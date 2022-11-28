@@ -7,92 +7,92 @@ License: GPL3.0
 */
 
 :root {
-	--active: green;
-	--active-inner: white;
-	--background: white;
-	--border-hover: green;
-	--border: lightgray;
-	--disabled: ghostwhite;
-	--kleistad-color: #f60083;
-	--disabled-inner: darkseagreen;
-	--focus: 2px greenyellow;
-	--tab-height: 460px;
+  --active: green;
+  --active-inner: white;
+  --background: white;
+  --border-hover: green;
+  --border: lightgray;
+  --disabled: ghostwhite;
+  --kleistad-color: #f60083;
+  --disabled-inner: darkseagreen;
+  --focus: 2px greenyellow;
+  --tab-height: 460px;
 }
 
 .kleistad-bank .ui-icon {
-	background-position: left top;
-	height: 24px;
-	width: 32px;
+  background-position: left top;
+  height: 24px;
+  width: 32px;
 }
 
 option.kleistad-bank {
-	background-repeat: no-repeat !important;
-	padding-left: 40px;
+  background-repeat: no-repeat !important;
+  padding-left: 40px;
 }
 
 .kleistad *:not(.dashicons, .mce-container-body *) {
-	font-family: Montserrat, "Helvetica Neue", sans-serif;
-	font-size: small;
+  font-family: Montserrat, "Helvetica Neue", sans-serif;
+  font-size: small;
 }
 
 .kleistad-shortcode table {
-	table-layout: auto;
+  table-layout: auto;
 }
 
 /* voor de jstree weergave */
 .kleistad-shortcode .jstree-anchor {
-	box-shadow: 0 0 0 0 white !important;
+  box-shadow: 0 0 0 0 white !important;
 }
 
 /* Fullcalendar toont om een dubbele button alsof het een radio button is. */
 
 /* stylelint-disable selector-class-pattern */
 .kleistad-shortcode .fc--button {
-	display: none;
+  display: none;
 }
 
 /* stylelint-enable selector-class-pattern */
 
 /* voor de jqueryui dialog */
 .kleistad-shortcode .fc-toolbar-title {
-	font-size: medium;
+  font-size: medium;
 }
 
 .kleistad-shortcode a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 /* voor de jqueryui datepicker */
 .kleistad-state-highlight {
-	border: 2px solid green !important;
+  border: 2px solid green !important;
 }
 
 .kleistad-fout {
-	background-color: lightsalmon;
-	border-left: 6px solid indianred;
-	padding-left: 10px;
+  background-color: lightsalmon;
+  border-left: 6px solid indianred;
+  padding-left: 10px;
 }
 
 .kleistad-succes {
-	background-color: limegreen;
-	border-left: 6px solid green;
-	padding-left: 10px;
+  background-color: limegreen;
+  border-left: 6px solid green;
+  padding-left: 10px;
 }
 
 .kleistad-inform {
-	background-color: lemonchiffon;
-	border-left: 6px solid gold;
-	padding-left: 10px;
+  background-color: lemonchiffon;
+  border-left: 6px solid gold;
+  padding-left: 10px;
 }
 
 .kleistad-wachten {
-	background: url(../images/plswait.gif) no-repeat;
-	height: 100%;
-	left: 50%;
-	position: fixed;
-	top: 50%;
-	width: 100%;
-	z-index: 10;
+  background: url("../images/plswait.gif") no-repeat;
+  height: 100%;
+  left: 50%;
+  position: fixed;
+  top: 50%;
+  width: 100%;
+  z-index: 10;
 }
 
 /**
@@ -100,45 +100,45 @@ option.kleistad-bank {
  */
 
 .kleistad-profiel {
-	height: 20px;
-	padding: 5px 0 5px;
-	text-align: right;
-	width: 100%;
+  height: 20px;
+  padding: 5px 0;
+  text-align: right;
+  width: 100%;
 }
 
 .kleistad-profiel table {
-	table-layout: auto;
+  table-layout: auto;
 }
 
 .kleistad-profiel table,
 .kleistad-profiel tr,
 .kleistad-profiel td {
-	border: none;
+  border: none;
 }
 
 .kleistad-dot {
-	height: 20px;
-	width: 20px;
-	border-radius: 50%;
-	display: inline-block;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .kleistad-openstaand {
-	background-color: white;
-	border: 1px solid;
-	box-shadow: 5px 10px var(--border);
-	box-sizing: border-box;
-	float: right;
-	padding: 15px;
-	width: 300px;
+  background-color: white;
+  border: 1px solid;
+  box-shadow: 5px 10px var(--border);
+  box-sizing: border-box;
+  float: right;
+  padding: 15px;
+  width: 300px;
 }
 
 .kleistad-betaalinfo {
-	border-radius: 50%;
-	color: black;
-	font-size: 25px;
-	margin: 0 10px;
-	padding: 10px;
+  border-radius: 50%;
+  color: black;
+  font-size: 25px;
+  margin: 0 10px;
+  padding: 10px;
 }
 
 /**
@@ -146,30 +146,30 @@ option.kleistad-bank {
  */
 
 .kleistad-workshop-communicatie {
-	border: 1px solid gray;
-	color: black;
-	font-size: small;
-	margin: 5px;
-	padding: 5px;
+  border: 1px solid gray;
+  color: black;
+  font-size: small;
+  margin: 5px;
+  padding: 5px;
 }
 
 .kleistad-workshop-communicatie-folded {
-	background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 10%, rgba(255, 255, 255, 0) 90%);
-	height: 10em;
-	overflow-y: hidden;
+  background: linear-gradient(to top, rgb(255 255 255 / 80%) 10%, rgb(255 255 255 / 0%) 90%);
+  height: 10em;
+  overflow-y: hidden;
 }
 
 .kleistad-workshop-aanvraag,
 .kleistad-workshop-nieuw {
-	background-color: lightblue;
+  background-color: lightblue;
 }
 
 .kleistad-workshop-vraag {
-	background-color: lightgoldenrodyellow;
+  background-color: lightgoldenrodyellow;
 }
 
 .kleistad-workshop-reactie {
-	background-color: lightgray;
+  background-color: lightgray;
 }
 
 /**
@@ -177,65 +177,65 @@ option.kleistad-bank {
  */
 
 a.kleistad-edit {
-	background-image: url(../images/icon-edit.png);
-	background-repeat: no-repeat;
-	padding: 0.4em 0.8em;
+  background-image: url("../images/icon-edit.png");
+  background-repeat: no-repeat;
+  padding: 0.4em 0.8em;
 }
 
 a.kleistad-view {
-	background-image: url(../images/icon-view.png);
-	background-repeat: no-repeat;
-	padding: 0.4em 0.8em;
+  background-image: url("../images/icon-view.png");
+  background-repeat: no-repeat;
+  padding: 0.4em 0.8em;
 }
 
 a.kleistad-schedule {
-	background-image: url(../images/icon-calendar.png);
-	background-repeat: no-repeat;
-	padding: 0.4em 0.8em;
+  background-image: url("../images/icon-calendar.png");
+  background-repeat: no-repeat;
+  padding: 0.4em 0.8em;
 }
 
 /**
  * Het formulier voor het aanmaken, wijzigen of verwijderen van een stook.
  */
 .kleistad-reservering-form {
-	border: none;
-	border-collapse: collapse;
-	border-spacing: 0;
-	font-size: small;
-	padding: 0;
-	table-layout: auto;
-	vertical-align: middle;
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: small;
+  padding: 0;
+  table-layout: auto;
+  vertical-align: middle;
 }
 
 .kleistad-reservering-form tr {
-	margin: 0;
+  margin: 0;
 }
 
 .kleistad-reservering-form td,
 .kleistad-reservering-form th {
-	border-style: none;
+  border-style: none;
 }
 
 .kleistad-reservering-form td,
 .kleistad-reservering-form input {
-	font-size: small;
-	text-align: right;
+  font-size: small;
+  text-align: right;
 }
 
 .kleistad-reservering-form th,
 .kleistad-reservering-form label,
 .kleistad-reservering-form select {
-	font-size: small;
-	text-align: left;
+  font-size: small;
+  text-align: left;
 }
 
 .kleistad-reservering-form select {
-	width: 100%;
+  width: 100%;
 }
 
 .kleistad-reservering-form input {
-	height: 2.5em;
-	width: 5em;
+  height: 2.5em;
+  width: 5em;
 }
 
 /**
@@ -244,83 +244,83 @@ a.kleistad-schedule {
  * @TODO is wellicht om te zetten naar een datatable
  */
 .kleistad-reserveringen {
-	border-collapse: collapse;
-	border-spacing: 0;
-	border-style: none;
-	font-size: small;
-	table-layout: auto;
-	vertical-align: middle;
-	width: 90%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-style: none;
+  font-size: small;
+  table-layout: auto;
+  vertical-align: middle;
+  width: 90%;
 }
 
 .kleistad-reserveringen th,
 .kleistad-reserveringen td {
-	border: 0 solid;
-	overflow: hidden;
+  border: 0 solid;
+  overflow: hidden;
 }
 
 .kleistad-reserveringen th:nth-child(n+3),
 .kleistad-reserveringen td:nth-child(n+3) {
-	text-align: right;
+  text-align: right;
 }
 
 .kleistad-reserveringen tr[data-form]:hover {
-	border: 1px solid gray;
-	color: blue;
-	cursor: pointer;
+  border: 1px solid gray;
+  color: blue;
+  cursor: pointer;
 }
 
 .kleistad-reservering-ongebruikt,
 .kleistad-reservering-definitief {
-	background: white;
+  background: white;
 }
 
 .kleistad-reservering-onderhoud {
-	background: lightgray;
+  background: lightgray;
 }
 
 .kleistad-reservering-zelf {
-	background: lightgreen;
+  background: lightgreen;
 }
 
 .kleistad-reservering-ander {
-	background: pink;
+  background: pink;
 }
 
 /**
  * Multistep formulier
  */
 .kleistad-tab {
-	background-color: gainsboro;
-	display: none;
-	flex-direction: column;
-	overflow-x: hidden;
-	padding: 10px 10px 20px;
+  background-color: gainsboro;
+  display: none;
+  flex-direction: column;
+  overflow-x: hidden;
+  padding: 10px 10px 20px;
 }
 
 .kleistad-tab-footer {
-	font-style: italic;
-	margin-top: auto;
-	text-align: right;
+  font-style: italic;
+  margin-top: auto;
+  text-align: right;
 }
 
 .kleistad-stap {
-	background-color: lightgrey;
-	border: none;
-	border-radius: 50%;
-	display: inline-block;
-	height: 15px;
-	margin: 0 2px;
-	opacity: 50%;
-	width: 15px;
+  background-color: lightgrey;
+  border: none;
+  border-radius: 50%;
+  display: inline-block;
+  height: 15px;
+  margin: 0 2px;
+  opacity: 0.5;
+  width: 15px;
 }
 
 .kleistad-stap.actief {
-	opacity: 100%;
+  opacity: 1;
 }
 
 .kleistad-stap.gereed {
-	background-color: green;
+  background-color: green;
 }
 
 /**
@@ -328,259 +328,259 @@ a.kleistad-schedule {
  */
 .kleistad-tijd,
 .kleistad-datum {
-	width: 9em;
+  width: 9em;
 }
 
 .kleistad-select { /* style overgenomen van input element */
-	background: whitesmoke -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
-	border: 1px solid var(--border);
-	border-radius: 2px;
-	line-height: normal;
-	padding: 0.625em 0.4375em;
-	width: 100%;
+  background: whitesmoke -webkit-linear-gradient(rgb(255 255 255 / 0%), rgb(255 255 255 / 0%));
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  line-height: normal;
+  padding: 0.625em 0.4375em;
+  width: 100%;
 }
 
 .kleistad-label,
 .kleistad-label + span {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .kleistad-input:required:invalid {
-	background-image: url(../images/invalid.png);
-	background-position: right top;
-	background-repeat: no-repeat;
+  background-image: url("../images/invalid.png");
+  background-position: right top;
+  background-repeat: no-repeat;
 }
 
 .kleistad-input:required:valid {
-	background-image: url(../images/valid.png);
-	background-position: right top;
-	background-repeat: no-repeat;
+  background-image: url("../images/valid.png");
+  background-position: right top;
+  background-repeat: no-repeat;
 }
 
 .kleistad-checkbox,
 .kleistad-radio {
-	appearance: none;
-	background: var(--b, var(--background));
-	border: 1px solid var(--bc, var(--border));
-	cursor: pointer;
-	display: inline-block;
-	height: 21px;
-	margin: 0;
-	outline: none;
-	position: relative;
-	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
-	vertical-align: top;
-	width: 21px;
+  appearance: none;
+  background: var(--b, var(--background));
+  border: 1px solid var(--bc, var(--border));
+  cursor: pointer;
+  display: inline-block;
+  height: 21px;
+  margin: 0;
+  outline: none;
+  position: relative;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+  vertical-align: top;
+  width: 21px;
 }
 
 .kleistad-checkbox::after,
 .kleistad-radio::after {
-	content: "";
-	display: block;
-	left: 0;
-	position: absolute;
-	top: 0;
-	transition: transform 0.3s ease, opacity 0.2s;
-	opacity: var(--o, 0);
+  content: "";
+  display: block;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transition: transform 0.3s ease, opacity 0.2s;
+  opacity: var(--o, 0);
 }
 
 .kleistad-radio {
-	border-radius: 50%;
+  border-radius: 50%;
 }
 
 .kleistad-checkbox {
-	border-radius: 7px;
+  border-radius: 7px;
 }
 
 .kleistad-checkbox:checked,
 .kleistad-radio:checked {
-	--b: var(--active);
-	--bc: var(--active);
-	--d-o: 0.3s;
-	--d-t: 0.6s;
-	--d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
-	--o: 1;
+  --b: var(--active);
+  --bc: var(--active);
+  --d-o: 0.3s;
+  --d-t: 0.6s;
+  --d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
+  --o: 1;
 }
 
 .kleistad-checkbox:disabled,
 .kleistad-radio:disabled {
-	--b: var(--disabled);
+  --b: var(--disabled);
 
-	cursor: not-allowed;
-	opacity: 0.9;
+  cursor: not-allowed;
+  opacity: 0.9;
 }
 
 .kleistad-checkbox:focus,
 .kleistad-radio:focus {
-	box-shadow: 0 0 0 var(--focus);
+  box-shadow: 0 0 0 var(--focus);
 }
 
 .kleistad-checkbox + label,
 .kleistad-radio + label {
-	cursor: pointer;
-	display: inline-block;
-	font-size: small;
-	line-height: 30px;
-	margin-left: 4px;
-	vertical-align: top;
-	max-width: 80%;
+  cursor: pointer;
+  display: inline-block;
+  font-size: small;
+  line-height: 30px;
+  margin-left: 4px;
+  vertical-align: top;
+  max-width: 80%;
 }
 
 .kleistad-radio:checked {
-	--s: 0.5;
+  --s: 0.5;
 }
 
 .kleistad-checkbox:disabled:checked,
 .kleistad-radio:disabled:checked {
-	--b: var(--disabled-inner);
-	--bc: var(--border);
+  --b: var(--disabled-inner);
+  --bc: var(--border);
 }
 
 .kleistad-checkbox:disabled + label,
 .kleistad-radio:disabled + label {
-	cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 .kleistad-radio::after {
-	background: var(--active-inner);
-	border-radius: 50%;
-	height: 19px;
-	opacity: 1;
-	transform: scale(var(--s, 0.7));
-	width: 19px;
+  background: var(--active-inner);
+  border-radius: 50%;
+  height: 19px;
+  opacity: 1;
+  transform: scale(var(--s, 0.7));
+  width: 19px;
 }
 
 .kleistad-checkbox::after {
-	border: 2px solid var(--active-inner);
-	border-left: 0;
-	border-top: 0;
-	height: 9px;
-	left: 7px;
-	top: 4px;
-	transform: rotate(43deg);
-	width: 5px;
+  border: 2px solid var(--active-inner);
+  border-left: 0;
+  border-top: 0;
+  height: 9px;
+  left: 7px;
+  top: 4px;
+  transform: rotate(43deg);
+  width: 5px;
 }
 
-.kleistad-checkbox:hover:not(:checked):not(:disabled),
-.kleistad-radio:hover:not(:checked):not(:disabled) {
-	--bc: var(--border-hover);
+.kleistad-checkbox:hover:not(:checked, :disabled),
+.kleistad-radio:hover:not(:checked, :disabled) {
+  --bc: var(--border-hover);
 }
 
 .kleistad-button {
-	background-color: green;
-	color: white;
-	border: none;
-	border-radius: 5px !important; /* Omdat full calendar dit aanpast. */
-	cursor: pointer;
-	font-size: medium;
-	overflow: hidden;
-	padding: 10px;
-	position: relative;
-	text-align: center;
-	text-decoration: none;
-	transition-duration: 0.4s;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 5px !important; /* Omdat full calendar dit aanpast. */
+  cursor: pointer;
+  font-size: medium;
+  overflow: hidden;
+  padding: 10px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition-duration: 0.4s;
 }
 
 .kleistad-button:hover {
-	background: white;
-	box-shadow: 0 2px 10px 5px var(--border);
-	color: black;
+  background: white;
+  box-shadow: 0 2px 10px 5px var(--border);
+  color: black;
 }
 
 .kleistad-button:active::after {
-	padding: 0;
-	margin: 0;
-	opacity: 1;
-	transition: 0s;
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s;
 }
 
 .kleistad-button:focus {
-	background-color: green;
-	color: white;
+  background-color: green;
+  color: white;
 }
 
 .kleistad-button:disabled {
-	cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 /**
  * Wachtwoord elementen.
  */
 .kleistad-pwd-meter {
-	border: 1px solid gainsboro;
-	box-sizing: border-box;
-	color: black;
+  border: 1px solid gainsboro;
+  box-sizing: border-box;
+  color: black;
 }
 
 .kleistad-pwd-sterk {
-	background-color: limegreen;
-	border-color: green;
-	opacity: 1;
+  background-color: limegreen;
+  border-color: green;
+  opacity: 1;
 }
 
 .kleistad-pwd-goed {
-	background-color: lemonchiffon;
-	border-color: gold;
-	opacity: 1;
+  background-color: lemonchiffon;
+  border-color: gold;
+  opacity: 1;
 }
 
 .kleistad-pwd-zwak {
-	background-color: lightsalmon;
-	border-color: indianred;
-	opacity: 1;
+  background-color: lightsalmon;
+  border-color: indianred;
+  opacity: 1;
 }
 
 .kleistad-pwd-erg-zwak,
 .kleistad-pwd-ongelijk {
-	background-color: red;
-	border-color: darkred;
-	opacity: 1;
+  background-color: red;
+  border-color: darkred;
+  opacity: 1;
 }
 
 /**
  * Specifiek voor stook recepten
  */
 .kleistad-recept-img {
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	background-size: contain;
-	float: left;
-	height: 200px;
-	position: relative;
-	width: 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  float: left;
+  height: 200px;
+  position: relative;
+  width: 100%;
 }
 
 .kleistad-recept-titel {
-	float: left;
-	position: relative;
+  float: left;
+  position: relative;
 }
 
 .kleistad-filters {
-	border: 0;
-	display: none;
-	float: left;
-	height: 100%;
-	padding: 15px;
-	width: 30%;
+  border: 0;
+  display: none;
+  float: left;
+  height: 100%;
+  padding: 15px;
+  width: 30%;
 }
 
 .kleistad-filter-term input:checked {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .kleistad-filter-term input:not(:checked) {
-	font-weight: normal;
+  font-weight: normal;
 }
 
 .kleistad-filter-term {
-	border-bottom: 1px solid black;
-	list-style-position: inside;
-	list-style-type: none;
+  border-bottom: 1px solid black;
+  list-style-position: inside;
+  list-style-type: none;
 }
 
 .kleistad-filter-term + label:hover {
-	background: whitesmoke;
-	cursor: pointer;
+  background: whitesmoke;
+  cursor: pointer;
 }
 
 /**
@@ -590,266 +590,270 @@ a.kleistad-schedule {
 .kleistad-meester,
 .kleistad-werkplek-bezet,
 .kleistad-werkplek-vrij {
-	box-sizing: border-box;
-	font-size: small;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-transform: none;
-	text-align: center;
-	white-space: nowrap;
-	width: 100%;
+  box-sizing: border-box;
+  font-size: small;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .kleistad-werkplek-bezet,
 .kleistad-werkplek-vrij {
-	border: 1px solid white;
-	font-size: small;
-	padding: 5px 10px;
+  border: 1px solid white;
+  font-size: small;
+  padding: 5px 10px;
 }
 
 .kleistad-werkplek-dagdeel,
 .kleistad-werkplek-reserveerbaar,
 .kleistad-werkplek-gereserveerd {
-	border: 0;
+  border: 0;
 }
 
 /**
  * Specifiek voor docent beschikbaarheid
  */
 .kleistad-inzet {
-	appearance: none;
-	display: inline-block;
-	height: 25px;
-	max-width: 11ch;
-	opacity: 0.9;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  appearance: none;
+  display: inline-block;
+  height: 25px;
+  max-width: 11ch;
+  opacity: 0.9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .kleistad-inzet-optie {
-	background: lightsalmon;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	color: white;
+  background: lightsalmon;
+  border: 1px solid var(--bc, var(--border));
+  border-radius: 7px;
+  color: white;
 }
 
 .kleistad-inzet-definitief {
-	background: dimgray;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	color: white;
-}
-
-.kleistad-cell_center {
-	text-align: center;
-}
-
-.kleistad-cell_right {
-	text-align: right;
-}
-
-.kleistad-cell_left {
-	text-align: left;
+  background: dimgray;
+  border: 1px solid var(--bc, var(--border));
+  border-radius: 7px;
+  color: white;
 }
 
 /**
  * Gallerij
  */
 div.kleistad-gallerij {
-	--gallerij-height: 260px;
-	--gallerij-gap: 1rem;
-	--gallerij-num-cols: 3;
-	--gallerij-radius: 7px;
+  --gallerij-height: 260px;
+  --gallerij-gap: 1rem;
+  --gallerij-num-cols: 3;
+  --gallerij-radius: 7px;
 
-	box-sizing: border-box;
-	display: grid;
-	gap: var(--gallerij-gap);
-	grid-auto-flow: dense;
-	grid-auto-rows: var(--gallerij-height);
-	grid-template-columns: repeat(var(--gallerij-num-cols), 1fr);
-	padding: var(--gallerij-gap);
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--gallerij-gap);
+  grid-auto-flow: dense;
+  grid-auto-rows: var(--gallerij-height);
+  grid-template-columns: repeat(var(--gallerij-num-cols), 1fr);
+  padding: var(--gallerij-gap);
+}
+
+div.kleistad-gallerij-keramist {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  --gallerij-gap: 1rem;
+  --gallerij-radius: 7px;
 }
 
 div.kleistad-gallerij-item {
-	border-radius: var(--gallerij-radius);
-	box-shadow: 7px 7px 3px darkgray;
+  border-radius: var(--gallerij-radius);
+  box-shadow: 7px 7px 3px darkgray;
+  min-width: 100px;
 }
 
 div.kleistad-gallerij-itemx2 {
-	grid-column: span 2;
-	grid-row: span 2;
+  grid-column: span 2;
+  grid-row: span 2;
 }
 
 div.kleistad-gallerij-item:hover {
-	animation: ease-in;
-	box-shadow: 7px 7px 3px gray;
+  animation: ease-in;
+  box-shadow: 7px 7px 3px gray;
 }
 
 div.kleistad-gallerij-item:active {
-	box-shadow: 0 5px gray;
-	transform: translateY(4px);
+  box-shadow: 0 5px gray;
+  transform: translateY(4px);
 }
 
-img.kleistad-gallerij {
-	border-radius: var(--gallerij-radius);
-	display: block;
-	height: 100%;
-	object-fit: cover;
-	pointer-events: none;
-	width: 100%;
+img.kleistad-gallerij,
+img.kleistad-gallerij-keramist {
+  border-radius: var(--gallerij-radius);
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  width: 100%;
+}
+
+img.kleistad-gallerij-keramist {
+  width: 150px;
 }
 
 @media screen and (max-width: 1024px) {
-	div.kleistad-gallerij {
-		--gallerij-num-cols: 2;
-		--gallerij-height: 200px;
-	}
+  div.kleistad-gallerij {
+    --gallerij-num-cols: 2;
+    --gallerij-height: 200px;
+  }
 }
 
 div.kleistad-showcase {
-	--showcase-radius: 10px;
-	--showcase-gap: 15px;
+  --showcase-radius: 10px;
+  --showcase-gap: 15px;
 
-	background-color: lightgray;
-	border-radius: var(--showcase-radius);
-	box-shadow: 10px 10px 6px darkgray;
-	box-sizing: border-box;
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-	grid-auto-flow: dense;
+  background-color: lightgray;
+  border-radius: var(--showcase-radius);
+  box-shadow: 10px 10px 6px darkgray;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-auto-flow: dense;
 }
 
 div.kleistad-showcase-item {
-	background-color: white;
-	border-radius: var(--showcase-radius);
-	margin: var(--showcase-gap);
-	overflow-y: auto;
-	padding: var(--showcase-gap);
+  background-color: white;
+  border-radius: var(--showcase-radius);
+  margin: var(--showcase-gap);
+  overflow-y: auto;
+  padding: var(--showcase-gap);
 }
 
 img.kleistad-showcase {
-	border-radius: var(--showcase-radius);
-	display: block;
-	height: auto;
-	object-fit: cover;
-	pointer-events: none;
+  border-radius: var(--showcase-radius);
+  display: block;
+  height: auto;
+  object-fit: cover;
+  pointer-events: none;
+  width: 100%;
 }
 
 div.kleistad-showcase-titel {
-	color: var(--kleistad-color);
-	font-size: x-large;
-	font-weight: bold;
-	text-align: center;
+  color: var(--kleistad-color);
+  font-size: x-large;
+  font-weight: bold;
+  text-align: center;
 }
 
 a.kleistad-showcase-prev {
-	font-size: 60px;
-	height: 60px;
-	left: 5%;
-	position: fixed;
-	top: 50%;
-	width: 60px;
+  font-size: 60px;
+  height: 60px;
+  left: 5%;
+  position: fixed;
+  top: 50%;
+  width: 60px;
 }
 
 a.kleistad-showcase-next {
-	font-size: 60px;
-	height: 60px;
-	position: fixed;
-	right: 5%;
-	top: 50%;
-	width: 60px;
+  font-size: 60px;
+  height: 60px;
+  position: fixed;
+  right: 5%;
+  top: 50%;
+  width: 60px;
 }
 
 /**
  * Layout elementen
  */
 .kleistad-row::after {
-	clear: both;
-	content: "";
-	display: table;
+  clear: both;
+  content: "";
+  display: table;
 }
 
 [class^="kleistad-col-"] {
-	border: 0;
-	float: left;
-	padding: 2px 15px;
-	width: 100%;
+  border: 0;
+  float: left;
+  padding: 2px 15px;
+  width: 100%;
 }
 
 /**
  * Voor laptopschermen en iPads
  */
 @media all and (min-width: 768px) {
-	div.kleistad-tab {
-		height: var(--tab-height);
-		overflow-y: auto;
-	}
+  div.kleistad-tab {
+    height: var(--tab-height);
+    overflow-y: auto;
+  }
 
-	.kleistad-col-1 {
-		width: 10%;
-	}
+  .kleistad-col-1 {
+    width: 10%;
+  }
 
-	.kleistad-col-2 {
-		width: 20%;
-	}
+  .kleistad-col-2 {
+    width: 20%;
+  }
 
-	.kleistad-col-3 {
-		width: 30%;
-	}
+  .kleistad-col-3 {
+    width: 30%;
+  }
 
-	.kleistad-col-4 {
-		width: 40%;
-	}
+  .kleistad-col-4 {
+    width: 40%;
+  }
 
-	.kleistad-col-5 {
-		width: 50%;
-	}
+  .kleistad-col-5 {
+    width: 50%;
+  }
 
-	.kleistad-col-6 {
-		width: 60%;
-	}
+  .kleistad-col-6 {
+    width: 60%;
+  }
 
-	.kleistad-col-7 {
-		width: 70%;
-	}
+  .kleistad-col-7 {
+    width: 70%;
+  }
 
-	.kleistad-col-8 {
-		width: 80%;
-	}
+  .kleistad-col-8 {
+    width: 80%;
+  }
 
-	.kleistad-col-9 {
-		width: 90%;
-	}
+  .kleistad-col-9 {
+    width: 90%;
+  }
 
-	.kleistad-col-10 {
-		width: 100%;
-	}
+  .kleistad-col-10 {
+    width: 100%;
+  }
 
-	.kleistad-col-kwart {
-		width: 25%;
-	}
+  .kleistad-col-kwart {
+    width: 25%;
+  }
 }
 
 /**
  * Voor mobieltjes
  */
 @media only screen and (max-width: 767px) {
-	table.kleistad-reserveringen th,
-	table.kleistad-reserveringen td,
-	table.kleistad-reserveringen button {
-		font-size: x-small;
-	}
+  table.kleistad-reserveringen th,
+  table.kleistad-reserveringen td,
+  table.kleistad-reserveringen button {
+    font-size: x-small;
+  }
 
-	div.kleistad-meesters {
-		display: none;
-	}
+  div.kleistad-meesters {
+    display: none;
+  }
 
-	div.kleistad-tab {
-		min-height: var(--tab-height);
-	}
+  div.kleistad-tab {
+    min-height: var(--tab-height);
+  }
 
-	[class^="kleistad-col-"] {
-		width: 100%;
-	}
+  [class^="kleistad-col-"] {
+    width: 100%;
+  }
 }

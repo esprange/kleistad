@@ -21,29 +21,6 @@ use Exception;
  * @since 5.0.0
  *
  * @property string code
- * @property int    id
- * @property string naam
- * @property int    datum
- * @property int    aanvraagdatum
- * @property int    start_tijd
- * @property int    eind_tijd
- * @property string docent
- * @property array  technieken
- * @property string organisatie
- * @property string organisatie_adres
- * @property string organisatie_email
- * @property string contact
- * @property string email
- * @property string telnr
- * @property string programma
- * @property array  werkplekken
- * @property bool   vervallen
- * @property float  kosten
- * @property int    aantal
- * @property bool   definitief
- * @property bool   betaling_email
- * @property int    aanvraag_id
- * @property array  communicatie
  */
 class Workshop extends Artikel {
 
@@ -79,6 +56,174 @@ class Workshop extends Artikel {
 	public WorkshopActie $actie;
 
 	/**
+	 * Workshop identificatie.
+	 *
+	 * @var int Het id.
+	 */
+	public int $id = 0;
+
+	/**
+	 * Workshop identificatie code.
+	 *
+	 * @var string De code.
+	 */
+	public string $code = '';
+
+	/**
+	 * Naam van de workshop.
+	 *
+	 * @var string De naam, workshop of kinderfeest etc.
+	 */
+	public string $naam = '';
+
+	/**
+	 * Workshop datum.
+	 *
+	 * @var int Datum waarop de workshop plaatsvindt.
+	 */
+	public int $datum = 0;
+
+	/**
+	 * Workshap aanvraag datum.
+	 *
+	 * @var int Datum waarop de workshop is aangevraagd.
+	 */
+	public int $aanvraagdatum = 0;
+
+	/**
+	 * Workshop start.
+	 *
+	 * @var int Start tijd van de workshop.
+	 */
+	public int $start_tijd = 0;
+
+	/**
+	 * Workshop eind.
+	 *
+	 * @var int Eind tijd van de workshop.
+	 */
+	public int $eind_tijd = 0;
+
+	/**
+	 * Docent(en) van de workshop.
+	 *
+	 * @var string Docent of docenten.
+	 */
+	public string $docent = '';
+
+	/**
+	 * Technieken.
+	 *
+	 * @var array De technieken die gebruikt worden.
+	 */
+	public array $technieken = [];
+
+	/**
+	 * Ingeval van zakelijk, de organisatie naam.
+	 *
+	 * @var string Organisatie naam.
+	 */
+	public string $organisatie = '';
+
+	/**
+	 * Ingeval van zakelijk, de organisatie adres.
+	 *
+	 * @var string Organisatie adres.
+	 */
+	public string $organisatie_adres = '';
+
+	/**
+	 * Ingeval van zakelijk, de organisatie email.
+	 *
+	 * @var string Organisatie email.
+	 */
+	public string $organisatie_email = '';
+
+	/**
+	 * Workshop contactpersoon.
+	 *
+	 * @var string De naam van het contact.
+	 */
+	public string $contact = '';
+
+	/**
+	 * Workshop contactpersoon email.
+	 *
+	 * @var string De email van het contact.
+	 */
+	public string $email = '';
+
+	/**
+	 * Workshop contactpersoon telefoonnummer.
+	 *
+	 * @var string Het telefoonnummer van het contact.
+	 */
+	public string $telnr = '';
+
+	/**
+	 * Workshop programma.
+	 *
+	 * @var string Het afgesproken programma.
+	 */
+	public string $programma = '';
+
+	/**
+	 * Werkplek reservering.
+	 *
+	 * @var array Aantal te reserveren werkplekken.
+	 */
+	public array $werkplekken = [];
+
+	/**
+	 * Vervallen status workshop.
+	 *
+	 * @var bool True als vervallen.
+	 */
+	public bool $vervallen = false;
+
+	/**
+	 * Workshop kosten.
+	 *
+	 * @var float De bruto kosten.
+	 */
+	public float $kosten = 0.0;
+
+	/**
+	 * Workshop deelnemer aantal.
+	 *
+	 * @var int Aantal deelnemers.
+	 */
+	public int $aantal = 6;
+
+	/**
+	 * Definitieve status workshop.
+	 *
+	 * @var bool True als definitief.
+	 */
+	public bool $definitief = false;
+
+	/**
+	 * Betaal email status.
+	 *
+	 * @var bool True als betaling email verstuurd.
+	 */
+	public bool $betaling_email = false;
+
+	/**
+	 * Aanvraag id. Is alleen nog nodig voor oude workshops, voor 21 mei 2022.
+	 *
+	 * @var int Backwards compatibility, id van de aanvraag.
+	 */
+	public int $aanvraag_id = 0;
+
+	/**
+	 * Communicatie over de workshop.
+	 *
+	 * @var array Communicatie teksten.
+	 */
+	public array $communicatie = [];
+
+	/**
 	 * Het door de aanvrager voorgestelde dagdeel van de workshop.
 	 *
 	 * @var string Het dagdeel.
@@ -105,39 +250,28 @@ class Workshop extends Artikel {
 	 * @since 5.0.0
 	 *
 	 * @global object    $wpdb WordPress database.
-	 * @param int|null   $workshop_id (optional) workshop welke geladen moet worden.
+	 * @param int        $workshop_id (optional) workshop welke geladen moet worden.
 	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( int $workshop_id = null, ?array $load = null ) {
+	public function __construct( int $workshop_id = 0, ?array $load = null ) {
 		global $wpdb;
-		$this->actie    = new WorkshopActie( $this );
-		$this->betaling = new WorkshopBetaling( $this );
-		$this->data     = [
-			'id'                => null,
-			'naam'              => '',
-			'datum'             => date( 'Y-m-d', strtotime( 'tomorrow' ) ),
-			'aanvraagdatum'     => date( 'Y-m-d' ),
-			'start_tijd'        => '10:00',
-			'eind_tijd'         => '12:00',
-			'docent'            => '',
-			'technieken'        => wp_json_encode( [] ),
-			'organisatie'       => '',
-			'organisatie_adres' => '',
-			'organisatie_email' => '',
-			'contact'           => '',
-			'email'             => '',
-			'telnr'             => '',
-			'programma'         => '',
-			'vervallen'         => 0,
-			'kosten'            => opties()['workshopprijs'],
-			'aantal'            => 6,
-			'definitief'        => 0,
-			'betaling_email'    => 0,
-			'aanvraag_id'       => 0,
-			'communicatie'      => maybe_serialize( [] ),
-			'werkplekken'       => wp_json_encode( [] ),
+		$this->actie         = new WorkshopActie( $this );
+		$this->betaling      = new WorkshopBetaling( $this );
+		$this->datum         = strtotime( 'tomorrow' );
+		$this->start_tijd    = strtotime( 'tomorrow 10:00' );
+		$this->eind_tijd     = strtotime( 'tomorrow 12:00' );
+		$this->aanvraagdatum = time();
+		$this->kosten        = opties()['workshopprijs'];
+		$this->communicatie  = [
+			[
+				'type'    => WorkshopActie::NIEUW,
+				'from'    => 'Kleistad',
+				'subject' => 'Toevoeging door ' . wp_get_current_user()->display_name,
+				'tekst'   => '',
+				'tijd'    => current_time( 'd-m-Y H:i' ),
+			],
 		];
-		if ( is_null( $workshop_id ) ) {
+		if ( ! $workshop_id ) {
 			return;
 		}
 		$workshop = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
@@ -145,58 +279,31 @@ class Workshop extends Artikel {
 			$workshop = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE aanvraag_id = %d", $workshop_id ), ARRAY_A );
 		}
 		if ( ! is_null( $workshop ) ) {
-			$this->data = $workshop;
+			$this->id                = intval( $workshop['id'] );
+			$this->code              = self::DEFINITIE['prefix'] . $this->id;
+			$this->datum             = strtotime( "{$workshop['datum']} 0:00" );
+			$this->aanvraagdatum     = strtotime( "{$workshop['aanvraagdatum']} 0:00" );
+			$this->start_tijd        = strtotime( "{$workshop['datum']} {$workshop['start_tijd']}" );
+			$this->eind_tijd         = strtotime( "{$workshop['datum']} {$workshop['eind_tijd']}" );
+			$this->vervallen         = boolval( $workshop['vervallen'] );
+			$this->definitief        = boolval( $workshop['definitief'] );
+			$this->betaling_email    = boolval( $workshop['betaling_email'] );
+			$this->technieken        = json_decode( $workshop['technieken'], true ) ?: [];
+			$this->werkplekken       = json_decode( $workshop['werkplekken'], true ) ?: [];
+			$this->communicatie      = maybe_unserialize( $workshop['communicatie'] );
+			$this->kosten            = floatval( $workshop['kosten'] );
+			$this->aantal            = intval( $workshop['aantal'] );
+			$this->contact           = htmlspecialchars_decode( $workshop['contact'] );
+			$this->email             = htmlspecialchars_decode( $workshop['email'] );
+			$this->telnr             = htmlspecialchars_decode( $workshop['telnr'] );
+			$this->organisatie       = htmlspecialchars_decode( $workshop['organisatie'] );
+			$this->organisatie_email = htmlspecialchars_decode( $workshop['organisatie_email'] );
+			$this->organisatie_adres = htmlspecialchars_decode( $workshop['organisatie_adres'] );
+			$this->programma         = htmlspecialchars_decode( $workshop['programma'] );
+			$this->docent            = $workshop['docent'];
+			$this->naam              = $workshop['naam'];
+			$this->aanvraag_id       = $workshop['aanvraag_id'];
 		}
-	}
-
-	/**
-	 * Get attribuut van het object.
-	 *
-	 * @since 5.0.0
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @return mixed Attribuut waarde.
-	 */
-	public function __get( string $attribuut ) {
-		if ( in_array( $attribuut, [ 'start_tijd', 'eind_tijd' ], true ) ) {
-			return strtotime( "{$this->data['datum']} {$this->data[ $attribuut ]}" );
-		}
-		if ( in_array( $attribuut, [ 'vervallen', 'definitief', 'betaling_email' ], true ) ) {
-			return boolval( $this->data[ $attribuut ] );
-		}
-		return match ( $attribuut ) {
-			'datum',
-			'aanvraagdatum' => strtotime( $this->data[ $attribuut ] ),
-			'technieken',
-			'werkplekken'   => json_decode( $this->data[ $attribuut ] ?? '[]', true ),
-			'code'          => "W{$this->data['id']}",
-			'communicatie'  => maybe_unserialize( $this->data['communicatie'] ) ?: [],
-			'kosten'        => floatval( $this->data['kosten'] ),
-			'aantal'        => intval( $this->data['aantal'] ),
-			default         => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
-		};
-	}
-
-	/**
-	 * Set attribuut van het object.
-	 *
-	 * @since 5.0.0
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @param mixed  $waarde Attribuut waarde.
-	 */
-	public function __set( string $attribuut, mixed $waarde ) {
-		$this->data[ $attribuut ] = match ( $attribuut ) {
-			'technieken',
-			'werkplekken'    => wp_json_encode( $waarde ),
-			'datum',
-			'datum_betalen' => date( 'Y-m-d', $waarde ),
-			'start_tijd',
-			'eind_tijd'     => date( 'H:i', $waarde ),
-			'telnr'         => $waarde,
-			'communicatie'  => maybe_serialize( $waarde ),
-			default         => is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde ),
-		};
 	}
 
 	/**
@@ -220,13 +327,16 @@ class Workshop extends Artikel {
 	/**
 	 * Hulp functie voor de oudere workshops (voor 7.0.0 werd de naam ingevuld, nu het nummer of een reeks van nummers ).
 	 *
+	 * @param bool $volledig Als true dan voornaam en achternaam, anders alleen voornaam.
 	 * @return string De naam van de docent.
 	 */
-	public function get_docent_naam() : string {
+	public function get_docent_naam( bool $volledig = true ) : string {
 		$docenten = [];
 		foreach ( explode( ';', $this->docent ) as $docent_item ) {
 			if ( is_numeric( $docent_item ) ) {
-				$docenten[] = get_user_by( 'id', intval( $docent_item ) )->display_name;
+				$docenten[] = $volledig ?
+					get_user_by( 'id', intval( $docent_item ) )->display_name :
+					get_user_by( 'id', intval( $docent_item ) )->first_name;
 				continue;
 			}
 			$docenten[] = $docent_item;
@@ -273,17 +383,45 @@ class Workshop extends Artikel {
 	 */
 	public function save() : int {
 		global $wpdb;
-		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
-		$this->id = $wpdb->insert_id;
-		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
+		$wpdb->replace(
+			"{$wpdb->prefix}kleistad_workshops",
+			[
+				'id'                => $this->id,
+				'datum'             => date( 'Y-m-d', $this->datum ),
+				'aanvraagdatum'     => date( 'Y-m-d', $this->aanvraagdatum ),
+				'start_tijd'        => date( 'H:i', $this->start_tijd ),
+				'eind_tijd'         => date( 'H:i', $this->eind_tijd ),
+				'contact'           => trim( $this->contact ),
+				'email'             => trim( $this->email ),
+				'telnr'             => trim( $this->telnr ),
+				'organisatie'       => trim( $this->organisatie ),
+				'organisatie_email' => trim( $this->organisatie_email ),
+				'organisatie_adres' => trim( $this->organisatie_adres ),
+				'programma'         => trim( $this->programma ),
+				'docent'            => $this->docent,
+				'naam'              => $this->naam,
+				'aanvraag_id'       => $this->aanvraag_id,
+				'aantal'            => $this->aantal,
+				'definitief'        => intval( $this->definitief ),
+				'betaling_email'    => intval( $this->betaling_email ),
+				'vervallen'         => intval( $this->vervallen ),
+				'communicatie'      => maybe_serialize( $this->communicatie ),
+				'technieken'        => wp_json_encode( $this->technieken ),
+				'werkplekken'       => wp_json_encode( $this->werkplekken ),
+				'kosten'            => $this->kosten,
+			]
+		);
+		$this->id   = $wpdb->insert_id;
+		$this->code = self::DEFINITIE['prefix'] . $this->id;
+		$timezone   = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
 			$afspraak               = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
 			$afspraak->titel        = $this->naam;
 			$afspraak->definitief   = $this->definitief;
 			$afspraak->vervallen    = $this->vervallen;
-			$afspraak->start        = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$afspraak->eind         = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$afspraak->start        = new DateTime( date( 'Y-m-d H:i', $this->start_tijd ), $timezone );
+			$afspraak->eind         = new DateTime( date( 'Y-m-d H:i', $this->eind_tijd ), $timezone );
 			$afspraak->beschrijving = sprintf(
 				'<p><strong>%s</strong></p><p>contact: %s, %s</p><p>aantal: %d</p><p>programma: %s</p><p>technieken: %s</p>',
 				$this->naam,

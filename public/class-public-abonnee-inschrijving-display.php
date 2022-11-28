@@ -23,30 +23,23 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * De formulier inhoud
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	public function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<div class="kleistad-tab"><?php $this->abonnement_info(); ?></div>
-
-		<?php if ( is_super_admin() ) : ?>
+				<?php if ( is_super_admin() ) : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Abonnee' ); ?></div>
 		<?php elseif ( is_user_logged_in() ) : ?>
 		<div class="kleistad-tab"><?php	$this->gebruiker_logged_in(); ?></div>
 		<?php else : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker(); ?></div>
 		<?php endif ?>
-
 		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
 		<div class="kleistad-tab"><?php $this->betaal_info(); ?></div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
@@ -99,7 +92,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-1">
 			</div>
 			<div class="kleistad-col-3 kleistad-input">
-				<input class="kleistad-datum kleistad-input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
+				<input class="kleistad-datum kleistad-input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( wp_date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
 			</div>
 		</div>
 		<?php

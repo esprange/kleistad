@@ -21,15 +21,12 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * Maak de formulier inhoud aan
-	 */
-	protected function form_content() {
-		$this->bijstorten()->betaal_info();
-		$this->submit();
+		$this->form(
+			function() {
+				$this->bijstorten()->betaal_info();
+				$this->submit();
+			}
+		);
 	}
 
 	/**

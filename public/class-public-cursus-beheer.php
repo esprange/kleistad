@@ -32,7 +32,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			]
 		);
 		if ( ! isset( $this->data['cursus'] ) ) {
-			$this->data['cursus'] = $this->formulier();
+			$this->data['cursus'] = new Cursus();
 		}
 		return $this->content();
 	}
@@ -51,7 +51,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			]
 		);
 		if ( ! isset( $this->data['cursus'] ) ) {
-			$this->data['cursus'] = $this->formulier( $this->data['id'] );
+			$this->data['cursus'] = new Cursus( $this->data['id'] );
 		}
 		return $this->content();
 	}
@@ -62,24 +62,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$cursussen               = new Cursussen();
-		$this->data['cursussen'] = [];
-		$vandaag                 = strtotime( 'today' );
-		foreach ( $cursussen as $cursus ) {
-			$this->data['cursussen'][] = [
-				'id'          => $cursus->id,
-				'naam'        => $cursus->naam,
-				'start_datum' => date( 'd-m-Y', $cursus->start_datum ),
-				'eind_datum'  => date( 'd-m-Y', $cursus->eind_datum ),
-				'start_tijd'  => date( 'H:i', $cursus->start_tijd ),
-				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
-				'docent'      => strstr( $cursus->get_docent_naam() . ' ', ' ', true ),
-				'vervallen'   => $cursus->vervallen,
-				'status'      => $cursus->vervallen ? 'vervallen' :
-					( $cursus->eind_datum < $vandaag ? 'voltooid' :
-						( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
-			];
-		}
+		$this->data['cursussen'] = new Cursussen();
 		return $this->content();
 	}
 
@@ -218,47 +201,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'status' => $bericht ? "$bericht, de gegevens zijn opgeslagen" : 'De gegevens zijn opgeslagen',
 			],
 			'content' => $this->display(),
-		];
-	}
-
-	/**
-	 * Bereid een cursus wijziging voor.
-	 *
-	 * @param int|null $cursus_id De cursus.
-	 * @return array De cursus data.
-	 */
-	private function formulier( ?int $cursus_id = null ) : array {
-		$cursus = new Cursus( $cursus_id );
-		return [
-			'id'              => $cursus->id,
-			'naam'            => $cursus->naam,
-			'code'            => empty( $cursus_id ) ? '' : $cursus->code,
-			'start_datum'     => $cursus->start_datum,
-			'eind_datum'      => $cursus->eind_datum,
-			'lesdatums'       => implode(
-				';',
-				array_map(
-					function( $lesdatum ) {
-						return date( 'd-m-Y', $lesdatum );
-					},
-					$cursus->lesdatums
-				)
-			),
-			'start_tijd'      => $cursus->start_tijd,
-			'eind_tijd'       => $cursus->eind_tijd,
-			'docent'          => $cursus->docent,
-			'technieken'      => $cursus->technieken,
-			'werkplekken'     => $cursus->werkplekken,
-			'vervallen'       => $cursus->vervallen,
-			'techniekkeuze'   => $cursus->techniekkeuze,
-			'inschrijfkosten' => $cursus->inschrijfkosten,
-			'cursuskosten'    => $cursus->cursuskosten,
-			'inschrijfslug'   => $cursus->inschrijfslug,
-			'indelingslug'    => $cursus->indelingslug,
-			'maximum'         => $cursus->maximum,
-			'meer'            => $cursus->meer,
-			'tonen'           => $cursus->tonen,
-			'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
 		];
 	}
 

@@ -46,7 +46,7 @@ class Public_Docent_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	private function tabelframe( string $tabel ) : void {
-		$maandag = date( 'd-m-Y', strtotime( 'Monday this week' ) );
+		$maandag = wp_date( 'd-m-Y', strtotime( 'Monday this week' ) );
 		?>
 		<div id="kleistad_geen_ie" style="display:none">
 			<strong>Helaas wordt Internet Explorer niet meer ondersteund voor deze functionaliteit, gebruik bijvoorbeeld Chrome of Edge</strong>
@@ -62,6 +62,5 @@ class Public_Docent_Display extends Public_Shortcode_Display {
 		</table>
 		<?php
 	}
-
 
 }

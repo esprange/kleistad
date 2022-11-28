@@ -21,14 +21,9 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * Render het formulier
-	 */
-	protected function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-4 kleistad-label">
 				<label for="kleistad_naam">Je naam (verplicht)</label>
@@ -65,7 +60,7 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">Onderwerp</label>
 			</div>
 		</div>
-		<?php foreach ( [ 'cursus', 'abonnement', 'stook', 'overig' ] as $onderwerp ) : ?>
+				<?php foreach ( [ 'cursus', 'abonnement', 'stook', 'overig' ] as $onderwerp ) : ?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-1" >
 			</div>
@@ -91,7 +86,8 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button" name="kleistad_submit_contact" id="kleistad_submit" type="submit" >Verzenden</button>
 			</div>
 		</div>
-		<?php
+				<?php
+			}
+		);
 	}
-
 }

@@ -21,14 +21,9 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * Render de dagdelenkaart info
-	 */
-	protected function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<input type="hidden" name="klant_type" id="kleistad_klant_type" value="nieuw">
 		<div id="kleistad_tabs" class="ui-tabs ui-widget">
 			<ul class="ui-tabs-nav">
@@ -89,7 +84,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 				<label>Aantal</label>
 			</div>
 		</div>
-			<?php foreach ( array_keys( $this->data['input']['omschrijving'] ) as $index ) : ?>
+				<?php foreach ( array_keys( $this->data['input']['omschrijving'] ) as $index ) : ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
 				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $this->data['input']['omschrijving'][ $index ] ); ?>" >
@@ -110,7 +105,9 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<button class="kleistad-button" type="submit" name="kleistad_submit_verkoop" id="kleistad_submit_verkoop" value="verzenden">Verzenden</button>
 		</div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 }

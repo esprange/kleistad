@@ -21,25 +21,18 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * Maak de formulier inhoud
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	protected function form_content() {
-		$this->bestelling();
-		if ( 0 < $this->data['openstaand'] ) {
-			$this->betalen( $this->data['annuleerbaar'] );
-		} elseif ( 0 > $this->data['openstaand'] ) {
-			$this->terugstorten();
-		} else {
-			$this->geen_actie();
-		}
-		?>
-		<?php
+		$this->form(
+			function() {
+				$this->bestelling();
+				if ( 0 < $this->data['openstaand'] ) {
+					$this->betalen( $this->data['annuleerbaar'] );
+				} elseif ( 0 > $this->data['openstaand'] ) {
+					$this->terugstorten();
+				} else {
+					$this->geen_actie();
+				}
+			}
+		);
 	}
 
 	/**

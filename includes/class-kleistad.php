@@ -259,6 +259,7 @@ class Kleistad {
 		$this->loader->add_action( 'login_headerurl', $plugin_common, 'login_headerurl' );
 		$this->loader->add_action( 'login_headertext', $plugin_common, 'login_headertext' );
 		$this->loader->add_action( 'after_setup_theme', $plugin_common, 'verberg_toolbar' );
+		$this->loader->add_action( 'plugins_loaded', $plugin_common, 'disable_emoji' );
 
 		$this->loader->add_filter( 'login_message', $plugin_common, 'user_login_message' );
 		$this->loader->add_filter( 'login_redirect', $plugin_common, 'login_redirect', 10, 3 );

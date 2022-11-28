@@ -116,8 +116,8 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * @since   6.6.0
 	 */
 	protected function save() : array {
-		$extra_cursisten  = [];
-		$emails_verzonden = false;
+		$this->data['inschrijving']->extra_cursisten = [];
+		$emails_verzonden                            = false;
 		foreach ( $this->data['input']['extra_cursist'] as $extra_cursist ) {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;
@@ -128,27 +128,16 @@ class Public_Cursus_Extra extends ShortcodeForm {
 					'status' => $this->status( new WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),
 				];
 			}
-			$extra_cursisten[] = $extra_cursist_id;
-			$cursist           = get_user_by( 'ID', $extra_cursist_id );
-			$cursist->add_role( CURSIST );
 			$extra_inschrijving = new Inschrijving( $this->data['inschrijving']->cursus->id, $extra_cursist_id );
 			if ( $extra_inschrijving->ingedeeld && 0 < $extra_inschrijving->aantal ) {
 				return [
 					'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie heeft ' . $extra_cursist['first_name'] . ' ' . $extra_cursist['last_name'] . ' zichzelf al opgegeven voor deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 				];
 			}
-			if ( ! $extra_inschrijving->ingedeeld ) {
-				$extra_inschrijving->hoofd_cursist_id = $this->data['inschrijving']->klant_id;
-				$extra_inschrijving->verzend_email( '_extra' );
-				$emails_verzonden              = true;
-				$extra_inschrijving->ingedeeld = true;
-				$extra_inschrijving->aantal    = 0;
-				$extra_inschrijving->datum     = strtotime( 'today' );
+			if ( $extra_inschrijving->actie->indelen_extra( $this->data['inschrijving'] ) ) {
+				$emails_verzonden = true;
 			}
-			$extra_inschrijving->save();
 		}
-		$this->data['inschrijving']->extra_cursisten = $extra_cursisten;
-		$this->data['inschrijving']->save();
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'De gegevens zijn opgeslagen' . ( $emails_verzonden ? ' en welkomst email is verstuurd' : '' ) ),

@@ -250,61 +250,41 @@ class Showcase {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'            => [
-					'name'               => 'Keramiek showcases',
-					'singular_name'      => 'Keramiek showcase',
-					'add_new'            => 'Toevoegen',
-					'add_new_item'       => 'Showcase toevoegen',
-					'edit'               => 'Wijzigen',
-					'edit_item'          => 'Showcase wijzigen',
-					'view'               => 'Inzien',
-					'view_item'          => 'Showcase inzien',
-					'search_items'       => 'Showcase zoeken',
-					'not_found'          => 'Niet gevonden',
-					'not_found_in_trash' => 'Niet in prullenbak gevonden',
-				],
-				'public'            => true,
-				'supports'          => [
-					'title',
-					'comments',
-					'thumbnail',
-				],
-				'rewrite'           => [
+				'public'  => true,
+				'rewrite' => [
 					'slug' => 'showcases',
 				],
-				'show_ui'           => false,
-				'show_in_admin_bar' => false,
-				'show_in_nav_menus' => false,
+				'show_ui' => false,
 			]
 		);
-		register_post_status(
-			self::BESCHIKBAAR,
-			[
-				'label'                     => self::POST_TYPE,
-				'public'                    => true,
-				'exclude_from_search'       => false,
-				'show_in_admin_all_list'    => true,
-				'show_in_admin_status_list' => true,
-				/* translators: zie wpdoc voor invulling */
-				'label_count'               => _n_noop( 'Unread (%s)', 'Unread (%s)' ),
-			]
-		);
+		register_post_status( self::INGEPLAND, [ 'public' => true ] );
+		register_post_status( self::TENTOONGESTELD, [ 'public' => true ] );
+		register_post_status( self::BESCHIKBAAR, [ 'public' => true ] );
 	}
 
 	/**
 	 * Bepaal de datums van de huidige en komende shows.
 	 *
+	 * @param int $datum Default huidige datum, aanpasbaar voor testdoeleinden.
 	 * @return array
 	 */
-	public static function show_datums() : array {
-		$offset = ( intval( date( 'n' ) ) - 1 ) % 2;
-		$shows  = [];
-		for ( $index = 0; $index < 3; $index ++ ) {
-			$periode = - $offset + $index * 2;
-			$shows[] = [
-				'start' => strtotime( "first monday of $periode month 0:00" ),
-				'eind'  => strtotime( 'first monday of ' . $periode + 2 . ' month 0:00' ),
-			];
+	public static function show_datums( int $datum = 0 ) : array {
+		$datum      = $datum ?: time();
+		$maand      = intval( date( 'n', $datum ) ) - 1;
+		$periode    = 0 === $maand % 2 ? -2 : -3;
+		$shows      = [];
+		$show_count = 0;
+		while ( 3 > $show_count ) {
+			$start = strtotime( "first monday of $periode month 0:00", $datum );
+			$eind  = strtotime( 'first monday of ' . $periode + 2 . ' month 0:00', $datum );
+			if ( $datum >= $start && $datum < $eind || $show_count ) {
+				$shows[] = [
+					'start' => $start,
+					'eind'  => $eind,
+				];
+			}
+			$periode   += 2;
+			$show_count = count( $shows );
 		}
 		return $shows;
 	}

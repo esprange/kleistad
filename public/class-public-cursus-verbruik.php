@@ -22,13 +22,8 @@ class Public_Cursus_Verbruik extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_cursisten() : string {
-		$cursus                  = new Cursus( $this->data['id'] );
-		$this->data['cursus']    = [
-			'id'   => $cursus->id,
-			'naam' => $cursus->naam,
-			'code' => $cursus->code,
-		];
-		$this->data['cursisten'] = $this->cursistenlijst( $cursus );
+		$this->data['cursus']    = new Cursus( $this->data['id'] );
+		$this->data['cursisten'] = $this->cursistenlijst( $this->data['cursus'] );
 		return $this->content();
 	}
 
@@ -38,18 +33,7 @@ class Public_Cursus_Verbruik extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$this->data['cursus_info'] = [];
-		foreach ( new Cursussen( strtotime( '-3 month 0:00' ) ) as $cursus ) {
-			if ( ! $cursus->vervallen ) {
-				$this->data['cursus_info'][ $cursus->id ] = [
-					'code'        => "C$cursus->id",
-					'naam'        => $cursus->naam,
-					'docent'      => $cursus->get_docent_naam(),
-					'start_dt'    => $cursus->start_datum,
-					'start_datum' => wp_date( 'd-m-Y', $cursus->start_datum ),
-				];
-			}
-		}
+		$this->data['cursussen'] = new Cursussen( strtotime( '-3 month 0:00' ) );
 		return $this->content();
 	}
 

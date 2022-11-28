@@ -185,7 +185,7 @@ EOT;
 		for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 			$weekdag = wp_date( 'l', $datum ) . '<br/>' . wp_date( 'd-m-Y', $datum );
 			$html   .= <<<EOT
-		<th class="kleistad-cell_center">$weekdag</th>
+		<th style="text-align:center;">$weekdag</th>
 EOT;
 		}
 		$html .= <<<EOT
@@ -196,11 +196,11 @@ EOT;
 		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
 			$html .= <<<EOT
 	<tr>
-		<td class="kleistad-cell_center">$dagdeel</td>
+		<td style="text-align:center;">$dagdeel</td>
 EOT;
 			for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				$html .= <<<EOT
-		<td class="kleistad-cell_center">
+		<td style="text-align:center;">
 EOT;
 				$html .= match ( $functie ) {
 					'overzicht' => self::get_overzicht_cell( $datum, $dagdeel, $args ),

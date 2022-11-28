@@ -21,7 +21,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function toevoegen() : void {
-		$this->form();
+		$this->wijzigen();
 	}
 
 	/**
@@ -30,16 +30,9 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function wijzigen() : void {
-		$this->form();
-	}
-
-	/**
-	 * Render het formulier
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	protected function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['recept']->id ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
@@ -50,7 +43,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 					value="<?php echo esc_attr( $this->data['recept']->titel ); ?>"/>
 			</div>
 		</div>
-		<?php $this->categorien(); ?>
+				<?php $this->categorien(); ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5 kleistad-label">
 				<label for="kleistad_kenmerk">Kenmerken</label>
@@ -92,23 +85,25 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				?>
 			</div>
 		</div>
-		<?php $this->grondstoffen(); ?>
+				<?php $this->grondstoffen(); ?>
 		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Bewaren</button>
-		<?php
-		if ( 0 < $this->data['recept']->id ) :
-			if ( 'publish' !== $this->data['recept']->status ) :
-				?>
+				<?php
+				if ( 0 < $this->data['recept']->id ) :
+					if ( 'publish' !== $this->data['recept']->status ) :
+						?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_publiceren" value="publiceren" >Publiceren</button>
-		<?php else : ?>
+				<?php else : ?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verbergen" value="verbergen" >Verbergen</button>
-			<?php
-			endif;
-		?>
+					<?php
+					endif;
+				?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verwijderen" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
-		<?php endif ?>
+				<?php endif ?>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**

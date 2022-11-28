@@ -5,7 +5,6 @@
  * @package Kleistad
  *
  * @covers \Kleistad\LosArtikel, \Kleistad\LosArtikelBetaling
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;
@@ -59,8 +58,6 @@ class Test_LosArtikel extends Kleistad_UnitTestCase {
 
 	/**
 	 * Test function get_facturatieregels
-	 *
-	 * @return void
 	 */
 	public function test_get_facturatieregels() {
 		$bestelling = $this->maak_losartikel();
@@ -91,7 +88,7 @@ class Test_LosArtikel extends Kleistad_UnitTestCase {
 		$order->bestel();
 
 		$bestelling2 = new LosArtikel( $bestelling->get_referentie() );
-		$bestelling2->betaling->verwerk( $order, 5.0, true, 'bank' );
+		$bestelling2->betaling->verwerk( $order, 5.0, true, 'stort' );
 		$this->assertEquals( 0, $mailer->get_sent_count(), 'onjuiste email verstuurd' );
 	}
 

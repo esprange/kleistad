@@ -26,16 +26,14 @@ class Public_Contact extends ShortcodeForm {
 	 */
 	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
-			$this->data = [
-				'input' => [
-					'naam'      => '',
-					'email'     => '',
-					'telnr'     => '',
-					'onderwerp' => '',
-					'vraag'     => '',
-				],
+			$this->data['input'] = [
+				'naam'      => '',
+				'email'     => '',
+				'telnr'     => '',
+				'onderwerp' => '',
+				'vraag'     => '',
 			];
-			$gebruiker  = wp_get_current_user();
+			$gebruiker           = wp_get_current_user();
 			if ( $gebruiker->exists() ) {
 				$this->data['input']['naam']  = $gebruiker->display_name;
 				$this->data['input']['email'] = $gebruiker->user_email;

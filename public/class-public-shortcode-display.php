@@ -91,18 +91,14 @@ abstract class Public_Shortcode_Display {
 	/**
 	 * Helper functie voor een formulier
 	 *
-	 * @param string $form_content De formulier functie.
+	 * @param callable $form_content De formulier functie.
 	 */
-	protected function form( string $form_content = 'form_content' ) : void {
-		if ( method_exists( $this, $form_content ) ) {
-			?>
+	protected function form( callable $form_content ) : void {
+		?>
 		<form action="#" autocomplete="off" enctype="multipart/form-data" class="kleistad-form" >
-			<?php
-			$this->$form_content();
-			?>
+			<?php $form_content(); ?>
 		</form>
-			<?php
-		}
+		<?php
 	}
 
 	/**

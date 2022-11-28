@@ -5,7 +5,6 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Cursus_Beheer
- * @noinspection PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection
  */
 
 namespace Kleistad;
@@ -53,7 +52,7 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 			'cursuskosten'    => 120.0,
 			'inschrijfslug'   => 'test_page',
 			'indelingslug'    => 'test_page',
-			'technieken'      => '',
+			'technieken'      => [],
 			'maximum'         => 10,
 			'meer'            => '',
 			'tonen'           => '',
@@ -98,7 +97,7 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 	public function test_verwijderen() {
 		$cursus = new Cursus();
 		$cursus->save();
-		$_POST  = [ 'id' => $cursus->id ];
+		$_POST  = [ 'cursus_id' => $cursus->id ];
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'verwijderen' );
 		$this->assertStringContainsString( 'De cursus informatie is verwijderd', $result['status'], 'verwijder zonder inschrijvng incorrect' );
 	}
@@ -115,7 +114,7 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 		/**
 		 * Verwijder cursus met inschrijvingen.
 		 */
-		$_POST  = [ 'id' => $cursus_id ];
+		$_POST  = [ 'cursus_id' => $cursus_id ];
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'verwijderen' );
 		$this->assertStringContainsString( 'Er zijn al cursisten inschrijvingen', $result['status'], 'verwijder met verwijzing incorrect' );
 	}

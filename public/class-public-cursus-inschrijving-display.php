@@ -22,53 +22,40 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function inschrijven() : void {
-		$this->form();
-	}
-
-	/**
-	 * Maak de formulier inhoud
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	protected function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<input type="hidden" id="kleistad_submit_value" value="<?php echo esc_attr( $this->display_actie ); ?>" >
 		<input name="cursus_naam" type="hidden" id="kleistad_cursus_naam" value="<?php echo esc_attr( $this->data['cursussen'][0]->naam ); ?>">
 		<input name="cursus_technieklijst" type="hidden" id="kleistad_cursus_technieklijst" value="">
-
 		<div class="kleistad-tab"><?php $this->cursus_info(); ?></div>
 		<div class="kleistad-tab"><?php $this->aantal( is_user_logged_in() ? 1 : 0 )->techniek_keuze(); ?></div>
-
-		<?php if ( is_super_admin() ) : ?>
+				<?php if ( is_super_admin() ) : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Cursist' ); ?></div>
 		<?php elseif ( is_user_logged_in() ) : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker_logged_in(); ?></div>
 		<?php else : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker(); ?></div>
 		<?php endif ?>
-
 		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
 		<div class="kleistad-tab"><?php $this->betalen(); ?></div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
 	 * Render het formulier voor inschrijving na op de wachtlijst te hebben gestaan
 	 */
 	protected function indelen_na_wachten() {
-		$this->form( 'form_indelen_na_wachten' );
-	}
-
-	/**
-	 * Maak het indelen na wachten formulier aan
-	 */
-	protected function form_indelen_na_wachten() {
-		?>
-		<h2><?php echo esc_html( $this->data['cursist_naam'] ); ?></h2>
-		<strong>Aanmelding voor cursus <?php echo esc_html( $this->data['cursus_naam'] ); ?></strong>
-		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus_id'] ); ?>" />
-		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['gebruiker_id'] ); ?>" />
+		$this->form(
+			function() {
+				?>
+		<h2><?php echo esc_html( get_user_by( 'id', $this->data['inschrijving']->klant_id )->display_name ); ?></h2>
+		<strong>Aanmelding voor cursus <?php echo esc_html( $this->data['inschrijving']->cursus->naam ); ?></strong>
+		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['inschrijving']->cursus->id ); ?>" />
+		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['inschrijving']->klant_id ); ?>" />
 		<input type="hidden" name="aantal" value="1" />
 		<p>Door de betaling te doen voor deze cursus wordt je meteen ingedeeld</p>
 		<div class ="kleistad-row">
@@ -78,30 +65,29 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				</div>
 			</div>
 		</div>
-		<?php
-		$this->submit( 'Betalen' );
+				<?php
+				$this->submit( 'Betalen' );
+			}
+		);
 	}
 
 	/**
 	 * Render het stop wachten formulier
 	 */
 	protected function stop_wachten() {
-		$this->form( 'form_stop_wachten' );
-	}
-
-	/**
-	 * Maak het stop wachten formulier aan.
-	 */
-	protected function form_stop_wachten() {
-		?>
-		<h2><?php echo esc_html( $this->data['cursist_naam'] ); ?></h2>
-		<strong>Afmelden voor de wachtlijst van cursus <?php echo esc_html( $this->data['cursus_naam'] ); ?></strong>
-		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus_id'] ); ?>" />
-		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['gebruiker_id'] ); ?>" />
+		$this->form(
+			function() {
+				?>
+		<h2><?php echo esc_html( get_user_by( 'id', $this->data['inschrijving']->klant_id )->display_name ); ?></h2>
+		<strong>Afmelden voor de wachtlijst van cursus <?php echo esc_html( $this->data['inschrijving']->cursus->naam ); ?></strong>
+		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['inschrijving']->cursus->id ); ?>" />
+		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['inschrijving']->klant_id ); ?>" />
 		<input type="hidden" name="aantal" value="1" />
 		<p>Door af te melden zal je geen email ontvangen als er een plaats vrijkomt voor deze cursus</p>
-		<?php
-		$this->submit( 'Afmelden' );
+				<?php
+				$this->submit( 'Afmelden' );
+			}
+		);
 	}
 
 	/**
@@ -308,9 +294,14 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @return string
 	 */
 	private function get_cursus_titel( Cursus $cursus ) : string {
-		$ruimte       = $cursus->get_ruimte();
-		$ruimte_tekst = ", nog ruimte voor $ruimte deelnemer" . ( $ruimte > 1 ? 's' : '' );
-		return $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : $ruimte_tekst ) );
+		if ( $cursus->vervallen ) {
+			return "$cursus->naam VERVALLEN";
+		}
+		if ( $cursus->vol ) {
+			return "$cursus->naam VOL";
+		}
+		$ruimte = $cursus->get_ruimte();
+		return "$cursus->naam, nog ruimte voor $ruimte deelnemer" . ( $ruimte > 1 ? 's' : '' );
 	}
 
 	/**
@@ -326,7 +317,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				'technieken' => $cursus->technieken,
 				'naam'       => $cursus->naam,
 				'meer'       => $cursus->meer,
-				'ruimte'     => min( $cursus->get_ruimte(), 4 ),
+				'ruimte'     => $cursus->vol ? 0 : min( $cursus->get_ruimte(), 4 ),
 				'bedrag'     => $cursus->get_bedrag(),
 				'lopend'     => $cursus->is_lopend(),
 				'vol'        => $cursus->vol,

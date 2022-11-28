@@ -88,7 +88,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() : array {
-		$this->data['showcase']       = filter_input_array(
+		$this->data['input']       = filter_input_array(
 			INPUT_POST,
 			[
 				'id'             => FILTER_SANITIZE_NUMBER_INT,
@@ -108,10 +108,10 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 				],
 			]
 		);
-		$this->data['showcase']['id'] = intval( $this->data['showcase']['id'] );
-		foreach ( $this->data['showcase']['shows'] ?? [] as $key => $show ) {
-			list( $start, $eind )                    = explode( ';', $show );
-			$this->data['showcase']['shows'][ $key ] = [
+		$this->data['input']['id'] = intval( $this->data['input']['id'] );
+		foreach ( $this->data['input']['shows'] ?? [] as $key => $show ) {
+			list( $start, $eind )                 = explode( ';', $show );
+			$this->data['input']['shows'][ $key ] = [
 				'start' => intval( $start ),
 				'eind'  => intval( $eind ),
 			];
@@ -125,7 +125,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verwijderen(): array {
-		$showcase = new Showcase( $this->data['showcase']['id'] );
+		$showcase = new Showcase( $this->data['input']['id'] );
 		$showcase->erase();
 		return [
 			'status'  => $this->status( 'Het werkstuk is verwijderd' ),
@@ -139,8 +139,8 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function tentoonstellen(): array {
-		$showcase = new Showcase( $this->data['showcase']['id'] );
-		$showcase->tentoonstellen( $this->data['showcase']['shows'] ?? [] );
+		$showcase = new Showcase( $this->data['input']['id'] );
+		$showcase->tentoonstellen( $this->data['input']['shows'] ?? [] );
 		return [
 			'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
 			'content' => $this->display(),
@@ -153,7 +153,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verkochtmelden(): array {
-		$showcase                = new Showcase( $this->data['showcase']['id'] );
+		$showcase                = new Showcase( $this->data['input']['id'] );
 		$showcase->status        = Showcase::VERKOCHT;
 		$showcase->verkoop_datum = strtotime( 'now' );
 		$showcase->save();
@@ -169,15 +169,15 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function aanmelden(): array {
-		$showcase                 = new Showcase( $this->data['showcase']['id'] );
-		$showcase->titel          = $this->data['showcase']['titel'];
-		$showcase->beschrijving   = $this->data['showcase']['beschrijving'] ?? '';
-		$showcase->breedte        = intval( $this->data['showcase']['breedte'] ) ?? 0;
-		$showcase->diepte         = intval( $this->data['showcase']['diepte'] ) ?? 0;
-		$showcase->hoogte         = intval( $this->data['showcase']['hoogte'] ) ?? 0;
-		$showcase->positie        = $this->data['showcase']['positie'] ?? $showcase->positie;
-		$showcase->prijs          = floatval( $this->data['showcase']['prijs'] ) ?? $showcase->prijs;
-		$showcase->btw_percentage = floatval( $this->data['showcase']['btw_percentage'] ) ?? $showcase->btw_percentage;
+		$showcase                 = new Showcase( $this->data['input']['id'] );
+		$showcase->titel          = $this->data['input']['titel'];
+		$showcase->beschrijving   = $this->data['input']['beschrijving'] ?? '';
+		$showcase->breedte        = intval( $this->data['input']['breedte'] ) ?? 0;
+		$showcase->diepte         = intval( $this->data['input']['diepte'] ) ?? 0;
+		$showcase->hoogte         = intval( $this->data['input']['hoogte'] ) ?? 0;
+		$showcase->positie        = $this->data['input']['positie'] ?? $showcase->positie;
+		$showcase->prijs          = floatval( $this->data['input']['prijs'] ) ?? $showcase->prijs;
+		$showcase->btw_percentage = floatval( $this->data['input']['btw_percentage'] ) ?? $showcase->btw_percentage;
 		$showcase->save();
 		if ( $_FILES['foto']['size'] ) {
 			$result = media_handle_upload( 'foto', $showcase->id );

@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use Countable;
 use Iterator;
+use WP_REST_Response;
 
 /**
  * Kleistad Showcases class.
@@ -189,6 +190,76 @@ class Showcases implements Countable, Iterator {
 				]
 			);
 		}
+	}
+
+	/**
+	 * Register rest URI's.
+	 *
+	 * @since 6.20.3
+	 */
+	public static function register_rest_routes() : void {
+		register_rest_route(
+			KLEISTAD_API,
+			'/showcases',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ __CLASS__, 'callback_showcases' ],
+				'permission_callback' => function() {
+					return true;
+				},
+			]
+		);
+	}
+
+	/**
+	 * Ajax callback voor showcase galerie functie.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public static function callback_showcases() : WP_REST_Response {
+		$showcase_data = [];
+		$keramist_data = [];
+		$showcases     = new self(
+			[
+				'post_status' => [
+					Showcase::BESCHIKBAAR,
+					Showcase::INGEPLAND,
+					Showcase::TENTOONGESTELD,
+				],
+				'orderby'     => 'rand',
+			]
+		);
+		foreach ( $showcases as $showcase ) {
+			if ( $showcase->foto_id ) {
+				$showcase_data[] = [
+					'id'           => $showcase->id,
+					'titel'        => $showcase->titel,
+					'beschrijving' => $showcase->beschrijving,
+					'foto_small'   => wp_get_attachment_image_url( $showcase->foto_id ),
+					'foto_large'   => wp_get_attachment_image_url( $showcase->foto_id, 'large' ),
+					'prijs'        => number_format_i18n( $showcase->prijs, 2 ),
+					'status'       => $showcase->status,
+					'link'         => get_permalink( $showcase->id ),
+					'keramist_id'  => $showcase->keramist_id,
+				];
+				if ( ! in_array( $showcase->keramist_id, array_column( $keramist_data, 'id' ), true ) ) {
+					$keramist        = get_user_by( 'ID', $showcase->keramist_id );
+					$keramist_data[] = [
+						'id'      => $keramist->ID,
+						'naam'    => $keramist->display_name,
+						'bio'     => $keramist->description,
+						'website' => $keramist->user_url,
+						'foto'    => wp_get_attachment_image_url( get_user_meta( $keramist->ID, 'profiel_foto', true ) ) ?: '',
+					];
+				}
+			}
+		}
+		return new WP_REST_Response(
+			[
+				'showcases'  => $showcase_data,
+				'keramisten' => $keramist_data,
+			]
+		);
 	}
 
 }

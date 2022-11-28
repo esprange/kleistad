@@ -5,7 +5,6 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Inschrijving, \Kleistad\Inschrijvingen, \Kleistad\Cursist
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;
@@ -201,9 +200,9 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving  = $this->maak_inschrijving();
 		$cursus_oud_id = $inschrijving->cursus->id;
 		$cursist       = new Cursist( $inschrijving->klant_id );
-		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
+		$inschrijving->actie->aanvraag( 'stort', 1, [], '' );
 		$order = new Order( $inschrijving->get_referentie() );
-		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
+		$inschrijving->betaling->verwerk( $order, 25.00, true, 'stort' );
 		$cursus_nieuw_id = $this->factory()->cursus->create(
 			[
 				'cursuskosten'    => 67.00,
@@ -230,11 +229,11 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$mailer       = tests_retrieve_phpmailer_instance();
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
-		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
+		$inschrijving->actie->aanvraag( 'stort', 1, [], '' );
 
 		$order        = new Order( $inschrijving->get_referentie() );
 		$cursuskosten = $order->get_te_betalen();
-		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
+		$inschrijving->betaling->verwerk( $order, 25.00, true, 'stort' );
 		$inschrijving->actie->correctie( $inschrijving->cursus->id, 2, [] );
 
 		/**
@@ -326,7 +325,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$mailer       = tests_retrieve_phpmailer_instance();
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
-		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
+		$inschrijving->actie->aanvraag( 'stort', 1, [], '' );
 		/**
 		 * Zet nu de cursus op vol.
 		 */
@@ -371,7 +370,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1                  = $this->maak_inschrijving();
 		$inschrijving1->cursus->maximum = 1;
 		$inschrijving1->cursus->save();
-		$inschrijving1->actie->aanvraag( 'bank', 1, [], '' );
+		$inschrijving1->actie->aanvraag( 'stort', 1, [], '' );
 		$this->assertEmpty( $inschrijving1->actie->get_beschikbaarheid(), 'get_beschikbaarheid open cursus incorrect' );
 		$inschrijving1->ingedeeld = true;
 		$inschrijving1->save();
@@ -391,11 +390,11 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
 
-		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
+		$inschrijving->actie->aanvraag( 'stort', 1, [], '' );
 		$this->assertEquals( 'Inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank inschrijving incorrecte email' );
 
 		$order = new Order( $inschrijving->get_referentie() );
-		$inschrijving->betaling->verwerk( $order, 25, true, 'bank' );
+		$inschrijving->betaling->verwerk( $order, 25, true, 'stort' );
 		$this->assertEquals( 2, $mailer->get_sent_count(), 'verwerk bank aantal email incorrect' );
 		$this->assertEquals( 'Indeling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank indeling incorrecte email' );
 

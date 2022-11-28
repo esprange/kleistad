@@ -24,22 +24,11 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 	 * @return string
 	 */
 	protected function prepare_stop_wachten() : string {
-		$params = filter_input_array(
-			INPUT_GET,
-			[
-				'code' => FILTER_SANITIZE_STRING,
-				'hsh'  => FILTER_SANITIZE_STRING,
-			]
-		);
-		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
-		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $params['hsh'] !== $inschrijving->get_controle() ) {
+		$inschrijving = $this->check_query_params();
+		if ( is_null( $inschrijving ) ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
-		$this->data['cursus_naam']  = $inschrijving->cursus->naam;
-		$this->data['cursus_id']    = $inschrijving->cursus->id;
-		$this->data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
-		$this->data['gebruiker_id'] = $inschrijving->klant_id;
+		$this->data['inschrijving'] = $inschrijving;
 		return $this->content();
 	}
 
@@ -49,26 +38,14 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 	 * @return string
 	 */
 	protected function prepare_indelen_na_wachten() : string {
-		$params = filter_input_array(
-			INPUT_GET,
-			[
-				'code' => FILTER_SANITIZE_STRING,
-				'hsh'  => FILTER_SANITIZE_STRING,
-			]
-		);
-		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
-		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $params['hsh'] !== $inschrijving->get_controle() ) {
+		$inschrijving = $this->check_query_params();
+		if ( is_null( $inschrijving ) ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $inschrijving->cursus->vol ) {
 			return $this->status( new WP_Error( 'Vol', 'Helaas, waarschijnlijk is iemand anders je voor geweest. De cursus is volgeboekt.' ) );
 		}
-		$this->data['cursus_naam']  = $inschrijving->cursus->naam;
-		$this->data['cursus_id']    = $inschrijving->cursus->id;
-		$this->data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
-		$this->data['gebruiker_id'] = $inschrijving->klant_id;
-		$this->data['ruimte']       = $inschrijving->cursus->get_ruimte();
+		$this->data['inschrijving'] = $inschrijving;
 		return $this->content();
 	}
 
@@ -123,7 +100,10 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		usort(
 			$this->data['cursussen'],
 			function ( $links, $rechts ) {
-				return strtoupper( $links->naam ) <=> strtoupper( $rechts->naam );
+				if ( $links->vol === $rechts->vol ) {
+					return strtoupper( $links->naam ) <=> strtoupper( $rechts->naam );
+				}
+				return $links->vol ? 1 : -1;
 			}
 		);
 		if ( ! $selecteerbaar ) {
@@ -260,8 +240,6 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		if ( ! is_int( $cursist_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
-		$cursist = get_user_by( 'ID', $cursist_id );
-		$cursist->add_role( CURSIST );
 		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $cursist_id );
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
@@ -281,4 +259,24 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		];
 	}
 
+	/**
+	 * Bepaal de inschrijving a.d.h.v. de parameters in de url.
+	 *
+	 * @return Inschrijving|null
+	 */
+	private function check_query_params() : ?Inschrijving {
+		$params = filter_input_array(
+			INPUT_GET,
+			[
+				'code' => FILTER_SANITIZE_STRING,
+				'hsh'  => FILTER_SANITIZE_STRING,
+			]
+		);
+		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
+		if ( $params['hsh'] !== $inschrijving->get_controle() ) {
+			return null;
+		}
+		return $inschrijving;
+	}
 }

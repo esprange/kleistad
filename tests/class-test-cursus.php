@@ -3,7 +3,6 @@
  * Class CursusTest
  *
  * @package Kleistad
- * @noinspection PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;
@@ -20,7 +19,7 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 		$cursus1                  = new Cursus();
 		$cursus1->naam            = 'test cursus';
 		$cursus1->start_datum     = strtotime( 'today' );
-		$cursus1->eind_datum      = strtotime( '+ 1 month' );
+		$cursus1->eind_datum      = strtotime( '+ 1 month', $cursus1->start_datum );
 		$cursus1->lesdatums       = [ $cursus1->start_datum, strtotime( 'tomorrow' ), $cursus1->eind_datum ];
 		$cursus1->start_tijd      = strtotime( '12:00' );
 		$cursus1->eind_tijd       = strtotime( '14:00' );

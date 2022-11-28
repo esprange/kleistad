@@ -97,7 +97,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 			<tbody>
 				<?php foreach ( $this->data['items'] as $item ) : ?>
 				<tr>
-					<td data-sort=<?php echo esc_attr( $item['datum'] ); ?> ><?php echo esc_html( date( 'd-m-Y', $item['datum'] ) ); ?></td>
+					<td data-sort=<?php echo esc_attr( $item['datum'] ); ?> ><?php echo esc_html( wp_date( 'd-m-Y', $item['datum'] ) ); ?></td>
 					<?php if ( $ovenstook ) : ?>
 						<?php if ( isset( $item['oven'] ) ) : ?>
 							<td><?php echo esc_html( $item['oven'] ); ?></td>

@@ -62,7 +62,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() : array {
-		$this->data['recept']                = filter_input_array(
+		$this->data['input']                = filter_input_array(
 			INPUT_POST,
 			[
 				'id'        => FILTER_SANITIZE_NUMBER_INT,
@@ -73,12 +73,12 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'foto_url'  => FILTER_SANITIZE_URL,
 			]
 		);
-		$this->data['recept']['id']          = intval( $this->data['recept']['id'] );
-		$this->data['recept']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
-		$this->data['recept']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
-		$this->data['recept']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
-		$this->data['recept']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
-		$this->data['recept']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
+		$this->data['input']['id']          = intval( $this->data['input']['id'] );
+		$this->data['input']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
+		$this->data['input']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
+		$this->data['input']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
+		$this->data['input']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
+		$this->data['input']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
 		return $this->save();
 	}
 
@@ -88,7 +88,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verwijderen(): array {
-		$recept = new Recept( $this->data['recept']['id'] );
+		$recept = new Recept( $this->data['input']['id'] );
 		$recept->erase();
 		return [
 			'status'  => $this->status( 'Het recept is verwijderd' ),
@@ -102,7 +102,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function publiceren(): array {
-		$recept         = new Recept( $this->data['recept']['id'] );
+		$recept         = new Recept( $this->data['input']['id'] );
 		$recept->status = 'publish';
 		$recept->save();
 		return [
@@ -117,7 +117,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verbergen(): array {
-		$recept         = new Recept( $this->data['recept']['id'] );
+		$recept         = new Recept( $this->data['input']['id'] );
 		$recept->status = 'private';
 		$recept->save();
 		return [
@@ -133,16 +133,16 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function bewaren(): array {
-		$recept              = new Recept( $this->data['recept']['id'] );
-		$recept->titel       = $this->data['recept']['titel'];
-		$recept->kenmerk     = $this->data['recept']['kenmerk'] ?? '';
-		$recept->toevoeging  = $this->data['recept']['toevoeging'];
-		$recept->basis       = $this->data['recept']['basis'];
-		$recept->stookschema = $this->data['recept']['stookschema'] ?? '';
-		$recept->herkomst    = $this->data['recept']['herkomst'] ?? '';
-		$recept->glazuur     = (int) $this->data['recept']['glazuur'];
-		$recept->uiterlijk   = (int) $this->data['recept']['uiterlijk'];
-		$recept->kleur       = (int) $this->data['recept']['kleur'];
+		$recept              = new Recept( $this->data['input']['id'] );
+		$recept->titel       = $this->data['input']['titel'];
+		$recept->kenmerk     = $this->data['input']['kenmerk'] ?? '';
+		$recept->toevoeging  = $this->data['input']['toevoeging'];
+		$recept->basis       = $this->data['input']['basis'];
+		$recept->stookschema = $this->data['input']['stookschema'] ?? '';
+		$recept->herkomst    = $this->data['input']['herkomst'] ?? '';
+		$recept->glazuur     = (int) $this->data['input']['glazuur'];
+		$recept->uiterlijk   = (int) $this->data['input']['uiterlijk'];
+		$recept->kleur       = (int) $this->data['input']['kleur'];
 		$recept->save();
 		if ( $_FILES['foto']['size'] ) {
 			$result = media_handle_upload( 'foto', $recept->id );

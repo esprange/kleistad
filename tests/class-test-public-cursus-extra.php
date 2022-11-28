@@ -5,7 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Cursus_Extra
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection
  */
 
 namespace Kleistad;
@@ -58,9 +58,10 @@ class Test_Public_Cursus_Extra extends Kleistad_UnitTestCase {
 	 * Test validate functie.
 	 */
 	public function test_process() {
-		$mailer               = tests_retrieve_phpmailer_instance();
-		$inschrijving         = $this->maak_inschrijving();
-		$inschrijving->aantal = 3;
+		$mailer                  = tests_retrieve_phpmailer_instance();
+		$inschrijving            = $this->maak_inschrijving();
+		$inschrijving->aantal    = 3;
+		$inschrijving->ingedeeld = true;
 		$inschrijving->save();
 		$_POST  = [
 			'code'          => $inschrijving->code,

@@ -143,6 +143,7 @@ class Public_Actions {
 				'Profiel',
 				'Shortcode',
 				'ShortcodeForm',
+				'Showcases',
 			]  as $object ) {
 				call_user_func( [ '\\' . __NAMESPACE__ . '\\' . $object, 'register_rest_routes' ] ); // Postcode.
 		}

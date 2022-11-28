@@ -24,7 +24,11 @@ class Public_Showcase_Gallerij extends Shortcode {
 	protected function prepare() : string {
 		$this->data['showcases'] = new Showcases(
 			[
-				'post_status' => [ Showcase::BESCHIKBAAR ],
+				'post_status' => [
+					Showcase::BESCHIKBAAR,
+					Showcase::INGEPLAND,
+					Showcase::TENTOONGESTELD,
+				],
 				'orderby'     => 'rand',
 				'numberposts' => 12,
 			]

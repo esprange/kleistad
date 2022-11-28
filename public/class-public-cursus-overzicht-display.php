@@ -19,25 +19,24 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 */
 	protected function cursisten() {
-		if ( current_user_can( BESTUUR ) ) {
-			$this->form( 'form_cursisten_bestuur' );
-			return;
-		}
-		$this->form( 'form_cursisten_docent' );
+		$this->form(
+			function() {
+				if ( current_user_can( BESTUUR ) ) {
+					$this->cursisten_bestuur();
+					return;
+				}
+				$this->cursisten_docent();
+			}
+		);
 	}
 
 	/**
 	 * Render het indelen formulier
 	 */
 	protected function indelen() {
-		$this->form( 'form_indelen' );
-	}
-
-	/**
-	 * Maak het indelen formilier aan.
-	 */
-	protected function form_indelen() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
 		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
 		<h2>Indeling op lopende cursus</h2>
@@ -54,7 +53,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 				<label>Inschrijfdatum</label>
 			</div>
 			<div class="kleistad-col-5">
-				<?php echo esc_html( date( 'd-m-Y', $this->data['cursist']['datum'] ) ); ?>
+				<?php echo esc_html( wp_date( 'd-m-Y', $this->data['cursist']['datum'] ) ); ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -86,21 +85,18 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
 	 * Render het uitschrijven formulier
 	 */
 	protected function uitschrijven_indelen() {
-		$this->form( 'form_uitschrijven_indelen' );
-	}
-
-	/**
-	 * Maak het uitschrijven formulier aan
-	 */
-	protected function form_uitschrijven_indelen() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
 		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
 		<h2>Indelen op cursus of uitschrijven van wachtlijst</h2>
@@ -123,7 +119,9 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
@@ -169,7 +167,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function form_cursisten_bestuur() {
+	private function cursisten_bestuur() {
 		?>
 		<strong><?php echo esc_html( $this->data['cursus']['code'] . ' ' . $this->data['cursus']['naam'] ); ?></strong>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
@@ -234,7 +232,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function form_cursisten_docent() {
+	private function cursisten_docent() {
 		?>
 		<strong><?php echo esc_html( $this->data['cursus']['code'] . ' ' . $this->data['cursus']['naam'] ); ?></strong>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">

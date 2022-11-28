@@ -15,7 +15,7 @@ wp_add_inline_script(
 			$(
 				function()
 				{
-					$( ".recept_foto" ).on(
+					$( ".recept-foto" ).on(
 						"click",
 						function() {
 							$( "#kleistad_recept_modal" ).show();
@@ -52,7 +52,7 @@ get_header();
 				<div style="float:left;width:50%;padding-bottom:25px;">
 					<?php
 					if ( $recept->foto_id ) :
-						echo wp_get_attachment_image( $recept->foto_id, 'medium', false, [ 'class' => 'recept_foto' ] );
+						echo wp_get_attachment_image( $recept->foto_id, 'medium', false, [ 'class' => 'recept-foto' ] );
 					endif;
 					?>
 				</div>

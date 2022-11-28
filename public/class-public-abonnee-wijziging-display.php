@@ -31,27 +31,24 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
 		$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
 		$this->abonnement_info()->abonnement_extra_info();
-		$this->form();
-	}
-
-	/**
-	 * Maak de formulier inhoud aan.
-	 */
-	protected function form_content() {
-		$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
-		$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
-		if ( $in_startperiode ) {
-			$this->abonnement_soort()->eindigen()->submit();
-			return;
-		}
-		if ( $this->data['abonnement']->eind_datum ) {
-			?>
-			<br>
-			<p>Omdat een beëindiging van dit abonnement gepland is zijn er nu geen wijzigingen meer mogelijk</p>
-			<?php
-			return;
-		}
-		$this->abonnement_soort()->abonnement_extra()->pauze()->eindigen()->betaalwijze()->submit();
+		$this->form(
+			function() {
+				$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
+				$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
+				if ( $in_startperiode ) {
+					$this->abonnement_soort()->eindigen()->submit();
+					return;
+				}
+				if ( $this->data['abonnement']->eind_datum ) {
+					?>
+					<br>
+					<p>Omdat een beëindiging van dit abonnement gepland is zijn er nu geen wijzigingen meer mogelijk</p>
+					<?php
+					return;
+				}
+				$this->abonnement_soort()->abonnement_extra()->pauze()->eindigen()->betaalwijze()->submit();
+			}
+		);
 	}
 
 	/**
@@ -224,7 +221,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-7" >
 					<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
 					<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( opties()['max_pauze_weken'] ); ?> weken.</p>
-					<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( date( 'd-m-Y', $this->data['abonnement']->pauze_datum ) ); ?>"
+					<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( wp_date( 'd-m-Y', $this->data['abonnement']->pauze_datum ) ); ?>"
 						data-min_pauze="<?php echo esc_attr( max( ( $this->per_datum - $this->data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, opties()['min_pauze_weken'] * 7 ) ); ?>"
 						data-max_pauze="<?php echo esc_attr( opties()['max_pauze_weken'] * 7 ); ?>">
 				</div>
@@ -238,7 +235,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-3">
 					<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad-datum" type="text"
-						value="<?php echo esc_attr( date( 'd-m-Y', $this->data['abonnement']->herstart_datum ) ); ?>"
+						value="<?php echo esc_attr( wp_date( 'd-m-Y', $this->data['abonnement']->herstart_datum ) ); ?>"
 						readonly="readonly" >
 				</div>
 			</div>
@@ -248,7 +245,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 					&nbsp;
 				</div>
 				<div class="kleistad-col-7" >
-					<p><strong>Je abonnement staat al gepauzeerd en wordt per <?php echo esc_html( date( 'd-m-Y', $this->data['abonnement']->herstart_datum ) ); ?> hervat.</strong></p>
+					<p><strong>Je abonnement staat al gepauzeerd en wordt per <?php echo esc_html( wp_date( 'd-m-Y', $this->data['abonnement']->herstart_datum ) ); ?> hervat.</strong></p>
 				</div>
 			</div>
 				<?php endif // Er wordt deze maand of per eerste komende maand hervat. ?>
@@ -272,7 +269,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-3">
 					<input name="pauze_datum" id="kleistad_pauze_datum" class="kleistad-datum" type="text"
-						value="<?php echo esc_attr( date( 'd-m-Y', $this->per_datum ) ); ?>"
+						value="<?php echo esc_attr( wp_date( 'd-m-Y', $this->per_datum ) ); ?>"
 						data-min_pauze="<?php echo esc_attr( opties()['min_pauze_weken'] * 7 ); ?>"
 						data-max_pauze="<?php echo esc_attr( opties()['max_pauze_weken'] * 7 ); ?>"
 						readonly="readonly" >
@@ -287,7 +284,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-3">
 					<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad-datum" type="text"
-						value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . opties()['min_pauze_weken'] . 'weeks', $this->per_datum ) ) ); ?>"
+						value="<?php echo esc_attr( wp_date( 'd-m-Y', strtotime( '+' . opties()['min_pauze_weken'] . 'weeks', $this->per_datum ) ) ); ?>"
 						readonly="readonly" >
 				</div>
 			</div>
@@ -313,7 +310,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		</div>
 		<div id="kleistad_optie_betaalwijze" style="display:none" >
 			<?php
-			if ( 'nee' === $this->data['incasso_actief'] ) :
+			if ( ! $this->data['abonnement']->betaling->incasso_actief() ) :
 				?>
 			<div class="kleistad-row" >
 				<div class="kleistad-col-3" >
@@ -333,7 +330,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 			</div>
 				<?php
-			elseif ( 'ja' === $this->data['incasso_actief'] ) : // Incasso is actief.
+			else : // Incasso is actief.
 				?>
 			<div class="kleistad-row" >
 				<div class="kleistad-col-3" >
@@ -348,8 +345,6 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 					&nbsp;<input type="hidden" name="betaal" value="stort" />
 				</div>
 			</div>
-				<?php else : // Onbekend of incasso actief is. ?>
-				<p><strong>Betaalwijze wijzigingen zijn helaas nu niet mogelijk. Probeer het later opnieuw.</strong></p>
 			<?php endif ?>
 		</div>
 		<?php

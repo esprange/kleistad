@@ -97,26 +97,20 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 */
 	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) : void {
 		if ( ! $this->inschrijving->ingedeeld && 0 < $bedrag ) {
-			if ( $this->indelen() ) {
-				if ( ! $order->id ) {
-					/**
-					 * Er is nog geen order, dan betreft dit inschrijving vanuit het formulier.
-					 */
-					$order = new Order( $this->inschrijving->get_referentie() );
-					$this->inschrijving->verzend_email( 'indeling', $order->bestel( $bedrag, $this->inschrijving->get_restant_melding(), $transactie_id ) );
-					return;
-				}
+			$this->inschrijving->actie->indelen();
+			if ( ! $order->id ) {
 				/**
-				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
+				 * Er is nog geen order, dan betreft dit inschrijving vanuit het formulier.
 				 */
-				$order->ontvang( $bedrag, $transactie_id );
-				$this->inschrijving->verzend_email( 'indeling' );
+				$order = new Order( $this->inschrijving->get_referentie() );
+				$this->inschrijving->verzend_email( 'indeling', $order->bestel( $bedrag, $this->inschrijving->get_restant_melding(), $transactie_id ) );
 				return;
 			}
 			/**
-			 * Indelen was niet meer mogelijk, annuleer de order en zet de cursist op de wachtlijst.
+			 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 			 */
-			$this->inschrijving->actie->naar_wachtlijst();
+			$order->ontvang( $bedrag, $transactie_id );
+			$this->inschrijving->verzend_email( 'indeling' );
 			return;
 		}
 		/**
@@ -143,23 +137,6 @@ class InschrijvingBetaling extends ArtikelBetaling {
 			 */
 			$this->inschrijving->erase();
 		}
-	}
-
-	/**
-	 * Deel de cursist in.
-	 */
-	private function indelen() : bool {
-		$ruimte = $this->inschrijving->cursus->get_ruimte();
-		if ( $ruimte < $this->inschrijving->aantal ) {
-			return false;
-		}
-		$this->inschrijving->ingedeeld   = true;
-		$this->inschrijving->wacht_datum = 0;
-		$this->inschrijving->save();
-		if ( 0 === $ruimte - $this->inschrijving->aantal ) {
-			$this->inschrijving->cursus->set_vol();
-		}
-		return true;
 	}
 
 }

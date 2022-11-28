@@ -5,7 +5,6 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Saldo, \Kleistad\SaldoActie, \Kleistad\SaldoBetaling
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;
@@ -49,10 +48,10 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 */
 	public function test_get_referentie() {
 		$saldo = $this->maak_saldo();
-		$saldo->actie->nieuw( 123.4, 'bank' );
+		$saldo->actie->nieuw( 123.4, 'stort' );
 		$referentie1 = $saldo->get_referentie();
 		$this->assertMatchesRegularExpression( '~S\d+-\d{6}-\d+~', $referentie1, 'referentie incorrect' );
-		$saldo->actie->nieuw( 567.8, 'bank' );
+		$saldo->actie->nieuw( 567.8, 'stort' );
 		$referentie2 = $saldo->get_referentie();
 		$this->assertNotEquals( $referentie1, $referentie2, 'referentie wijziging incorrect' );
 	}
@@ -65,12 +64,12 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$saldo  = $this->maak_saldo();
 		$stoker = new Stoker( $saldo->klant_id );
 		$bedrag = 123.45;
-		$result = $saldo->actie->nieuw( $bedrag, 'bank' );
+		$result = $saldo->actie->nieuw( $bedrag, 'stort' );
 		$this->assertTrue( $result, 'nieuw incorrect' );
 		$order = new Order( $saldo->get_referentie() );
 
 		$saldo = new Saldo( $stoker->ID );
-		$saldo->betaling->verwerk( $order, $bedrag, true, 'bank' );
+		$saldo->betaling->verwerk( $order, $bedrag, true, 'stort' );
 		$this->assertEquals( 'Betaling saldo per bankstorting', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk mail attachment incorrect' );
 
@@ -101,7 +100,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
 		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
-		$saldo->actie->nieuw( $bedrag, 'bank' ); // Verzend email 2.
+		$saldo->actie->nieuw( $bedrag, 'stort' ); // Verzend email 2.
 		$order = new Order( $saldo->get_referentie() );
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'ideal' ); // Verzend email 3.
 

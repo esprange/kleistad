@@ -27,7 +27,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		/*
 		* Er moet een nieuwe workshop opgevoerd worden, zelfde als wijzigen maar dan zonder id.
 		*/
-		$this->data['id'] = null;
+		$this->data['id'] = 0;
 		return $this->prepare_wijzigen();
 	}
 
@@ -42,7 +42,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		*/
 		$this->data['docenten'] = new Docenten();
 		if ( ! isset( $this->data['workshop'] ) ) {
-			$this->data['workshop'] = $this->formulier( $this->data['id'] );
+			$this->data['workshop'] = new Workshop( $this->data['id'] );
 		}
 		return $this->content();
 	}
@@ -56,7 +56,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		/**
 		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
 		 */
-		$this->planning();
+		$this->data['workshops'] = new Workshops();
 		return $this->content();
 	}
 
@@ -68,8 +68,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() : array {
-		$error                  = new WP_Error();
-		$this->data['workshop'] = filter_input_array(
+		$error                              = new WP_Error();
+		$this->data['input']                = filter_input_array(
 			INPUT_POST,
 			[
 				'workshop_id'       => FILTER_SANITIZE_NUMBER_INT,
@@ -111,28 +111,29 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'aanvraag_id'       => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
+		$this->data['input']['workshop_id'] = intval( $this->data['input']['workshop_id'] );
 		if ( 'reageren' === $this->form_actie ) {
-			if ( empty( $this->data['workshop']['reactie'] ) ) {
+			if ( empty( $this->data['input']['reactie'] ) ) {
 				return $this->melding( new WP_Error( 'reactie', 'Er is nog geen reactie ingevoerd!' ) );
 			}
 			return $this->save();
 		}
-		$this->data['workshop']['programma'] = sanitize_textarea_field( $this->data['workshop']['programma'] );
-		if ( is_null( $this->data['workshop']['technieken'] ) ) {
-			$this->data['workshop']['technieken'] = [];
+		$this->data['input']['programma'] = sanitize_textarea_field( $this->data['input']['programma'] );
+		if ( is_null( $this->data['input']['technieken'] ) ) {
+			$this->data['input']['technieken'] = [];
 		}
-		if ( is_null( $this->data['workshop']['werkplekken'] ) ) {
-			$this->data['workshop']['werkplekken'] = [];
+		if ( is_null( $this->data['input']['werkplekken'] ) ) {
+			$this->data['input']['werkplekken'] = [];
 		}
-		$this->data['workshop']['docent'] = implode( ';', $this->data['workshop']['docent'] ?? [] );
+		$this->data['input']['docent'] = implode( ';', $this->data['input']['docent'] ?? [] );
 		if ( in_array( $this->form_actie, [ 'bewaren', 'bevestigen' ], true ) ) {
-			if ( ! $this->validator->email( $this->data['workshop']['email'] ) ) {
-				$error->add( 'verplicht', 'De invoer ' . $this->data['workshop']['email'] . ' is geen geldig E-mail adres.' );
+			if ( ! $this->validator->email( $this->data['input']['email'] ) ) {
+				$error->add( 'verplicht', 'De invoer ' . $this->data['input']['email'] . ' is geen geldig E-mail adres.' );
 			}
-			if ( ! $this->validator->telnr( $this->data['workshop']['telnr'] ) ) {
+			if ( ! $this->validator->telnr( $this->data['input']['telnr'] ) ) {
 				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 			}
-			if ( strtotime( $this->data['workshop']['start_tijd'] ) >= strtotime( $this->data['workshop']['eind_tijd'] ) ) {
+			if ( strtotime( $this->data['input']['start_tijd'] ) >= strtotime( $this->data['input']['eind_tijd'] ) ) {
 				$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
 			}
 		}
@@ -203,8 +204,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function reageren() : array {
-		$workshop = new Workshop( $this->data['workshop']['workshop_id'] );
-		$workshop->actie->reactie( $this->data['workshop']['reactie'] );
+		$workshop = new Workshop( $this->data['input']['workshop_id'] );
+		$workshop->actie->reactie( $this->data['input']['reactie'] );
 		return [
 			'status'  => $this->status( 'Er is een email verzonden naar het contact' ),
 			'content' => $this->display(),
@@ -217,7 +218,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function negeren() : array {
-		$workshop = new Workshop( $this->data['workshop']['workshop_id'] );
+		$workshop = new Workshop( $this->data['input']['workshop_id'] );
 		$workshop->actie->reactie();
 		return [
 			'status'  => $this->status( 'De status is aangepast' ),
@@ -231,7 +232,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function afzeggen() : array {
-		$workshop = new Workshop( intval( $this->data['workshop']['workshop_id'] ) );
+		$workshop = new Workshop( $this->data['input']['workshop_id'] );
 		$workshop->actie->annuleer();
 		return [
 			'status'  => $this->status( 'De afspraak voor de workshop is ' . ( $workshop->definitief ? 'per email afgezegd' : 'verwijderd' ) ),
@@ -272,113 +273,25 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return Workshop
 	 */
 	private function update_workshop() : Workshop {
-		$workshop               = new Workshop();
-		$workshop->communicatie = [
-			[
-				'type'    => WorkshopActie::NIEUW,
-				'from'    => 'Kleistad',
-				'subject' => "Toevoeging {$this->data['workshop']['naam']} door " . wp_get_current_user()->display_name,
-				'tekst'   => '',
-				'tijd'    => current_time( 'd-m-Y H:i' ),
-			],
-		];
-		$workshop_id            = intval( $this->data['workshop']['workshop_id'] );
-		if ( $workshop_id ) {
-			$workshop = new Workshop( $workshop_id );
-		}
-		$workshop->naam              = $this->data['workshop']['naam'];
-		$workshop->datum             = strtotime( $this->data['workshop']['datum'] );
-		$workshop->start_tijd        = strtotime( $this->data['workshop']['start_tijd'] );
-		$workshop->eind_tijd         = strtotime( $this->data['workshop']['eind_tijd'] );
-		$workshop->docent            = $this->data['workshop']['docent'] ?? '';
-		$workshop->technieken        = $this->data['workshop']['technieken'];
-		$workshop->organisatie       = $this->data['workshop']['organisatie'];
-		$workshop->organisatie_adres = $this->data['workshop']['organisatie_adres'];
-		$workshop->organisatie_email = $this->data['workshop']['organisatie_email'];
-		$workshop->contact           = $this->data['workshop']['contact'];
-		$workshop->email             = $this->data['workshop']['email'];
-		$workshop->telnr             = $this->data['workshop']['telnr'];
-		$workshop->programma         = $this->data['workshop']['programma'];
-		$workshop->kosten            = floatval( $this->data['workshop']['kosten'] );
-		$workshop->aantal            = intval( $this->data['workshop']['aantal'] );
-		$workshop->aanvraag_id       = intval( $this->data['workshop']['aanvraag_id'] );
-		$workshop->werkplekken       = $this->data['workshop']['werkplekken'];
+		$workshop                    = new Workshop( $this->data['input']['workshop_id'] );
+		$workshop->naam              = $this->data['input']['naam'];
+		$workshop->datum             = strtotime( $this->data['input']['datum'] );
+		$workshop->start_tijd        = strtotime( $this->data['input']['start_tijd'] );
+		$workshop->eind_tijd         = strtotime( $this->data['input']['eind_tijd'] );
+		$workshop->docent            = $this->data['input']['docent'] ?? '';
+		$workshop->technieken        = $this->data['input']['technieken'];
+		$workshop->organisatie       = $this->data['input']['organisatie'];
+		$workshop->organisatie_adres = $this->data['input']['organisatie_adres'];
+		$workshop->organisatie_email = $this->data['input']['organisatie_email'];
+		$workshop->contact           = $this->data['input']['contact'];
+		$workshop->email             = $this->data['input']['email'];
+		$workshop->telnr             = $this->data['input']['telnr'];
+		$workshop->programma         = $this->data['input']['programma'];
+		$workshop->kosten            = floatval( $this->data['input']['kosten'] );
+		$workshop->aantal            = intval( $this->data['input']['aantal'] );
+		$workshop->aanvraag_id       = intval( $this->data['input']['aanvraag_id'] );
+		$workshop->werkplekken       = $this->data['input']['werkplekken'];
 		return $workshop;
-	}
-
-	/**
-	 * Maak de lijst van workshops
-	 *
-	 * @return void.
-	 */
-	private function planning() : void {
-		$workshops                    = new Workshops();
-		$this->data['workshops']      = [];
-		$this->data['gaat_vervallen'] = false;
-		foreach ( $workshops as $workshop ) {
-			$status = $workshop->get_statustekst();
-			if ( Workshop::VERVALT === $status ) {
-				$this->data['gaat_vervallen'] = true;
-			}
-			$docenten = explode( ', ', $workshop->get_docent_naam() );
-			array_walk(
-				$docenten,
-				function( &$docent ) {
-					$docent = strstr( $docent . ' ', ' ', true );
-				}
-			);
-			$this->data['workshops'][] = [
-				'id'         => $workshop->id,
-				'code'       => $workshop->code,
-				'datum_ux'   => $workshop->datum,
-				'datum'      => date( 'd-m-Y', $workshop->datum ),
-				'contact'    => substr( $workshop->contact, 0, 14 ),
-				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
-				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
-				'docent'     => implode( ', ', $docenten ),
-				'aantal'     => $workshop->aantal,
-				'status'     => $workshop->get_statustekst(),
-				'cstatus'    => $workshop->communicatie[0]['type'] ?? '',
-				'technieken' => implode( ', ', $workshop->technieken ),
-				'update'     => strtotime( $workshop->communicatie[0]['tijd'] ?? '' ),
-			];
-		}
-	}
-
-	/**
-	 * Bereid een workshop wijziging voor.
-	 *
-	 * @param int|null $workshop_id De workshop.
-	 * @return array De workshop data.
-	 */
-	private function formulier( ?int $workshop_id ) : array {
-		$workshop = new Workshop( $workshop_id );
-		return [
-			'workshop_id'       => $workshop->id,
-			'naam'              => $workshop->naam,
-			'datum'             => date( 'd-m-Y', $workshop->datum ),
-			'start_tijd'        => date( 'H:i', $workshop->start_tijd ),
-			'eind_tijd'         => date( 'H:i', $workshop->eind_tijd ),
-			'docent'            => array_map( 'intval', explode( ';', $workshop->docent ) ),
-			'docent_naam'       => $workshop->get_docent_naam(),
-			'technieken'        => $workshop->technieken,
-			'organisatie'       => $workshop->organisatie,
-			'organisatie_adres' => $workshop->organisatie_adres,
-			'organisatie_email' => $workshop->organisatie_email,
-			'contact'           => $workshop->contact,
-			'email'             => $workshop->email,
-			'telnr'             => $workshop->telnr,
-			'programma'         => $workshop->programma,
-			'kosten'            => $workshop->kosten,
-			'aantal'            => $workshop->aantal,
-			'betaald'           => $workshop->is_betaald(),
-			'definitief'        => $workshop->definitief,
-			'vervallen'         => $workshop->vervallen,
-			'aanvraag_id'       => $workshop->aanvraag_id,
-			'gefactureerd'      => $workshop->betaling_email,
-			'communicatie'      => $workshop->communicatie,
-			'werkplekken'       => $workshop->werkplekken,
-		];
 	}
 
 }

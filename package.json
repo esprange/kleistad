@@ -16,7 +16,8 @@
     "grunt-contrib-uglify": ">=5.2.0",
     "grunt-shell": ">=4.0.0",
     "grunt-wp-readme-to-markdown": ">=2.1.0",
-    "grunt-zip": ">=0.18.2"
+    "grunt-zip": ">=0.18.2",
+    "stylelint-config-standard": "^29.0.0"
   },
   "dependencies": {
     "@types/datatables.net": ">=1.10.20",

@@ -41,18 +41,11 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * Render het blokkade formulier
 	 */
 	protected function blokkade() {
-		$this->form( 'form_blokkade' );
-	}
-
-	/**
-	 * Maak het blokkade formulier aan
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	protected function form_blokkade() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<div class="kleistad-row">
-			<?php if ( $this->data['wijzigbaar'] ) : ?>
+				<?php if ( $this->data['wijzigbaar'] ) : ?>
 				<p>Druk op 'bevestigen' als je het voorgaande kwartaal wilt afsluiten.</p>
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
@@ -66,28 +59,25 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			<p>Het voorgaand kwartaal is reeds afgesloten.</p>
 		</div>
 			<?php endif ?>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
 	 * Render het debiteur formulier
 	 */
 	protected function debiteur() {
-		$this->form( 'form_debiteur' );
-	}
-
-	/**
-	 * Maak het debiteur form aan.
-	 */
-	protected function form_debiteur() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<p><?php echo esc_html( ucfirst( $this->data['debiteur']['betreft'] ) . ', ' . ( ! $this->data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $this->data['debiteur']['naam'] ); ?></p>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2">
 				<label class="kleistad-label">referentie</label>
 			</div>
 			<div class="kleistad-col-6">
-				<?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?>
+				<?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . wp_date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -126,12 +116,14 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
-				<?php echo $this->data['debiteur']['terugstorting'] ? '<strong>Een stornering is ingediend</strong>' : ''; ?>
+				<?php echo $this->data['debiteur']['terugstorting'] ? '<strong>Een stornering is ingediend</strong>' : ''; // phpcs:ignore ?>
 			</div>
 		</div>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
-		<?php
-		$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end();
+				<?php
+				$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end();
+			}
+		);
 	}
 
 	/**
@@ -171,7 +163,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>
 					<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>
 					<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
-					<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
+					<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( wp_date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
 					<td>
 						<a href="#" title="wijzig order" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
 							&nbsp;
@@ -207,7 +199,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-3" >
 				</div>
 				<?php if ( 0 < $this->data['debiteur']['openstaand'] ) : ?>
-					<div class="kleistad-col-4 kleistad-label">
+				<div class="kleistad-col-4 kleistad-label">
 						<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >

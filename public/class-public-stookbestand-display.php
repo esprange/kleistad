@@ -27,7 +27,7 @@ class Public_Stookbestand_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label" for="kleistad_vanaf_datum" >Vanaf</label>
 			</div>
 			<div class="kleistad-col-7">
-				<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad-datum" value="<?php echo esc_attr( date( '01-01-Y' ) ); ?>"  readonly="readonly" />
+				<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad-datum" value="<?php echo esc_attr( wp_date( '01-01-Y' ) ); ?>"  readonly="readonly" />
 			</div>
 		</div>
 		<div class="kleistad-row" >
@@ -35,7 +35,7 @@ class Public_Stookbestand_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label" for="kleistad_tot_datum" >Tot</label>
 			</div>
 			<div class="kleistad-col-7">
-				<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad-datum" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
+				<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad-datum" value="<?php echo esc_attr( wp_date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
 			</div>
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;" >

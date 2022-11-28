@@ -9,7 +9,29 @@
 
 namespace Kleistad;
 
-wp_enqueue_style( 'dashicons' );
+add_action(
+	'wp_enqueue_scripts',
+	function() {
+		$dev = 'development' === wp_get_environment_type() ? '' : '.min';
+		wp_enqueue_style( 'dashicons' );
+		wp_dequeue_style( 'wp-block-library' );
+		wp_dequeue_style( 'wp-block-library-theme' );
+		wp_dequeue_style( 'wc-blocks-style' );
+		wp_enqueue_script( 'kleistad_galerie', plugin_dir_url( __FILE__ ) . "../js/public-galerie$dev.js", [ 'jquery' ], versie(), true );
+		wp_add_inline_script(
+			'kleistad_galerie',
+			'const kleistadData = ' . wp_json_encode(
+				[
+					'nonce'         => wp_create_nonce( 'wp_rest' ),
+					'error_message' => 'het was niet mogelijk om de bewerking uit te voeren',
+					'base_url'      => base_url(),
+				]
+			),
+			'before'
+		);
+	}
+);
+
 ?>
 <!DOCTYPE html>
 <!--suppress HtmlRequiredLangAttribute -->
@@ -23,7 +45,6 @@ wp_enqueue_style( 'dashicons' );
 </head>
 
 <body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
 <div id="page" class="site">
 	<div class="site-inner">
 		<header id="masthead" role="banner">
@@ -39,85 +60,42 @@ wp_enqueue_style( 'dashicons' );
 		</header><!-- .site-header -->
 		<div id="content" class="site-content">
 			<main id="main" class="site-main" role="main">
-			<?php
-				$showcase_id = get_the_ID();
-				$showcases   = new Showcases(
-					[
-						'post_status' => [ Showcase::BESCHIKBAAR ],
-						'orderby'     => 'ID',
-					]
-				);
-				while ( $showcases->current()->id !== $showcase_id ) {
-					$showcases->next();
-					if ( ! $showcases->valid() ) :
-						// De showcase is waarschijnlijk niet meer beschikbaar en al verkocht. Dan een soort 404 tonen.
-						?>
-						<strong>Het werkstuk is helaas niet meer beschikbaar</strong>
-						<?php
-						break;
-					endif;
-				}
-				if ( $showcases->valid() ) :
-					$keramist = get_user_by( 'ID', $showcases->current()->keramist_id );
-					?>
-				<div class="kleistad kleistad-showcase" >
-					<?php if ( 1 < $showcases->count() ) : ?>
-						<a class="kleistad-showcase-prev dashicons dashicons-arrow-left-alt2"
-							href="<?php echo esc_url( get_post_permalink( $showcases->get_prev()->id ) ); ?>">
-						</a>
-						<a class="kleistad-showcase-next dashicons dashicons-arrow-right-alt2"
-							href="<?php echo esc_url( get_post_permalink( $showcases->get_next()->id ) ); ?>">
-						</a>
-					<?php endif; ?>
-					<div class="kleistad-showcase-item"> <!-- first container -->
-						<?php
-						echo wp_get_attachment_image(
-							$showcases->current()->foto_id,
-							'large',
-							false,
-							[ 'class' => 'kleistad-showcase' ]
-						);
-						?>
-					</div>
-					<div>  <!-- second container -->
+			<div id="showcase" class="kleistad kleistad-showcase" data-id="<?php echo esc_attr( get_the_ID() ); ?>" >
+					<a class="kleistad-showcase-prev dashicons dashicons-arrow-left-alt2 showcase-link" id="prev" ></a>
+					<a class="kleistad-showcase-next dashicons dashicons-arrow-right-alt2 showcase-link" id="next" ></a>
+					<div class="kleistad-showcase-item" id="foto"></div>
+					<div>
 						<div class="kleistad-showcase-item">
-							<div class="kleistad-showcase-titel"><?php the_title(); ?></div>
+							<div class="kleistad-showcase-titel" id="titel"></div>
 							<strong>Prijs</strong>
-							<div style="padding-left:15px">&euro; <?php echo esc_html( number_format_i18n( $showcases->current()->prijs, 2 ) ); ?>
-								<?php echo $showcases->current()->is_tentoongesteld() ? ' (nu tentoongesteld)' : ''; ?>
+							<div style="padding-left:15px" id="prijs"></div>
+							<div>
+								<strong id="beschrijving_label">Beschrijving</strong>
+								<div style="padding-left:15px" id="beschrijving"></div>
 							</div>
-							<?php if ( $showcases->current()->beschrijving ) : ?>
-								<strong>Beschrijving</strong>
-								<div style="padding-left:15px"><?php echo esc_html( $showcases->current()->beschrijving ); ?></div>
-							<?php endif; ?>
 						</div>
 						<div class="kleistad-showcase-item">
-							<strong>Keramist</strong>
-							<div style="padding-left:10px"><?php echo esc_html( $keramist->display_name ); ?></div>
-							<?php if ( $keramist->description ) : ?>
-								<strong>Over de keramist</strong>
-								<?php
-								$profiel_foto_id = get_user_meta( $keramist->ID, 'profiel_foto', true );
-								if ( $profiel_foto_id ) :
-									?>
-									<div>
-										<div style="padding-left:15px;width:70%;float:left"><?php echo $keramist->description; // phpcs:ignore ?></div>
-										<?php echo wp_get_attachment_image( $profiel_foto_id ); ?>
-									</div>
-								<?php else : ?>
-									<div style="padding-left:15px"><?php echo $keramist->description; // phpcs:ignore ?></div>
-								<?php endif ?>
-							<?php endif; ?>
-							<?php if ( $keramist->user_url ) : ?>
-								<div style="clear: left">
-									<strong>Website van de keramist</strong>
-									<div style="padding-left:15px"><a href="<?php echo esc_url( $keramist->user_url ); ?>"><?php echo esc_url( $keramist->user_url ); ?></a></div>
+							<strong id="keramist_label">Keramist</strong>
+							<div style="padding-left:10px" id="keramist"></div>
+							<div>
+								<strong id="bio_label">Over de keramist</strong>
+								<div>
+									<div style="padding-left:15px;width:70%;float:left" id="bio"></div>
+									<div id="keramist_foto"></div>
 								</div>
-							<?php endif; ?>
+							</div>
+							<div style="clear: left">
+								<strong id="website_label">Website van de keramist</strong>
+								<div style="padding-left:15px" id="website"></div>
+							</div>
+							<div>
+								<strong id="meer_panel_label">Meer van deze keramist</strong>
+								<div id="meer_panel" class="kleistad-gallerij-keramist">
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				<?php endif ?>
 			</main><!-- .site-main -->
 		</div>
 	</div>

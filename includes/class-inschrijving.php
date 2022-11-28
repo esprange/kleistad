@@ -17,18 +17,6 @@ namespace Kleistad;
  * @since 4.0.87
  *
  * @property string code
- * @property int    datum
- * @property array  technieken
- * @property array  extra_cursisten
- * @property int    hoofd_cursist_id
- * @property bool   ingedeeld
- * @property bool   geannuleerd
- * @property string opmerking
- * @property int    aantal
- * @property int    wacht_datum
- * @property bool   restant_email
- * @property bool   herinner_email
- * @property float  maatwerkkosten
  */
 class Inschrijving extends Artikel {
 
@@ -56,11 +44,95 @@ class Inschrijving extends Artikel {
 	];
 
 	/**
+	 * De datum dat de inschrijving plaatsvindt.
+	 *
+	 * @var int De inschrijfdatum.
+	 */
+	public int $datum;
+
+	/**
+	 * Wachtlijst datum.
+	 *
+	 * @var int Wachtdatum, 0 als er niet gewacht wordt.
+	 */
+	public int $wacht_datum = 0;
+
+	/**
+	 * De technieken die gekozen zijn.
+	 *
+	 * @var array De gekozen technieken.
+	 */
+	public array $technieken = [];
+
+	/**
+	 * Opmerking.
+	 *
+	 * @var string De opmerking.
+	 */
+	public string $opmerking = '';
+
+	/**
+	 * Meervoudige inschrijving.
+	 *
+	 * @var int Aantal cursisten.
+	 */
+	public int $aantal = 1;
+
+	/**
+	 * De extra cursisten
+	 *
+	 * @var array Id's van de extra cursisten.
+	 */
+	public array $extra_cursisten = [];
+
+	/**
+	 * Als het een extra cursist is, de hoofdcursist.
+	 *
+	 * @var int Id van de hoofdcursist.
+	 */
+	public int $hoofd_cursist_id = 0;
+
+	/**
+	 * Indeling status.
+	 *
+	 * @var bool True als ingedeeld.
+	 */
+	public bool $ingedeeld = false;
+
+	/**
 	 * Of de inschrijving al bestond
 	 *
-	 * @var bool $ingeschreven Of er al eerder was ingeschreven.
+	 * @var bool True als eerder was ingeschreven.
 	 */
 	public bool $ingeschreven = false;
+
+	/**
+	 * Annulerings status.
+	 *
+	 * @var bool True als geannuleerd.
+	 */
+	public bool $geannuleerd = false;
+
+	/**
+	 * Status of restant email verstuurd is.
+	 *
+	 * @var bool True als email verstuurd.
+	 */
+	public bool $restant_email = false;
+
+	/**
+	 * Status of aanmaning verstuurd is.
+	 *
+	 * @var bool True als aanmaning email verstuurd.
+	 */
+	public bool $herinner_email = false;
+
+	/**
+	 * Maatwerk bij te late inschrijving.
+	 *
+	 * @var float De maatwerkkosten
+	 */
+	public float $maatwerkkosten = 0.0;
 
 	/**
 	 * De cursus
@@ -92,65 +164,27 @@ class Inschrijving extends Artikel {
 		global $wpdb;
 		$this->cursus   = new Cursus( $cursus_id );
 		$this->klant_id = $klant_id;
-		$this->data     = [
-			'code'             => "C$cursus_id-$klant_id",
-			'datum'            => time(),
-			'technieken'       => [],
-			'ingedeeld'        => 0,
-			'geannuleerd'      => 0,
-			'opmerking'        => '',
-			'aantal'           => 1,
-			'restant_email'    => 0,
-			'herinner_email'   => 0,
-			'wacht_datum'      => 0,
-			'extra_cursisten'  => [],
-			'hoofd_cursist_id' => 0,
-			'maatwerkkosten'   => 0.0,
-		];
+		$this->code     = self::DEFINITIE['prefix'] . "$cursus_id-$klant_id";
+		$this->datum    = time();
 		$this->actie    = new InschrijvingActie( $this );
 		$this->betaling = new InschrijvingBetaling( $this );
 		$inschrijving   = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursus_id = %d AND cursist_id = %d", $cursus_id, $klant_id ), ARRAY_A );
 		if ( is_null( $inschrijving ) ) {
-			$this->ingeschreven = false;
 			return;
 		}
-		$this->data['datum']            = strtotime( $inschrijving['datum'] );
-		$this->data['technieken']       = json_decode( $inschrijving['technieken'], true );
-		$this->data['ingedeeld']        = boolval( $inschrijving['ingedeeld'] );
-		$this->data['geannuleerd']      = boolval( $inschrijving['geannuleerd'] );
-		$this->data['opmerking']        = htmlspecialchars_decode( $inschrijving['opmerking'] ?? '' );
-		$this->data['aantal']           = intval( $inschrijving['aantal'] );
-		$this->data['restant_email']    = boolval( $inschrijving['restant_email'] );
-		$this->data['herinner_email']   = boolval( $inschrijving['herinner_email'] );
-		$this->data['wacht_datum']      = strtotime( $inschrijving['wacht_datum'] );
-		$this->data['extra_cursisten']  = json_decode( $inschrijving['extra_cursisten'], true );
-		$this->data['hoofd_cursist_id'] = intval( $inschrijving['hoofd_cursist_id'] );
-		$this->data['maatwerkkosten']   = floatval( $inschrijving['maatwerkkosten'] );
-		$this->ingeschreven             = true;
-	}
-
-	/**
-	 * Get attribuut van het object.
-	 *
-	 * @since 4.0.87
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @return mixed Attribuut waarde.
-	 */
-	public function __get( string $attribuut ) {
-		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
-	}
-
-	/**
-	 * Set attribuut van het object.
-	 *
-	 * @since 4.0.87
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @param mixed  $waarde Attribuut waarde.
-	 */
-	public function __set( string $attribuut, mixed $waarde ) {
-		$this->data[ $attribuut ] = $waarde;
+		$this->datum            = strtotime( $inschrijving['datum'] );
+		$this->technieken       = json_decode( $inschrijving['technieken'], true ) ?: [];
+		$this->ingedeeld        = boolval( $inschrijving['ingedeeld'] );
+		$this->geannuleerd      = boolval( $inschrijving['geannuleerd'] );
+		$this->opmerking        = htmlspecialchars_decode( $inschrijving['opmerking'] );
+		$this->aantal           = intval( $inschrijving['aantal'] );
+		$this->restant_email    = boolval( $inschrijving['restant_email'] );
+		$this->herinner_email   = boolval( $inschrijving['herinner_email'] );
+		$this->wacht_datum      = strtotime( $inschrijving['wacht_datum'] );
+		$this->extra_cursisten  = json_decode( $inschrijving['extra_cursisten'], true ) ?: [];
+		$this->hoofd_cursist_id = intval( $inschrijving['hoofd_cursist_id'] );
+		$this->maatwerkkosten   = floatval( $inschrijving['maatwerkkosten'] );
+		$this->ingeschreven     = true;
 	}
 
 	/**

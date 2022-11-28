@@ -3,24 +3,26 @@
  */
 
 table {
-	font-size: small;
+  font-size: small;
 }
 
+.recept-foto {
+  border-radius: 5px;
+  cursor: zoom-in;
+  max-width: 100%;
+  max-height: 100%;
+  transition: 0.3s;
+}
+
+/* noinspection Stylelint */
 #kleistad_terug {
 	cursor: pointer;
 }
 
-.recept_foto {
-	border-radius: 5px;
-	cursor: zoom-in;
-	max-width: 100%;
-	max-height: 100%;
-	transition: 0.3s;
-}
-
 @media print {
-	#kleistad_terug,
-	#kleistad_profiel_container {
-		display: none;
-	}
+  /* noinspection Stylelint */
+  #kleistad_terug,
+  #kleistad_profiel_container {
+    display: none;
+  }
 }

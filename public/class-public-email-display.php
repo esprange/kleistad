@@ -21,14 +21,11 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * Maak de formulier inhoud aan
-	 */
-	protected function form_content() {
-		$this->aan()->onderwerp()->aanhef()->inhoud()->verzender();
+		$this->form(
+			function() {
+				$this->aan()->onderwerp()->aanhef()->inhoud()->verzender();
+			}
+		);
 	}
 
 	/**

@@ -5,7 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Cursus_Inschrijving
- * @noinspection PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection,PhpArrayWriteIsNotUsedInspection
+ * @noinspection PhpArrayWriteIsNotUsedInspection, PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;
@@ -15,8 +15,7 @@ namespace Kleistad;
  */
 class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 
-	private const CURSUSNAAM = 'Testcursus';
-	private const SHORTCODE  = 'cursus_inschrijving';
+	private const SHORTCODE = 'cursus_inschrijving';
 
 	/**
 	 * Formulier data.

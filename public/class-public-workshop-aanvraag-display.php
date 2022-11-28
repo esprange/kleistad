@@ -21,20 +21,17 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * Maak de formulier inhoud aan
-	 */
-	protected function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<div class="kleistad-tab"><?php $this->aanvraag(); ?></div>
 		<div class="kleistad-tab"><?php $this->planning(); ?></div>
 		<div class="kleistad-tab"><?php $this->contactinfo()->email()->telnr(); ?></div>
 		<div class="kleistad-tab"><?php $this->opmerking( 'Heb je nog nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad' ); ?></div>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**

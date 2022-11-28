@@ -3,7 +3,7 @@
  * Class ShowcaseTest
  *
  * @package Kleistad
- * @noinspection PhpUndefinedFieldInspection
+ * @noinspection PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
  */
 
 namespace Kleistad;
@@ -52,6 +52,61 @@ class Test_Showcase extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Helper, om show datums in tekst te krijgen.
+	 *
+	 * @param string $datum De test datum.
+	 *
+	 * @return array
+	 */
+	private function showdatums_as_string( string $datum ) : array {
+		return array_map(
+			function( $show ) {
+				return [
+					'start' => date( 'Y-m-d', $show['start'] ),
+					'eind'  => date( 'Y-m-d', $show['eind'] ),
+				];
+			},
+			Showcase::show_datums( strtotime( $datum ) )
+		);
+	}
+
+	/**
+	 * Test de showdatums function.
+	 */
+	public function test_showdatums() {
+		$show1 = [
+			'start' => '2022-09-05',
+			'eind'  => '2022-11-07',
+		];
+		$show2 = [
+			'start' => '2022-11-07',
+			'eind'  => '2023-01-02',
+		];
+		$show3 = [
+			'start' => '2023-01-02',
+			'eind'  => '2023-03-06',
+		];
+		$show4 = [
+			'start' => '2023-03-06',
+			'eind'  => '2023-05-01',
+		];
+		$test1 = [
+			$show1,
+			$show2,
+			$show3,
+		];
+		$this->assertEquals( $test1, $this->showdatums_as_string( '2022-10-15' ), 'Datums 10-11-2022 onjuist' );
+		$this->assertEquals( $test1, $this->showdatums_as_string( '2022-11-02' ), 'Datums 1-11-2022 onjuist' );
+
+		$test2 = [
+			$show2,
+			$show3,
+			$show4,
+		];
+		$this->assertEquals( $test2, $this->showdatums_as_string( '2022-11-08' ), 'Datums 1-11-2022 onjuist' );
+	}
+
+	/**
 	 * Test ruimte function.
 	 */
 	public function test_tentoonstellen() {
@@ -85,7 +140,6 @@ class Test_Showcase extends Kleistad_UnitTestCase {
 		$showcase1->prijs = 123;
 		$showcase1->shows = [ $show_datums[0] ];
 		$showcase1->save();
-
 		Showcases::doe_dagelijks();
 		$this->assertEquals( 'Tentoonstellen werkstukken', $mailer->get_last_sent()->subject, 'mail tentoonstellen incorrect' );
 	}

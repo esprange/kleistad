@@ -8,7 +8,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Workshop, \Kleistad\Workshops, \Kleistad\WorkshopActie, \Kleistad\WorkshopBetaling
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
+ * @noinspection PhpPossiblePolymorphicInvocationInspection
  */
 
 namespace Kleistad;
@@ -46,9 +46,41 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop->actie->bevestig();
 		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestig email incorrect' );
 
-		$workshop->datum = strtotime( '21 days' );
-		$workshop->actie->bevestig();
-		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging na correctie van workshop~', $mailer->get_last_sent()->subject, 'herbevestig email incorrect' );
+		$workshop->datum = strtotime( 'days' );
+		$workshop->save();
+
+		Workshops::doe_dagelijks();
+		$order = new Order( $workshop->get_referentie() );
+		$this->assertTrue( 0 < $order->id, 'order niet aangemaakt' );
+		$this->assertEquals( $workshop->kosten, $order->get_te_betalen(), 'kosten onjuist' );
+	}
+
+	/**
+	 * Test de workshop storage.
+	 * Deze test moet met de hand gecontroleerd worden, er zijn altijd een aantal properties die niet opgeslagen worden.
+	 */
+	public function test_workshop_store() {
+		if ( 1 === 2 ) {
+			$workshop = $this->maak_workshop();
+			$time     = strtotime( 'today 0:00' );
+			foreach ( get_object_vars( $workshop ) as $key => $value ) {
+				if ( 'id' === $key ) {
+					continue;
+				}
+				$workshop->$key = match ( gettype( $workshop->$key ) ) {
+					'boolean' => $workshop->$key ?: true,
+					'integer' => $time,
+					'double'  => 123.45,
+					'string'  => 'test123',
+					'array'   => [ '123', '456' ],
+					'object'  => $value
+				};
+			}
+			$workshop->save();
+			$workshop2 = new Workshop( $workshop->id );
+			$this->assertEquals( $workshop, $workshop2, 'storage niet correct' );
+		}
+		$this->assertTrue( true, 'geen test' );
 	}
 
 	/**
@@ -165,7 +197,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$this->assertFalse( $workshop->is_betaald(), 'onbetaald workshop incorrect' );
 		$workshop->actie->vraag_betaling();
 		$order = new Order( $workshop->get_referentie() );
-		$workshop->betaling->verwerk( $order, $workshop->kosten, true, 'bank' );
+		$workshop->betaling->verwerk( $order, $workshop->kosten, true, 'stort' );
 		$this->assertTrue( $workshop->is_betaald(), 'betaald workshop incorrect' );
 	}
 
@@ -284,13 +316,13 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop1->datum         = strtotime( '7 days' );
 		$workshop1->actie->bevestig();
 		$workshop2                = $this->maak_workshop();
-		$workshop2->aanvraagdatum = strtotime( '-7 days' );
+		$workshop2->aanvraagdatum = strtotime( '-8 days' );
 		$workshop2->datum         = strtotime( '7 days' );
 		$workshop2->save();
 		Workshops::doe_dagelijks();
 		$workshop1 = new Workshop( $workshop1->id );
 		$workshop2 = new Workshop( $workshop2->id );
-		$this->assertTrue( $workshop2->vervallen, 'vervallen 2 onjuist' );
 		$this->assertFalse( $workshop1->vervallen, 'vervallen 1 onjuist' );
+		$this->assertTrue( $workshop2->vervallen, 'vervallen 2 onjuist' );
 	}
 }

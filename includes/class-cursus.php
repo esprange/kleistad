@@ -17,29 +17,6 @@ use Exception;
 
 /**
  * Kleistad Cursus class.
- *
- * @property int    id
- * @property string naam
- * @property string code
- * @property int    start_datum
- * @property int    eind_datum
- * @property int    ruimte_datum
- * @property array  lesdatums
- * @property int    start_tijd
- * @property int    eind_tijd
- * @property string docent
- * @property array  technieken
- * @property bool   vervallen
- * @property bool   vol
- * @property bool   techniekkeuze
- * @property array  werkplekken
- * @property float  inschrijfkosten
- * @property float  cursuskosten
- * @property string inschrijfslug
- * @property string indelingslug
- * @property int    maximum
- * @property bool   meer
- * @property bool   tonen
  */
 class Cursus {
 
@@ -48,11 +25,158 @@ class Cursus {
 	public const AFSPRAAK_PREFIX = 'kleistadcursus';
 
 	/**
-	 * De cursusdata
+	 * Cursus ident
 	 *
-	 * @var array $data De ruwe data.
+	 * @var int Het id van de cursus.
 	 */
-	private array $data;
+	public int $id = 0;
+
+	/**
+	 * Cursus titel
+	 *
+	 * @var string Cursus naam.
+	 */
+	public string $naam = '';
+
+	/**
+	 * Cursus code
+	 *
+	 * @var string Cursus code.
+	 */
+	public string $code = '';
+
+	/**
+	 * Start van de cursus
+	 *
+	 * @var int Start datum.
+	 */
+	public int $start_datum;
+
+	/**
+	 * Eind van de cursus
+	 *
+	 * @var int Eind datum.
+	 */
+	public int $eind_datum;
+
+	/**
+	 * Datum nadat er ruimte is ontstaan in de cursus
+	 *
+	 * @var int Ruimte datum.
+	 */
+	public int $ruimte_datum = 0;
+
+	/**
+	 * De lesdatums van de cursus
+	 *
+	 * @var array Les datums.
+	 */
+	public array $lesdatums = [];
+
+	/**
+	 * Aanvangstijd cursus
+	 *
+	 * @var int Start tijd.
+	 */
+	public int $start_tijd;
+
+	/**
+	 * Eindtijd cursus
+	 *
+	 * @var int Eind tijd.
+	 */
+	public int $eind_tijd;
+
+	/**
+	 * Docent van de cursus
+	 *
+	 * @var string Docent of docenten.
+	 */
+	public string $docent = '';
+
+	/**
+	 * Gebruikte technieken
+	 *
+	 * @var array Technieken in de cursus.
+	 */
+	public array $technieken = [];
+
+	/**
+	 * Cursus status
+	 *
+	 * @var bool True als vervallen.
+	 */
+	public bool $vervallen = false;
+
+	/**
+	 * Cursus ruimte status
+	 *
+	 * @var bool True als vol
+	 */
+	public bool $vol = false;
+
+	/**
+	 * Cursist techniek keuze
+	 *
+	 * @var bool True als keuze verplicht.
+	 */
+	public bool $techniekkeuze = false;
+
+	/**
+	 * Benodigde werkplekken voor cursus
+	 *
+	 * @var array De te reserveren werkplekken.
+	 */
+	public array $werkplekken = [];
+
+	/**
+	 * Inschrijfkosten cursus
+	 *
+	 * @var float Inschrijfkosten of 0.0
+	 */
+	public float $inschrijfkosten = 0.0;
+
+	/**
+	 * Cursus kosten
+	 *
+	 * @var float Cursuskosten exclusief de inschrijfkosten
+	 */
+	public float $cursuskosten = 0.0;
+
+	/**
+	 * Inschrijf email
+	 *
+	 * @var string Email slug voor inschrijving.
+	 */
+	public string $inschrijfslug = 'cursus_aanvraag';
+
+	/**
+	 * Indeling email
+	 *
+	 * @var string Email slug voor indeling.
+	 */
+	public string $indelingslug = 'cursus_ingedeeld';
+
+	/**
+	 * Aantal cursisten
+	 *
+	 * @var int Maximum aantal cursisten.
+	 */
+	public int $maximum = 12;
+
+	/**
+	 * Meervoudige inschrijving
+	 *
+	 * @var bool True als inschrijving voor meer cursisten mogelijk.
+	 */
+	public bool $meer = true;
+
+	/**
+	 * Cursus publicatie status
+	 *
+	 * @var bool True als gepubliceerd.
+	 */
+	public bool $tonen = false;
 
 	/**
 	 * Constructor
@@ -61,104 +185,45 @@ class Cursus {
 	 * @param int|null   $cursus_id (optioneel) cursus welke geladen moet worden.
 	 * @param array|null $load      (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( int $cursus_id = null, ?array $load = null ) {
+	public function __construct( ?int $cursus_id = null, ?array $load = null ) {
 		global $wpdb;
-		$this->data = [
-			'id'              => null,
-			'naam'            => '',
-			'start_datum'     => date( 'Y-m-d' ),
-			'eind_datum'      => date( 'Y-m-d' ),
-			'ruimte_datum'    => '',
-			'lesdatums'       => wp_json_encode( [ date( 'Y-m-d' ) ] ),
-			'start_tijd'      => '09:30',
-			'eind_tijd'       => '12:00',
-			'docent'          => '',
-			'technieken'      => wp_json_encode( [] ),
-			'vervallen'       => 0,
-			'vol'             => 0,
-			'techniekkeuze'   => 0,
-			'werkplekken'     => wp_json_encode( [] ),
-			'inschrijfkosten' => opties()['cursusinschrijfprijs'],
-			'cursuskosten'    => opties()['cursusprijs'],
-			'inschrijfslug'   => 'cursus_aanvraag',
-			'indelingslug'    => 'cursus_ingedeeld',
-			'maximum'         => 12,
-			'meer'            => 0,
-			'tonen'           => 0,
-		];
+		$this->start_datum     = strtotime( 'today' );
+		$this->lesdatums       = [ $this->start_datum ];
+		$this->eind_datum      = strtotime( 'today' );
+		$this->start_tijd      = strtotime( 'today 09:30' );
+		$this->eind_tijd       = strtotime( 'today 12:00' );
+		$this->inschrijfkosten = opties()['cursusinschrijfprijs'];
+		$this->cursuskosten    = opties()['cursusprijs'];
 		if ( ! is_null( $cursus_id ) ) {
 			$data = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
 			if ( ! is_null( $data ) ) {
-				$this->data = $data;
-				if ( empty( $this->data['lesdatums'] ) ) {
-					$this->data['lesdatums'] = wp_json_encode(
-						( $this->data['start_datum'] === $this->data['eind_datum'] ) ?
-						[ $this->data['start_datum'] ] :
-						[ $this->data['start_datum'], $this->data['eind_datum'] ]
-					);
+				$this->id              = intval( $data['id'] );
+				$this->naam            = htmlspecialchars_decode( $data['naam'] );
+				$this->code            = Inschrijving::DEFINITIE['prefix'] . $cursus_id;
+				$this->start_datum     = strtotime( $data['start_datum'] );
+				$this->eind_datum      = strtotime( $data['eind_datum'] );
+				$this->ruimte_datum    = strtotime( $data['ruimte_datum'] );
+				$this->start_tijd      = strtotime( $data['start_tijd'] );
+				$this->eind_tijd       = strtotime( $data['eind_tijd'] );
+				$this->lesdatums       = array_map( 'strtotime', json_decode( $data['lesdatums'], true ) );
+				$this->technieken      = json_decode( $data['technieken'] ?: '[]', true );
+				$this->werkplekken     = json_decode( $data['werkplekken'] ?: '[]', true );
+				$this->docent          = htmlspecialchars_decode( $data['docent'] );
+				$this->maximum         = intval( $data['maximum'] );
+				$this->vol             = boolval( $data['vol'] );
+				$this->meer            = boolval( $data['meer'] );
+				$this->techniekkeuze   = boolval( $data['techniekkeuze'] );
+				$this->vervallen       = boolval( $data['vervallen'] );
+				$this->tonen           = boolval( $data['tonen'] );
+				$this->inschrijfslug   = $data['inschrijfslug'];
+				$this->indelingslug    = $data['indelingslug'];
+				$this->inschrijfkosten = floatval( $data['inschrijfkosten'] );
+				$this->cursuskosten    = floatval( $data['cursuskosten'] );
+				if ( empty( $this->lesdatums ) ) {
+					$this->lesdatums = $this->start_datum === $this->eind_datum ? [ $this->start_datum ] : [ $this->start_datum, $this->eind_datum ];
 				}
 			}
 		}
-	}
-
-	/**
-	 * Get attribuut van het object.
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @return mixed Attribuut waarde.
-	 */
-	public function __get( string $attribuut ) {
-		if ( in_array( $attribuut, [ 'start_datum', 'eind_datum', 'ruimte_datum', 'start_tijd', 'eind_tijd' ], true ) ) {
-			return strtotime( $this->data[ $attribuut ] );
-		}
-		if ( in_array( $attribuut, [ 'vol', 'vervallen', 'techniekkeuze', 'tonen' ], true ) ) {
-			return boolval( $this->data[ $attribuut ] );
-		}
-		if ( in_array( $attribuut, [ 'inschrijfkosten', 'cursuskosten' ], true ) ) {
-			return floatval( $this->data[ $attribuut ] );
-		}
-
-		return match ( $attribuut ) {
-			'technieken',
-			'werkplekken' => json_decode( $this->data[ $attribuut ] ?? '[]', true ),
-			'lesdatums'   => array_map(
-				function ( $item ) {
-					return strtotime( $item );
-				},
-				json_decode( $this->data[ $attribuut ], true )
-			),
-			'code'        => "C{$this->data['id']}",
-			'meer'        => $this->data[ $attribuut ] && ( strtotime( 'today' ) < $this->start_datum ),
-			default       => is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
-				( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] ),
-		};
-	}
-
-	/**
-	 * Set attribuut van het object.
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @param mixed  $waarde Attribuut waarde.
-	 */
-	public function __set( string $attribuut, mixed $waarde ) {
-		$this->data[ $attribuut ] = match ( $attribuut ) {
-			'technieken',
-			'werkplekken'  => wp_json_encode( $waarde ),
-			'lesdatums'    => wp_json_encode(
-				array_map(
-					function ( $item ) {
-						return date( 'Y-m-d', $item );
-					},
-					$waarde
-				)
-			),
-			'start_datum',
-			'eind_datum'   => date( 'Y-m-d', $waarde ),
-			'ruimte_datum' => date( 'Y-m-d H:i:s', $waarde ),
-			'start_tijd',
-			'eind_tijd'    => date( 'H:i', $waarde ),
-			default        => is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde ),
-		};
 	}
 
 	/**
@@ -249,13 +314,28 @@ class Cursus {
 	/**
 	 * Hulp functie voor de oudere cursussen (voor 6.1.1 werd de naam ingevuld, nu het nummer ).
 	 *
+	 * @param bool $volledig True als volledige naam, anders alleen de voornaam.
 	 * @return string De naam van de docent.
 	 */
-	public function get_docent_naam() : string {
+	public function get_docent_naam( bool $volledig = true ) : string {
 		if ( is_numeric( $this->docent ) ) {
-			return get_user_by( 'id', intval( $this->docent ) )->display_name;
+			return $volledig ?
+				get_user_by( 'id', intval( $this->docent ) )->display_name :
+				get_user_by( 'id', intval( $this->docent ) )->first_name;
 		}
 		return $this->docent;
+	}
+
+	/**
+	 * Geef de status van de cursus terug.
+	 *
+	 * @return string
+	 */
+	public function get_statustekst() : string {
+		$vandaag = strtotime( 'today' );
+		return $this->vervallen ? 'vervallen' :
+			( $this->eind_datum < $vandaag ? 'voltooid' :
+				( $this->start_datum < $vandaag ? 'actief' : 'nieuw' ) );
 	}
 
 	/**
@@ -288,7 +368,39 @@ class Cursus {
 	 */
 	public function save() : int {
 		global $wpdb;
-		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
+		$wpdb->replace(
+			"{$wpdb->prefix}kleistad_cursussen",
+			[
+				'id'              => $this->id,
+				'naam'            => $this->naam,
+				'docent'          => $this->docent,
+				'maximum'         => $this->maximum,
+				'technieken'      => wp_json_encode( $this->technieken ),
+				'werkplekken'     => wp_json_encode( $this->werkplekken ),
+				'lesdatums'       => wp_json_encode(
+					array_map(
+						function( $item ) {
+							return date( 'Y-m-d', $item );
+						},
+						$this->lesdatums
+					)
+				),
+				'start_datum'     => date( 'Y-m-d', $this->start_datum ),
+				'eind_datum'      => date( 'Y-m-d', $this->eind_datum ),
+				'ruimte_datum'    => date( 'Y-m-d H:i:s', $this->ruimte_datum ),
+				'start_tijd'      => date( 'H:i', $this->start_tijd ),
+				'eind_tijd'       => date( 'H:i', $this->eind_tijd ),
+				'vol'             => intval( $this->vol ),
+				'meer'            => intval( $this->meer ),
+				'vervallen'       => intval( $this->vervallen ),
+				'tonen'           => intval( $this->tonen ),
+				'techniekkeuze'   => intval( $this->techniekkeuze ),
+				'inschrijfslug'   => $this->indelingslug,
+				'indelingslug'    => $this->indelingslug,
+				'inschrijfkosten' => $this->inschrijfkosten,
+				'cursuskosten'    => $this->cursuskosten,
+			]
+		);
 		$this->id = $wpdb->insert_id;
 		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 		try {
@@ -296,12 +408,12 @@ class Cursus {
 			$afspraak->titel      = $this->naam;
 			$afspraak->definitief = $this->tonen;
 			$afspraak->vervallen  = $this->vervallen;
-			$afspraak->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$afspraak->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$afspraak->start      = new DateTime( date( 'Y-m-d', $this->start_datum ) . ' ' . date( 'H:i', $this->start_tijd ), $timezone );
+			$afspraak->eind       = new DateTime( date( 'Y-m-d', $this->start_datum ) . ' ' . date( 'H:i', $this->eind_tijd ), $timezone );
 			if ( 1 < count( $this->lesdatums ) ) {
 				$datums = [];
 				foreach ( $this->lesdatums as $lesdatum ) {
-					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
+					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . date( 'H:i', $this->start_tijd ), $timezone );
 				}
 				sort( $datums );
 				$afspraak->set_patroon( $datums );

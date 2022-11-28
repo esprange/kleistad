@@ -113,7 +113,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	protected function bankbetaling() : array {
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $this->data['order']->referentie );
-		$artikel->betaling->verwerk( $this->data['order'], floatval( $this->data['input']['bedrag_betaald'] ) ?: - floatval( $this->data['input']['bedrag_gestort'] ), true, 'bank' );
+		$artikel->betaling->verwerk( $this->data['order'], floatval( $this->data['input']['bedrag_betaald'] ) ?: - floatval( $this->data['input']['bedrag_gestort'] ), true, 'stort' );
 		return [
 			'status'  => $this->status( 'De betaling is verwerkt' ),
 			'content' => $this->display(),

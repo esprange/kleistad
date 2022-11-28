@@ -21,19 +21,12 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$this->form();
-	}
-
-	/**
-	 * De formulier inhoud
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	protected function form_content() {
-		?>
+		$this->form(
+			function() {
+				?>
 		<div class="kleistad-tab"><?php $this->dagdelenkaart_info(); ?></div>
 
-		<?php if ( is_super_admin() ) : ?>
+				<?php if ( is_super_admin() ) : ?>
 			<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Abonnee' ); ?></div>
 		<?php elseif ( is_user_logged_in() ) : ?>
 			<div class="kleistad-tab"><?php	$this->gebruiker_logged_in(); ?></div>
@@ -44,7 +37,9 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
 		<div class="kleistad-tab"><?php $this->betaal_info(); ?></div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
@@ -65,7 +60,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-3 kleistad-input">
 				<input type="hidden" id="kleistad_kosten_kaart" value="<?php echo esc_attr( opties()['dagdelenkaart'] ); ?>" >
-				<input class="kleistad-datum kleistad-input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
+				<input class="kleistad-datum kleistad-input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( wp_date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
 			</div>
 		</div>
 		<?php

@@ -188,6 +188,46 @@ class InschrijvingActie {
 	}
 
 	/**
+	 * Deel de cursist in.
+	 */
+	public function indelen() : void {
+		static $ruimte = null;
+		if ( is_null( $ruimte ) ) {
+			$ruimte = $this->inschrijving->cursus->get_ruimte();
+		}
+		$cursist = get_user_by( 'ID', $this->inschrijving->klant_id );
+		$cursist->add_role( CURSIST );
+		$this->inschrijving->ingedeeld   = true;
+		$this->inschrijving->wacht_datum = 0;
+		$this->inschrijving->save();
+		$ruimte -= $this->inschrijving->aantal;
+		if ( 0 >= $ruimte - $this->inschrijving->aantal ) {
+			$this->inschrijving->cursus->set_vol();
+		}
+	}
+
+	/**
+	 * Deel een extra cursist in.
+	 *
+	 * @param Inschrijving $hoofd_inschrijving De hoofd cursist inschrijving.
+	 *
+	 * @return bool
+	 */
+	public function indelen_extra( Inschrijving $hoofd_inschrijving ) : bool {
+		if ( $this->inschrijving->ingedeeld ) {
+			return false;
+		}
+		$this->inschrijving->hoofd_cursist_id = $hoofd_inschrijving->klant_id;
+		$this->inschrijving->aantal           = 0;
+		$this->inschrijving->datum            = strtotime( 'today' );
+		$this->indelen();
+		$this->inschrijving->verzend_email( '_extra' );
+		$hoofd_inschrijving->extra_cursisten[] = $this->inschrijving->klant_id;
+		$hoofd_inschrijving->save();
+		return true;
+	}
+
+	/**
 	 * Deel de cursist in op een lopende cursus
 	 *
 	 * @param float $prijs De prijs van de cursus.
@@ -195,11 +235,9 @@ class InschrijvingActie {
 	 */
 	public function indelen_lopend( float $prijs ) : void {
 		$this->inschrijving->maatwerkkosten = $prijs;
-		$this->inschrijving->ingedeeld      = true;
-		$this->inschrijving->wacht_datum    = 0;
 		$this->inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 		$this->inschrijving->artikel_type   = 'inschrijving';
-		$this->inschrijving->save();
+		$this->indelen();
 		$order             = new Order( '' );  // Forceer een nieuwe order, zodat iemand die op de wachtlijst staat alsnog opnieuw kan inschrijven.
 		$order->referentie = $this->inschrijving->get_referentie();
 		$this->inschrijving->verzend_email( '_lopend_betalen', $order->bestel() );
@@ -211,10 +249,8 @@ class InschrijvingActie {
 	 * @return void
 	 */
 	public function indelen_geforceerd() : void {
-		$this->inschrijving->ingedeeld    = true;
-		$this->inschrijving->wacht_datum  = 0;
 		$this->inschrijving->artikel_type = 'inschrijving';
-		$this->inschrijving->save();
+		$this->indelen();
 		$order             = new Order( '' );  // Forceer een nieuwe order, zodat iemand die op de wachtlijst staat alsnog opnieuw kan inschrijven.
 		$order->referentie = $this->inschrijving->get_referentie();
 		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel() );

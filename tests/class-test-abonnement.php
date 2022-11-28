@@ -5,7 +5,6 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Abonnement, \Kleistad\Abonnementen, \Kleistad\Abonnee, \Kleistad\Abonnees, \Kleistad\AbonnementActie, \Kleistad\AbonnementBetaling
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, MessDetectorValidationInspection
  */
 
 namespace Kleistad;
@@ -30,7 +29,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$opties['extra'][] = self::EXTRA;
 		update_option( 'kleistad-opties', $opties );
 
-		$role = add_role( LID, 'Kleistad abonnee' );
+		$role = get_role( LID );
 		if ( is_object( $role ) ) {
 			$role->add_cap( RESERVEER, true );
 		}
@@ -45,7 +44,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 
-		$this->assertTrue( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'bank' ), 'abonnement start bank incorrect' );
+		$this->assertTrue( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'stort' ), 'abonnement start bank incorrect' );
 		$this->assertEquals( 'Welkom bij Kleistad', $mailer->get_last_sent()->subject, 'start bank email incorrect' );
 		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'abonnement rol incorrect' );
 	}
@@ -69,7 +68,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	 */
 	public function test_erase() {
 		$abonnement = $this->maak_abonnement();
-		$abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'stort' );
 
 		$abonnement->erase();
 		$this->assertFalse( user_can( $abonnement->klant_id, LID ), 'erase rol incorrect' );
@@ -105,11 +104,11 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	public function test_get_referentie() {
 		$abonnement = $this->maak_abonnement();
 
-		$abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'stort' );
 
-		$this->assertMatchesRegularExpression( '~A[0-9]+-start-20[0-9]{4}~', $abonnement->get_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~A\d+-start-20\d~', $abonnement->get_referentie(), 'referentie incorrect' );
 		$abonnement->artikel_type = 'regulier';
-		$this->assertMatchesRegularExpression( '~A[0-9]+-regulier-20[0-9]{4}~', $abonnement->get_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~A\d+-regulier-20\d{4}~', $abonnement->get_referentie(), 'referentie incorrect' );
 	}
 
 	/**
@@ -117,7 +116,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	 */
 	public function test_geef_fractie() {
 		$abonnement = $this->maak_abonnement();
-		$abonnement->actie->starten( strtotime( 'first day of this month 00:00' ), 'beperkt', 'dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( 'first day of this month 00:00' ), 'beperkt', 'dit is een test', 'stort' );
 
 		$this->assertTrue( 0.0 < $abonnement->get_overbrugging_fractie(), 'overbrugging fractie incorrect' );
 
@@ -135,7 +134,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	public function test_pauzeren() {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 
 		/**
 		 * Pauzeer het abonnement in de toekomst
@@ -161,7 +160,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	public function test_stoppen() {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 
 		/**
 		 * Stop het abonnement. Dan moet er alleen eem bevestiging uitgezonden worden.
@@ -180,7 +179,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 
 		$abonnee = new Abonnee( $abonnee_id );
 
@@ -208,7 +207,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( $this->set_date( 3 + (int) date( 'j' ), -3 ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( $this->set_date( 3 + (int) date( 'j' ), -3 ), 'beperkt', 'Dit is een test', 'stort' );
 		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
 		$abonnement->save();
 		Abonnementen::doe_dagelijks(); // Voert actie->overbrugging uit en verstuurt email 1.
@@ -227,7 +226,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' ); // Verstuurt email 0.
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' ); // Verstuurt email 0.
 		$abonnement                = new Abonnement( $abonnee_id );
 		$abonnement->factuur_maand = date( 'Ym', strtotime( '-2 month' ) );
 		$abonnement->save();
@@ -247,7 +246,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' ); // Verstuurt email 0.
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' ); // Verstuurt email 0.
 		$abonnement->pauze_datum    = $this->set_date( 15, -1 );
 		$abonnement->herstart_datum = $this->set_date( 15, +1 );
 		$abonnement->factuur_maand  = date( 'Ym', strtotime( '-1 month' ) );
@@ -266,7 +265,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' ); // Verstuurt email 0.
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' ); // Verstuurt email 0.
 
 		$abonnement                 = new Abonnement( $abonnee_id );
 		$abonnement->pauze_datum    = strtotime( '- 1 month 00:00' );
@@ -287,7 +286,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	 */
 	public function test_set_autorisatie() {
 		$abonnement = $this->maak_abonnement();
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'autoriseer na start incorrect' );
 
 		$abonnement->actie->stoppen( strtotime( '-1 month 00:00' ) );
@@ -302,11 +301,11 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 		$order = new Order( $abonnement->get_referentie() );
 
 		$abonnee = new Abonnee( $abonnee_id );
-		$abonnee->abonnement->betaling->verwerk( $order, 10, true, 'bank' );
+		$abonnee->abonnement->betaling->verwerk( $order, 10, true, 'stort' );
 		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk bankstorting onterechte email' );
 
 		$abonnee->abonnement->betaling->verwerk( $order, 10, true, 'ideal', 'transactie_1' );
@@ -322,9 +321,9 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	 */
 	public function test_abonnees() {
 		$abonnement1 = $this->maak_abonnement();
-		$abonnement1->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement1->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 		$abonnement2 = $this->maak_abonnement();
-		$abonnement2->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement2->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 		$abonnees = new Abonnees();
 		$this->assertTrue( 1 < $abonnees->count(), 'aantal abonnees onjuist' );
 	}
@@ -345,7 +344,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee    = new Abonnee( $abonnement->klant_id );
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 		$abonnement->actie->start_incasso();
 		$abonnement->betaling->verwerk( new Order( $abonnement->get_referentie() ), 0.01, true, 'ideal', 'incasso' );
 		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );
@@ -361,7 +360,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee    = new Abonnee( $abonnement->klant_id );
-		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 
 		$abonnement                = new Abonnement( $abonnement->klant_id );
 		$abonnement->factuur_maand = date( 'Ym', strtotime( '-2 month' ) );
@@ -382,13 +381,11 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 
 	/**
 	 * Test eventuele extra's.
-	 *
-	 * @return void
 	 */
 	public function test_extras() {
 		$abonnement        = $this->maak_abonnement();
 		$abonnement->soort = 'beperkt';
-		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'stort' );
 
 		$abonnement                = new Abonnement( $abonnement->klant_id );
 		$abonnement->extras        = [ self::EXTRA['naam'] ];

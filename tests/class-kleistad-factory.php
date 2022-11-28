@@ -13,6 +13,9 @@ use WP_UnitTest_Generator_Sequence;
 use WP_UnitTest_Factory_For_Thing;
 use WP_UnitTest_Factory;
 
+/**
+ * Kleistad PHPUnit factory.
+ */
 class Kleistad_Factory extends WP_UnitTest_Factory {
 	/**
 	 * De oven factory
@@ -40,6 +43,12 @@ class Kleistad_Factory extends WP_UnitTest_Factory {
 	 */
 	public function __construct() {
 		parent::__construct();
+		add_role( CURSIST, 'Kleistad cursist' );
+		add_role( BESTUUR, 'Kleistad bestuur' );
+		add_role( LID, 'Kleistad abonnnee' );
+		add_role( DOCENT, 'Kleistad docent' );
+		add_role( BOEKHOUD, 'Kleistad boekhouder' );
+
 		$this->oven   = new Kleistad_Factory_For_Oven( $this );
 		$this->order  = new Kleistad_Factory_For_Order( $this );
 		$this->cursus = new Kleistad_Factory_For_Cursus( $this );

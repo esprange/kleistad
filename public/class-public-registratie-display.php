@@ -25,14 +25,9 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 			$this->wachtwoord();
 			return;
 		}
-		$this->form();
-	}
-
-	/**
-	 * Render de details
-	 */
-	protected function form_content() : void {
-		?>
+		$this->form(
+			function() : void {
+				?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_voornaam">Naam</label>
@@ -138,7 +133,9 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button kleistad-edit-link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
 			</div>
 		</div>
-		<?php
+				<?php
+			}
+		);
 	}
 
 	/**
