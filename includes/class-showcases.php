@@ -158,7 +158,7 @@ class Showcases implements Countable, Iterator {
 	 * Controleer of er emails moeten worden verstuurd voor werkstukken die tentoongesteld gaan worden
 	 */
 	public static function doe_dagelijks() {
-		$show_datums = Showcase::show_datums();
+		$show_datums = ( new Show() )->get_datums();
 		$keramisten  = [];
 		$vandaag     = strtotime( 'today' );
 		foreach ( new self( [ 'post_status' => [ Showcase::BESCHIKBAAR ] ] ) as $showcase ) {

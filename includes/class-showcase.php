@@ -134,7 +134,7 @@ class Showcase {
 	 *
 	 * @return string
 	 */
-	public function show_status() : string {
+	public function get_statustekst() : string {
 		if ( self::VERKOCHT === $this->status ) {
 			return 'verkocht';
 		}
@@ -262,30 +262,4 @@ class Showcase {
 		register_post_status( self::BESCHIKBAAR, [ 'public' => true ] );
 	}
 
-	/**
-	 * Bepaal de datums van de huidige en komende shows.
-	 *
-	 * @param int $datum Default huidige datum, aanpasbaar voor testdoeleinden.
-	 * @return array
-	 */
-	public static function show_datums( int $datum = 0 ) : array {
-		$datum      = $datum ?: time();
-		$maand      = intval( date( 'n', $datum ) ) - 1;
-		$periode    = 0 === $maand % 2 ? -2 : -3;
-		$shows      = [];
-		$show_count = 0;
-		while ( 3 > $show_count ) {
-			$start = strtotime( "first monday of $periode month 0:00", $datum );
-			$eind  = strtotime( 'first monday of ' . $periode + 2 . ' month 0:00', $datum );
-			if ( $datum >= $start && $datum < $eind || $show_count ) {
-				$shows[] = [
-					'start' => $start,
-					'eind'  => $eind,
-				];
-			}
-			$periode   += 2;
-			$show_count = count( $shows );
-		}
-		return $shows;
-	}
 }

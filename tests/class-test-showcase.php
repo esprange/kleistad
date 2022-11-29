@@ -66,7 +66,7 @@ class Test_Showcase extends Kleistad_UnitTestCase {
 					'eind'  => date( 'Y-m-d', $show['eind'] ),
 				];
 			},
-			Showcase::show_datums( strtotime( $datum ) )
+			( new Show( strtotime( $datum ) ) )->get_datums()
 		);
 	}
 
@@ -114,16 +114,16 @@ class Test_Showcase extends Kleistad_UnitTestCase {
 		$showcase1->titel = 'Dit is een test';
 		$showcase1->prijs = 123;
 		$showcase_id      = $showcase1->save();
-		$this->assertNotEquals( Showcase::TENTOONGESTELD, $showcase1->show_status(), 'tentoonstelling status onjuist 1' );
-		$show_datums      = Showcase::show_datums();
+		$this->assertNotEquals( Showcase::TENTOONGESTELD, $showcase1->get_statustekst(), 'tentoonstelling status onjuist 1' );
+		$show_datums      = ( new Show() )->get_datums();
 		$showcase1->shows = [ $show_datums[0] ];
 		$showcase1->save();
 		$showcase2 = new Showcase( $showcase_id );
-		$this->assertEquals( Showcase::TENTOONGESTELD, $showcase2->show_status(), 'tentoonstelling status onjuist 2' );
+		$this->assertEquals( Showcase::TENTOONGESTELD, $showcase2->get_statustekst(), 'tentoonstelling status onjuist 2' );
 		$showcase2->shows = [ $show_datums[2] ];
 		$showcase2->save();
 		$showcase3 = new Showcase( $showcase_id );
-		$this->assertEquals( Showcase::INGEPLAND, $showcase3->show_status(), 'tentoonstelling status onjuist 2' );
+		$this->assertEquals( Showcase::INGEPLAND, $showcase3->get_statustekst(), 'tentoonstelling status onjuist 2' );
 	}
 
 	/**
@@ -134,7 +134,7 @@ class Test_Showcase extends Kleistad_UnitTestCase {
 		$keramist_id = $this->factory()->user->create();
 		wp_set_current_user( $keramist_id );
 
-		$show_datums      = Showcase::show_datums();
+		$show_datums      = ( new Show() )->get_datums();
 		$showcase1        = new Showcase();
 		$showcase1->titel = 'Dit is een test';
 		$showcase1->prijs = 123;

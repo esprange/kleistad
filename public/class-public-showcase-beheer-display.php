@@ -71,7 +71,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 					&nbsp;
 				<?php endif; ?></td>
 				<td><?php echo esc_html( $showcase->titel ); ?></td>
-				<td><?php echo esc_html( $showcase->show_status() ); ?></td>
+				<td><?php echo esc_html( $showcase->get_statustekst() ); ?></td>
 				<td>
 					<a href="#" title="wijzig werkstuk" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $showcase->id ); ?>" data-actie="wijzigen" >&nbsp;</a>
 				</td>
@@ -118,7 +118,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $showcase->titel ); ?></td>
 					<td><?php echo esc_html( get_user_by( 'ID', $showcase->keramist_id )->display_name ); ?></td>
 					<td><?php echo esc_html( sprintf( '%04d', $showcase->keramist_id ) ); ?></td>
-					<td><?php echo esc_html( $showcase->show_status() ); ?></td>
+					<td><?php echo esc_html( $showcase->get_statustekst() ); ?></td>
 					<td>
 						<a href="#" title="wijzig werkstuk" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( $showcase->id ); ?>" data-actie="wijzigen" >&nbsp;</a>
 					</td>
@@ -306,7 +306,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<?php
-			foreach ( Showcase::show_datums() as $index => $show_datum ) :
+			foreach ( ( new Show() )->get_datums() as $index => $show_datum ) :
 				$checked = false;
 				foreach ( $this->data['showcase']->shows as $show ) :
 					if ( $show['start'] >= $show_datum['start'] && $show['eind'] <= $show_datum['eind'] ) :

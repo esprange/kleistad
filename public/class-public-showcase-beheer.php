@@ -275,7 +275,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 					number_format_i18n( $showcase->prijs, 2 ),
 					number_format_i18n( $showcase->btw_percentage ),
 					date( 'd-m-Y', $showcase->aanmeld_datum ),
-					$showcase->show_status(),
+					$showcase->get_statustekst(),
 				],
 				';'
 			);
