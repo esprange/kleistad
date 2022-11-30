@@ -41,7 +41,12 @@ class Public_Workshop_Aanvraag extends Public_Bestelling {
 		}
 		$planning = new Workshopplanning();
 		if ( 0 === count( $planning->get_beschikbaarheid() ) ) {
-			return $this->status( new WP_Error( 'Aanvraag', 'Helaas is er de komende drie maanden geen ruimte beschikbaar. Probeer het later opnieuw' ) );
+			return $this->status(
+				new WP_Error(
+					'Aanvraag',
+					sprintf( 'Helaas is er de komende %d weken geen ruimte beschikbaar. Probeer het later opnieuw', opties()['weken workshop'] )
+				)
+			);
 		}
 		return $this->content();
 	}

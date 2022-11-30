@@ -12,9 +12,9 @@
 namespace Kleistad;
 
 /**
- * Kleistad Show class.
+ * Kleistad Shows class.
  */
-class Show {
+class Shows {
 
 	/**
 	 * De datums

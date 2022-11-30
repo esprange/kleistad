@@ -151,7 +151,7 @@ class Showcase {
 			}
 			return self::TENTOONGESTELD;
 		}
-		return 'beschikbaar';
+		return self::BESCHIKBAAR;
 	}
 
 	/**
@@ -257,8 +257,6 @@ class Showcase {
 				'show_ui' => false,
 			]
 		);
-		register_post_status( self::INGEPLAND, [ 'public' => true ] );
-		register_post_status( self::TENTOONGESTELD, [ 'public' => true ] );
 		register_post_status( self::BESCHIKBAAR, [ 'public' => true ] );
 	}
 

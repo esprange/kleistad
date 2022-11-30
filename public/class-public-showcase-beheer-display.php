@@ -306,7 +306,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<?php
-			foreach ( ( new Show() )->get_datums() as $index => $show_datum ) :
+			foreach ( ( new Shows() )->get_datums() as $index => $show_datum ) :
 				$checked = false;
 				foreach ( $this->data['showcase']->shows as $show ) :
 					if ( $show['start'] >= $show_datum['start'] && $show['eind'] <= $show_datum['eind'] ) :
