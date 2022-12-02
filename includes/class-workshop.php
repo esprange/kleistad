@@ -468,13 +468,21 @@ class Workshop extends Artikel {
 	}
 
 	/**
+	 * De verval datum
+	 *
+	 * @return int
+	 */
+	public function get_verval_datum(): int {
+		return $this->datum;
+	}
+
+	/**
 	 * De regels voor de factuur.
 	 *
 	 * @return Orderregels De regel.
 	 */
 	public function get_factuurregels() : Orderregels {
-		$orderregels               = new Orderregels();
-		$orderregels->verval_datum = $this->datum;
+		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( "$this->naam op " . wp_date( 'l d-m-y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
 		return $orderregels;
 	}

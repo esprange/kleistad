@@ -36,27 +36,6 @@ class Orderregels implements Countable, Iterator {
 	private int $current_index = 0;
 
 	/**
-	 * De verval datum (dat er betaald moet worden) die bij de orderregels hoort.
-	 *
-	 * @var int Datum.
-	 */
-	public int $verval_datum;
-
-	/**
-	 * De constructor
-	 *
-	 * @param string|null $json_string Een optionele string om de regels mee te laden.
-	 */
-	public function __construct( string $json_string = null ) {
-		if ( is_string( $json_string ) ) {
-			foreach ( json_decode( $json_string, true ) as $regel ) {
-				$this->regels[] = new Orderregel( $regel['artikel'], floatval( $regel['aantal'] ), floatval( $regel['prijs'] ), floatval( $regel['btw'] ) );
-			}
-		}
-		$this->verval_datum = strtotime( '+14 days  0:00' );
-	}
-
-	/**
 	 * Deep clone
 	 */
 	public function __clone() {

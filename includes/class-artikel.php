@@ -78,6 +78,15 @@ abstract class Artikel {
 	}
 
 	/**
+	 * Geef de vervaldatum dat het artikel moet zijn betaald, kan nader ingevuld worden.
+	 *
+	 * @return int
+	 */
+	public function get_verval_datum() : int {
+		return strtotime( '+ 14 days 00:00' );
+	}
+
+	/**
 	 * Klant gegevens voor op de factuur, kan eventueel aangepast worden zoals bijvoorbeeld voor de contact van een workshop.
 	 *
 	 * @return array De naw gegevens.

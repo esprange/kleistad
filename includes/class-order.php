@@ -14,34 +14,104 @@ namespace Kleistad;
 /**
  * Kleistad Order class.
  *
- * @property int    id
- * @property float  betaald
- * @property int    datum
- * @property int    credit_id
- * @property int    origineel_id
- * @property bool   gesloten
- * @property bool   credit
- * @property array  historie
- * @property array  klant
- * @property int    klant_id
- * @property int    mutatie_datum
- * @property int    verval_datum
- * @property string referentie
- * @property string regels
- * @property string opmerking
- * @property int    factuurnr
- * @property string transactie_id
- *
  * @since 6.1.0
  */
 class Order {
 
 	/**
-	 * De orderdata
+	 * Order id
 	 *
-	 * @var array $data De ruwe data.
+	 * @var int $id Id van de order.
 	 */
-	private array $data;
+	public int $id = 0;
+
+	/**
+	 * Betaald bedrag
+	 *
+	 * @var float $betaald Bedrag dat al betaald is.
+	 */
+	public float $betaald = 0.0;
+
+	/**
+	 * Order datum
+	 *
+	 * @var int $datum Unix timestamp van aanleggen order.
+	 */
+	public int $datum;
+
+	/**
+	 * Verwijzing naar credit order.
+	 *
+	 * @var int $credit_id Id van de credit order, indien gecrediteerd.
+	 */
+	public int $credit_id = 0;
+
+	/**
+	 * Verwijzing naar originele order
+	 *
+	 * @var int $origineel_id Id van de originele order ingeval van credit.
+	 */
+	public int $origineel_id = 0;
+
+	/**
+	 * Gesloten vlag
+	 *
+	 * @var bool $gesloten True als de order gesloten is.
+	 */
+	public bool $gesloten = false;
+
+	/**
+	 * Credit vlag
+	 *
+	 * @var bool $credit True als het een creditering betreft.
+	 */
+	public bool $credit = false;
+
+	/**
+	 * Order historie.
+	 *
+	 * @var array $historie Order historie.
+	 */
+	public array $historie = [];
+
+	/**
+	 * Klant gegevens voor op de factuur.
+	 *
+	 * @var array $klant NAW gegevens.
+	 */
+	public array $klant = [
+		'naam'  => '',
+		'adres' => '',
+		'email' => '',
+	];
+
+	/**
+	 * Het eventuele klant nummer.
+	 *
+	 * @var int $klant_id WP user id.
+	 */
+	public int $klant_id = 0;
+
+	/**
+	 * De order mutatie datum
+	 *
+	 * @var int $mutatie_datum Unix order mutatiedatum/tijd.
+	 */
+	public int $mutatie_datum = 0;
+
+	/**
+	 * De order verval datum
+	 *
+	 * @var int $verval_datum Unix order vervaldatum/tijd.
+	 */
+	public int $verval_datum = 0;
+
+	/**
+	 * De order referentie
+	 *
+	 * @var string $referentie De order referentie.
+	 */
+	public string $referentie;
 
 	/**
 	 * De order regels
@@ -51,6 +121,27 @@ class Order {
 	public Orderregels $orderregels;
 
 	/**
+	 * Eventuele opmerking op factuur.
+	 *
+	 * @var string $opmerking Opmerking
+	 */
+	public string $opmerking = '';
+
+	/**
+	 * Het factuur nummer.
+	 *
+	 * @var int $factuurnr factuur nummer.
+	 */
+	public int $factuurnr = 0;
+
+	/**
+	 * Het Mollie transactie id.
+	 *
+	 * @var string $transactie_id transactie id.
+	 */
+	public string $transactie_id = '';
+
+	/**
 	 * Maak het object aan.
 	 *
 	 * @param int|string $arg  Het order id of de referentie.
@@ -58,32 +149,10 @@ class Order {
 	 */
 	public function __construct( int|string $arg, ?array $load = null ) {
 		global $wpdb;
-		$this->data = [
-			'id'            => 0,
-			'betaald'       => 0.0,
-			'datum'         => date( 'Y-m-d H:i:s' ),
-			'credit_id'     => 0,
-			'origineel_id'  => 0,
-			'gesloten'      => false,
-			'credit'        => false,
-			'historie'      => wp_json_encode( [] ),
-			'klant'         => wp_json_encode(
-				[
-					'naam'  => '',
-					'adres' => '',
-					'email' => '',
-				]
-			),
-			'klant_id'      => 0,
-			'mutatie_datum' => null,
-			'verval_datum'  => date( 'Y-m-d 00:00:0', strtotime( '+14 days 00:00' ) ),
-			'referentie'    => '',
-			'regels'        => wp_json_encode( [] ),
-			'opmerking'     => '',
-			'factuurnr'     => 0,
-			'transactie_id' => '',
-		];
-		$resultaat  = null;
+		$this->datum        = strtotime( 'now' );
+		$this->verval_datum = strtotime( '+ 14 days 00:00' );
+		$this->orderregels  = new Orderregels();
+		$resultaat          = null;
 		if ( ! is_null( $load ) ) {
 			$resultaat = $load;
 		} elseif ( is_numeric( $arg ) ) {
@@ -93,9 +162,26 @@ class Order {
 			$resultaat        = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s OR transactie_id = %s ORDER BY id DESC LIMIT 1", $arg, $arg ), ARRAY_A ) ?? 0;
 		}
 		if ( ! empty( $resultaat ) ) {
-			$this->data = $resultaat;
+			$this->id            = intval( $resultaat['id'] );
+			$this->betaald       = floatval( $resultaat['betaald'] );
+			$this->datum         = strtotime( $resultaat['datum'] );
+			$this->credit_id     = intval( $resultaat['credit_id'] );
+			$this->origineel_id  = intval( $resultaat['origineel_id'] );
+			$this->credit        = boolval( $resultaat['credit'] );
+			$this->gesloten      = boolval( $resultaat['gesloten'] );
+			$this->historie      = json_decode( $resultaat['historie'], true );
+			$this->klant         = json_decode( $resultaat['klant'], true );
+			$this->klant_id      = intval( $resultaat['klant_id'] );
+			$this->mutatie_datum = strtotime( $resultaat['mutatie_datum'] );
+			$this->verval_datum  = strtotime( $resultaat['verval_datum'] );
+			$this->referentie    = $resultaat['referentie'];
+			$this->opmerking     = htmlspecialchars_decode( $resultaat['opmerking'] );
+			$this->factuurnr     = intval( $resultaat['factuurnr'] );
+			$this->transactie_id = $resultaat['transactie_id'];
+			foreach ( json_decode( $resultaat['regels'], true ) as $regel ) {
+				$this->orderregels->toevoegen( new Orderregel( $regel['artikel'], floatval( $regel['aantal'] ), floatval( $regel['prijs'] ), floatval( $regel['btw'] ) ) );
+			}
 		}
-		$this->orderregels = new Orderregels( $this->data['regels'] );
 	}
 
 	/**
@@ -106,54 +192,6 @@ class Order {
 		$this->id           = 0;
 		$this->datum        = time();
 		$this->orderregels  = clone $this->orderregels;
-	}
-
-	/**
-	 * Get attribuut van het object.
-	 *
-	 * @since 6.1.0
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @return mixed Attribuut waarde.
-	 */
-	public function __get( string $attribuut ) {
-		if ( in_array( $attribuut, [ 'mutatie_datum', 'verval_datum', 'datum' ], true ) ) {
-			return strtotime( $this->data[ $attribuut ] );
-		}
-		if ( in_array( $attribuut, [ 'credit_id', 'origineel_id', 'klant_id', 'id' ], true ) ) {
-			return intval( $this->data[ $attribuut ] );
-		}
-		if ( in_array( $attribuut, [ 'klant', 'historie' ], true ) ) {
-			return json_decode( $this->data[ $attribuut ], true );
-		}
-		if ( in_array( $attribuut, [ 'gesloten', 'credit' ], true ) ) {
-			return boolval( $this->data[ $attribuut ] );
-		}
-		if ( 'betaald' === $attribuut ) {
-			return floatval( $this->data[ $attribuut ] );
-		}
-		return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
-	}
-
-	/**
-	 * Set attribuut van het object.
-	 *
-	 * @since 6.1.0
-	 *
-	 * @param string $attribuut Attribuut naam.
-	 * @param mixed  $waarde    Attribuut waarde.
-	 */
-	public function __set( string $attribuut, mixed $waarde ) {
-		$this->data[ $attribuut ] = match ( $attribuut ) {
-			'historie',
-			'klant'        => wp_json_encode( $waarde ),
-			'datum',
-			'mutatie_datum',
-			'verval_datum' => date( 'Y-m-d H:i:s', $waarde ),
-			'gesloten',
-			'credit'       => (int) $waarde,
-			default        => $waarde,
-		};
 	}
 
 	/**
@@ -225,22 +263,40 @@ class Order {
 	 */
 	public function save( string $reden = '' ) : int {
 		global $wpdb;
-		if ( ! empty( $reden ) ) {
-			$historie       = $this->historie;
-			$historie[]     = sprintf( '%s %s', wp_date( 'd-m-Y H:i' ), $reden );
-			$this->historie = $historie;
-		}
-		$this->gesloten = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
-		$this->regels   = $this->orderregels->get_json_export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
+
+		if ( ! empty( $reden ) ) {
+			$this->historie[] = sprintf( '%s %s', wp_date( 'd-m-Y H:i' ), $reden );
+		}
+		$this->gesloten      = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
+		$this->factuurnr     = $this->factuurnr ?: 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
+		$this->mutatie_datum = $this->id ? time() : 0;
+		$orderdata           = [
+			'id'            => $this->id,
+			'betaald'       => $this->betaald,
+			'datum'         => date( 'Y-m-d H:i:s', $this->datum ),
+			'credit_id'     => $this->credit_id,
+			'origineel_id'  => $this->origineel_id,
+			'gesloten'      => intval( $this->gesloten ),
+			'credit'        => intval( $this->credit ),
+			'historie'      => wp_json_encode( $this->historie ),
+			'klant'         => wp_json_encode( $this->klant ),
+			'klant_id'      => $this->klant_id,
+			'mutatie_datum' => date( 'Y-m-d H:i:s', $this->mutatie_datum ),
+			'verval_datum'  => date( 'Y-m-d H:i:s', $this->verval_datum ),
+			'referentie'    => $this->referentie,
+			'regels'        => $this->orderregels->get_json_export(),
+			'opmerking'     => $this->opmerking,
+			'factuurnr'     => $this->factuurnr,
+			'transactie_id' => $this->transactie_id,
+		];
 		if ( $this->id ) {
-			$this->mutatie_datum = time();
-			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] );
+			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $orderdata, [ 'id' => $this->id ] );
 		} else {
-			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
-			$wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data );
+			$wpdb->insert( "{$wpdb->prefix}kleistad_orders", $orderdata );
 			$this->id = $wpdb->insert_id;
 		}
+
 		$wpdb->query( 'COMMIT' );
 		return $this->id;
 	}
@@ -267,7 +323,7 @@ class Order {
 		$this->klant         = $artikel->get_naw_klant();
 		$this->opmerking     = $opmerking;
 		$this->transactie_id = $transactie_id;
-		$this->verval_datum  = $orderregels->verval_datum;
+		$this->verval_datum  = $artikel->get_verval_datum();
 		foreach ( $orderregels as $orderregel ) {
 			$this->orderregels->toevoegen( $orderregel );
 		}

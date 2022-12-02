@@ -149,13 +149,21 @@ class Dagdelenkaart extends Artikel {
 	}
 
 	/**
+	 * Geef de verval datum
+	 *
+	 * @return int
+	 */
+	public function get_verval_datum(): int {
+		return $this->start_datum;
+	}
+
+	/**
 	 * Geef de factuur regels.
 	 *
 	 * @return Orderregels De regels.
 	 */
 	public function get_factuurregels() : Orderregels {
-		$orderregels               = new Orderregels();
-		$orderregels->verval_datum = $this->start_datum;
+		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . wp_date( 'd-m-Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
 		return $orderregels;
 	}

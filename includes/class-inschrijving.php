@@ -344,6 +344,18 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Geef de verval datum
+	 *
+	 * @return int
+	 */
+	public function get_verval_datum(): int {
+		if ( ! $this->maatwerkkosten ) {
+			return $this->cursus->start_datum;
+		}
+		return parent::get_verval_datum();
+	}
+
+	/**
 	 * De regels voor de factuur.
 	 *
 	 * @return Orderregels De regels of één regel.
@@ -354,7 +366,6 @@ class Inschrijving extends Artikel {
 			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->maatwerkkosten ) );
 			return $orderregels;
 		}
-		$orderregels->verval_datum = $this->cursus->start_datum;
 		if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
 			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ) );
 			return $orderregels;

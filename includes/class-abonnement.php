@@ -71,7 +71,7 @@ class Abonnement extends Artikel {
 	 * @param int $klant_id wp user id van de abonnee.
 	 */
 	public function __construct( int $klant_id ) {
-		$default_data   = [
+		$default_data       = [
 			'code'               => "A$klant_id",
 			'datum'              => time(),
 			'start_datum'        => 0,
@@ -87,11 +87,12 @@ class Abonnement extends Artikel {
 			'factuur_maand'      => 0,
 			'historie'           => [],
 		];
-		$this->klant_id = $klant_id;
-		$abonnement     = get_user_meta( $this->klant_id, self::META_KEY, true );
-		$this->data     = is_array( $abonnement ) ? wp_parse_args( $abonnement, $default_data ) : $default_data;
-		$this->actie    = new AbonnementActie( $this );
-		$this->betaling = new AbonnementBetaling( $this );
+		$this->klant_id     = $klant_id;
+		$abonnement         = get_user_meta( $this->klant_id, self::META_KEY, true );
+		$this->data         = is_array( $abonnement ) ? wp_parse_args( $abonnement, $default_data ) : $default_data;
+		$this->actie        = new AbonnementActie( $this );
+		$this->betaling     = new AbonnementBetaling( $this );
+		$this->artikel_type = 'regulier';
 	}
 
 	/**
@@ -197,6 +198,19 @@ class Abonnement extends Artikel {
 	}
 
 	/**
+	 * Geef de vervaldatum terug
+	 *
+	 * @return int
+	 */
+	public function get_verval_datum() : int {
+		return match ( $this->artikel_type ) {
+			'start'        => $this->start_datum,
+			'overbrugging' => strtotime( '+7 days 0:00', $this->start_eind_datum ),
+			default        => parent::get_verval_datum()
+		};
+	}
+
+	/**
 	 * Geef de factuurregels door.
 	 *
 	 * @return Orderregels De regels.
@@ -204,26 +218,24 @@ class Abonnement extends Artikel {
 	public function get_factuurregels() : Orderregels {
 		$betaalinfo  = [
 			'start'        => [
-				'info'         => sprintf(
+				'info'   => sprintf(
 					'%s abonnement %s vanaf %s tot %s',
 					$this->soort,
 					$this->code,
 					wp_date( 'd-m-Y', $this->start_datum ),
 					wp_date( 'd-m-Y', $this->start_eind_datum )
 				),
-				'aantal'       => opties()['start_maanden'],
-				'verval_datum' => $this->start_datum,
+				'aantal' => opties()['start_maanden'],
 			],
 			'overbrugging' => [
-				'info'         => sprintf(
+				'info'   => sprintf(
 					'%s abonnement %s vanaf %s tot %s',
 					$this->soort,
 					$this->code,
 					wp_date( 'd-m-Y', strtotime( '+1 day', $this->start_eind_datum ) ),
 					wp_date( 'd-m-Y', strtotime( '-1 day', $this->reguliere_datum ) )
 				),
-				'aantal'       => $this->get_overbrugging_fractie(),
-				'verval_datum' => strtotime( '+7 days 0:00', $this->start_eind_datum ),
+				'aantal' => $this->get_overbrugging_fractie(),
 			],
 			'regulier'     => [
 				'info'   => sprintf(
@@ -246,8 +258,7 @@ class Abonnement extends Artikel {
 		];
 		$orderregels = new Orderregels();
 		if ( isset( $betaalinfo[ $this->artikel_type ] ) ) {
-			$orderregels->verval_datum = $betaalinfo[ $this->artikel_type ]['verval_datum'] ?? $orderregels->verval_datum;
-			$aantal                    = $betaalinfo[ $this->artikel_type ]['aantal'];
+			$aantal = $betaalinfo[ $this->artikel_type ]['aantal'];
 			if ( $aantal ) {
 				$orderregels->toevoegen( new Orderregel( $betaalinfo[ $this->artikel_type ]['info'], $aantal, $this->betaling->get_bedrag() ) );
 				foreach ( $this->extras as $extra ) {
