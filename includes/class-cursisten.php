@@ -103,4 +103,26 @@ class Cursisten implements Countable, Iterator {
 		return isset( $this->cursisten[ $this->current_index ] );
 	}
 
+	/**
+	 * Dagelijkse job, check of de cursist inderdaad ingedeeld is en niet heeft geannuleerd.
+	 * Als er nog een saldo openstaat blijft de rol open staan.
+	 */
+	public static function doe_dagelijks() {
+		foreach ( new self() as $cursist ) {
+			$valide = ! empty( ( new Saldo( $cursist->ID ) )->storting );
+			if ( $valide ) {
+				return;
+			}
+			foreach ( $cursist->get_cursus_inschrijvingen() as $inschrijving ) {
+				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+					$valide = true;
+					break;
+				}
+			}
+			if ( ! $valide ) {
+				$cursist->remove_role( CURSIST );
+			}
+		}
+	}
+
 }
