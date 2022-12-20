@@ -103,23 +103,4 @@ class Cursisten implements Countable, Iterator {
 		return isset( $this->cursisten[ $this->current_index ] );
 	}
 
-	/**
-	 * Dagelijkse job, voorlopig alleen cursisten rol verwijderen, 2 weken na laatste cursusdag.
-	 */
-	public static function doe_dagelijks() {
-		$laatste_dag = strtotime( '- 2 weeks' );
-		foreach ( new self() as $cursist ) {
-			$actief = false;
-			foreach ( $cursist->get_cursus_inschrijvingen() as $inschrijving ) {
-				if ( $laatste_dag <= $inschrijving->cursus->eind_datum && ! $inschrijving->geannuleerd ) {
-					$actief = true;
-					break;
-				}
-			}
-			if ( ! $actief ) {
-				$cursist->remove_role( CURSIST );
-			}
-		}
-	}
-
 }

@@ -296,67 +296,72 @@ class Admin_Instellingen_Display {
 	 */
 	private function instellingen_parameters() : void {
 		$parameters = [
-			'cursusmaximum'       => [
+			'cursusmaximum'         => [
 				'min'   => 1,
 				'max'   => 99,
 				'label' => 'Standaard maximum cursisten per cursus/workshop',
 			],
-			'start_maanden'       => [
+			'start_maanden'         => [
 				'min'   => 1,
 				'max'   => 3,
 				'label' => 'Start duur abonnement (maanden)',
 			],
-			'min_pauze_weken'     => [
+			'min_pauze_weken'       => [
 				'min'   => 1,
 				'max'   => 12,
 				'label' => 'Minimum pauze duur abonnement (weken)',
 			],
-			'max_pauze_weken'     => [
+			'max_pauze_weken'       => [
 				'min'   => 1,
 				'max'   => 12,
 				'label' => 'Maximum pauze duur abonnement (weken)',
 			],
-			'termijn'             => [
+			'termijn'               => [
 				'min'   => 0,
 				'max'   => 14,
 				'label' => 'Termijn (dagen) dat correctie stook mogelijk is',
 			],
-			'oven_midden'         => [
+			'oven_midden'           => [
 				'min'   => 0,
 				'max'   => 1500,
 				'label' => 'Oven temperatuur waarbij het midden tarief gaat gelden',
 			],
-			'oven_hoog'           => [
+			'oven_hoog'             => [
 				'min'   => 0,
 				'max'   => 1500,
 				'label' => 'Oven temperatuur waarbij het hoge tarief gaat gelden',
 			],
-			'stook_max'           => [
+			'stook_max'             => [
 				'min'   => 1,
 				'max'   => 99,
 				'label' => 'Aantal stook reserveringen dat mag openstaan',
 			],
-			'weken_werkplek'      => [
+			'weken_werkplek'        => [
 				'min'   => 1,
 				'max'   => 52,
 				'label' => 'Aantal weken vooruit dat werkplekken gereserveerd kunnen worden',
 			],
-			'verloopaanvraag'     => [
+			'weken_cursus_werkplek' => [
+				'min'   => 0,
+				'max'   => 52,
+				'label' => 'Aantal weken na afloop cursus dat werkplekken gereserveerd kunnen worden',
+			],
+			'verloopaanvraag'       => [
 				'min'   => 1,
 				'max'   => 12,
 				'label' => 'Aantal weken voordat een workshop aanvraag verloopt',
 			],
-			'weken_workshop'      => [
+			'weken_workshop'        => [
 				'min'   => 1,
 				'max'   => 52,
 				'label' => 'Aantal weken vooruit dat workshop aanvragen gedaan kunnen worden',
 			],
-			'workshop_wijzigbaar' => [
+			'workshop_wijzigbaar'   => [
 				'min'   => 0,
 				'max'   => 99,
 				'label' => 'Aantal dagen na workshop dat workshop wijzigbaar is',
 			],
-			'max_activiteit'      => [
+			'max_activiteit'        => [
 				'min'   => 1,
 				'max'   => 12,
 				'label' => 'Aantal activiteiten (cursus, workshop etc.) dat gelijktijdig kan plaatsvinden',

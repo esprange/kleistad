@@ -83,14 +83,14 @@ class Cursist extends Gebruiker {
 	}
 
 	/**
-	 * Bepaal of de cursist nu actief is.
+	 * Bepaal of de cursist nu actief is, ook na afloop van de cursus kan dit nog het geval zijn.
 	 *
 	 * @return bool True als actief.
 	 */
 	public function is_actief() : bool {
 		$vandaag = strtotime( 'today' );
 		foreach ( $this->inschrijvingen as $inschrijving ) {
-			if ( $inschrijving->ingedeeld && $vandaag <= $inschrijving->cursus->eind_datum && $vandaag >= $inschrijving->cursus->start_datum ) {
+			if ( $inschrijving->ingedeeld && $vandaag <= $inschrijving->cursus->eind_datum + opties()['weken_cursus_werkplek'] * WEEK_IN_SECONDS && $vandaag >= $inschrijving->cursus->start_datum ) {
 				return true;
 			}
 		}

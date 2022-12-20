@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 180;
+	const DBVERSIE = 182;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -45,29 +45,30 @@ class Admin_Upgrade {
 	 */
 	private function convert_opties() : void {
 		$default_options = [
-			'onbeperkt_abonnement' => 50,
-			'beperkt_abonnement'   => 30,
-			'dagdelenkaart'        => 60,
-			'cursusprijs'          => 130,
-			'cursusinschrijfprijs' => 25,
-			'cursusmaximum'        => 12,
-			'workshopprijs'        => 120,
-			'materiaalprijs'       => 2.50,
-			'administratiekosten'  => 1.00,
-			'termijn'              => 4,
-			'start_maanden'        => 3,
-			'min_pauze_weken'      => 2,
-			'max_pauze_weken'      => 9,
-			'extra'                => [],
-			'oven_midden'          => 1100,
-			'oven_hoog'            => 1200,
-			'stook_max'            => 2,
-			'weken_werkplek'       => 5,
-			'weken_workshop'       => 12,
-			'workshop_wijzigbaar'  => 0,
-			'max_activiteit'       => 1,
-			'verloopaanvraag'      => 1,
-			'werkruimte'           => [
+			'onbeperkt_abonnement'  => 50,
+			'beperkt_abonnement'    => 30,
+			'dagdelenkaart'         => 60,
+			'cursusprijs'           => 130,
+			'cursusinschrijfprijs'  => 25,
+			'cursusmaximum'         => 12,
+			'workshopprijs'         => 120,
+			'materiaalprijs'        => 2.50,
+			'administratiekosten'   => 1.00,
+			'termijn'               => 4,
+			'start_maanden'         => 3,
+			'min_pauze_weken'       => 2,
+			'max_pauze_weken'       => 9,
+			'extra'                 => [],
+			'oven_midden'           => 1100,
+			'oven_hoog'             => 1200,
+			'stook_max'             => 2,
+			'weken_werkplek'        => 5,
+			'weken_cursus_werkplek' => 3,
+			'weken_workshop'        => 12,
+			'workshop_wijzigbaar'   => 0,
+			'max_activiteit'        => 1,
+			'verloopaanvraag'       => 1,
+			'werkruimte'            => [
 				[
 					'naam'  => 'Handvormen',
 					'kleur' => '#E1E599',
@@ -81,11 +82,11 @@ class Admin_Upgrade {
 					'kleur' => '#D9D9D9',
 				],
 			],
-			'activiteit'           => [
+			'activiteit'            => [
 				[ 'naam' => 'Workshop' ],
 				[ 'naam' => 'Kinderfeest' ],
 			],
-			'actpauze'             => [],
+			'actpauze'              => [],
 		];
 		$default_setup   = [
 			'sleutel'            => '',
@@ -100,24 +101,8 @@ class Admin_Upgrade {
 			'stort'              => 1,
 			'profiel'            => 0,
 		];
-		$current_options = get_option( 'kleistad-opties', [] );
-		$current_setup   = get_option( 'kleistad-setup', [] );
-		$options         = [];
-		$setup           = [];
-		foreach ( array_keys( $default_options ) as $key ) {
-			if ( isset( $current_options[ $key ] ) ) {
-				$options[ $key ] = $current_options[ $key ];
-			}
-		}
-		foreach ( array_keys( $default_setup ) as $key ) {
-			if ( isset( $current_setup[ $key ] ) ) {
-				$setup[ $key ] = $current_setup[ $key ];
-			} elseif ( isset( $current_options[ $key ] ) ) {
-				$setup[ $key ] = $current_options[ $key ];
-			}
-		}
-		update_option( 'kleistad-opties', wp_parse_args( $options, $default_options ) );
-		update_option( 'kleistad-setup', wp_parse_args( $setup, $default_setup ) );
+		update_option( 'kleistad-opties', array_merge( $default_options, get_option( 'kleistad-opties', [] ) ) );
+		update_option( 'kleistad-setup', array_merge( $default_setup, get_option( 'kleistad-setup', [] ) ) );
 	}
 
 	/**
