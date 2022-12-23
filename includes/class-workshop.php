@@ -290,7 +290,7 @@ class Workshop extends Artikel {
 			$this->betaling_email    = boolval( $workshop['betaling_email'] );
 			$this->technieken        = json_decode( $workshop['technieken'], true ) ?: [];
 			$this->werkplekken       = json_decode( $workshop['werkplekken'], true ) ?: [];
-			$this->communicatie      = maybe_unserialize( $workshop['communicatie'] );
+			$this->communicatie      = maybe_unserialize( $workshop['communicatie'] ) ?: [];
 			$this->kosten            = floatval( $workshop['kosten'] );
 			$this->aantal            = intval( $workshop['aantal'] );
 			$this->contact           = htmlspecialchars_decode( $workshop['contact'] );
