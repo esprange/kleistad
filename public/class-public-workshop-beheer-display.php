@@ -114,7 +114,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function form_details() {
-		$readonly = $this->data['workshop']->vervallen || $this->data['workshop']->datum <= strtotime( '- ' . opties()['workshop_wijzigbaar'] . ' day 0:00' );
+		$readonly = ! $this->data['workshop']->vervallen && $this->data['workshop']->datum <= strtotime( '- ' . opties()['workshop_wijzigbaar'] . ' day 0:00' );
 		?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $this->data['workshop']->id ); ?>"/>
 		<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $this->data['workshop']->aanvraag_id ); ?>"/>
@@ -122,11 +122,15 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<?php $this->activiteit_details( $readonly )->contact_details( $readonly )->planning_details( $readonly )->kosten_details( $readonly )->status_details(); ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
+				<?php if ( $this->data['workshop']->vervallen ) : ?>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_herstellen" value="herstellen" >Herstellen</button>
+				<?php else : ?>
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']->definitief ); ?> >Bewaren</button>
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $readonly ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je <?php echo $this->data['workshop']->definitief ? 'opnieuw' : 'nu'; ?> de bevesting wilt versturen" >Bevestigen</button>
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->display_actie ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
+				<?php endif ?>
 			</div>
 			<div class="kleistad-col-3">
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right;">Terug</button>
@@ -298,7 +302,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-3" >
 					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['workshop']->technieken, true ) ); ?> <?php disabled( $readonly ); ?> >
 					<!--suppress HtmlFormInputWithoutLabel -->
-					<input name="werkplekken[<?php echo esc_attr( $techniek ); ?>]" min="0" max="99" type="number" class="kleistad-techniek"
+					<input name="werkplekken[<?php echo esc_attr( $techniek ); ?>]" min="0" max="99" type="number"
 						value="<?php echo esc_attr( $this->data['workshop']->werkplekken[ $techniek ] ?? 0 ); ?>" style="width: 4em;"/> werkplekken
 				</div>
 			<?php endforeach; ?>

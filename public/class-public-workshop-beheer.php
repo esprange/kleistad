@@ -255,6 +255,24 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	}
 
 	/**
+	 * Verwerk de input data en bewaar de workshop.
+	 *
+	 * @return array
+	 */
+	protected function herstellen() : array {
+		$workshop                = $this->update_workshop();
+		$workshop->definitief    = false;
+		$workshop->vervallen     = false;
+		$workshop->aanvraagdatum = strtotime( 'now' );
+		$workshop->save();
+		return [
+			'status'  => $this->status( 'De workshop informatie is opgeslagen' ),
+			'content' => $this->display(),
+		];
+	}
+
+
+	/**
 	 * Verwerk de input data en bevestig de workshop.
 	 *
 	 * @return array
