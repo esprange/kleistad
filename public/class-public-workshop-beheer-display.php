@@ -87,7 +87,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<tr>
 					<td data-sort="<?php echo esc_attr( $workshop->id ); ?>"><?php echo esc_html( $workshop->code ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop->datum ); ?>"><?php echo esc_html( wp_date( 'd-m-Y', $workshop->datum ) ); ?></td>
-					<td><?php echo esc_html( wp_date( 'H:i', $workshop->start_tijd ) ); ?> <?php echo esc_html( wp_date( 'H:i', $workshop->eind_tijd ) ); ?></td>
+					<td><?php echo esc_html( date( 'H:i', $workshop->start_tijd ) ); ?> <?php echo esc_html( date( 'H:i', $workshop->eind_tijd ) ); ?></td>
 					<td><?php echo esc_html( substr( $workshop->contact, 0, 14 ) ); ?></td>
 					<td><?php echo esc_html( $workshop->get_docent_naam( false ) ); ?></td>
 					<td><?php echo esc_html( $workshop->aantal ); ?></td>
@@ -288,12 +288,12 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_start_tijd">Begintijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00"
-				value="<?php echo esc_attr( wp_date( 'H:i', $this->data['workshop']->start_tijd ) ); ?>" class="kleistad-tijd" required <?php wp_readonly( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'H:i', $this->data['workshop']->start_tijd ) ); ?>" class="kleistad-tijd" required <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_eind_tijd">Eindtijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00"
-				value="<?php echo esc_attr( wp_date( 'H:i', $this->data['workshop']->eind_tijd ) ); ?>" class="kleistad-tijd" required <?php wp_readonly( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'H:i', $this->data['workshop']->eind_tijd ) ); ?>" class="kleistad-tijd" required <?php wp_readonly( $readonly ); ?> />
 			</div>
 		</div>
 		<div class="kleistad-row">

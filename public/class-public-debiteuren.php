@@ -280,13 +280,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De info.
 	 */
 	private function get_debiteuren( string $zoek = '' ) : array {
-		$data            = [
+		$data   = [
 			'openstaand'   => 0,
 			'terugstorten' => false,
-			'debiteuren'   => [],
+			'orders'       => [],
 		];
-		$artikelregister = new Artikelregister();
-		$orders          = new Orders();
+		$orders = new Orders();
 		foreach ( $orders as $order ) {
 			if (
 				( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) ||
@@ -295,18 +294,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				continue;
 			}
 			$openstaand           = $order->get_te_betalen();
-			$data['debiteuren'][] = [
-				'id'           => $order->id,
-				'naam'         => $order->klant['naam'],
-				'betreft'      => $artikelregister->get_naam( $order->referentie ),
-				'referentie'   => $order->referentie,
-				'factuurnr'    => $order->get_factuurnummer(),
-				'openstaand'   => $openstaand,
-				'credit'       => $order->credit,
-				'sinds'        => $order->datum,
-				'gesloten'     => $order->gesloten,
-				'verval_datum' => $order->verval_datum,
-			];
+			$data['orders'][]     = $order;
 			$data['openstaand']  += $openstaand;
 			$data['terugstorten'] = $data['terugstorten'] || ( 0 > $openstaand && ! $order->transactie_id ); // Alleen bankterugstorting.
 		}

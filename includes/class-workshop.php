@@ -389,8 +389,8 @@ class Workshop extends Artikel {
 				'id'                => $this->id,
 				'datum'             => date( 'Y-m-d', $this->datum ),
 				'aanvraagdatum'     => date( 'Y-m-d', $this->aanvraagdatum ),
-				'start_tijd'        => date( 'H:i', $this->start_tijd ),
-				'eind_tijd'         => date( 'H:i', $this->eind_tijd ),
+				'start_tijd'        => date( 'H:i', $this->start_tijd ), // Geen timezone conversie.
+				'eind_tijd'         => date( 'H:i', $this->eind_tijd ), // Geen timezone conversie.
 				'contact'           => trim( $this->contact ),
 				'email'             => trim( $this->email ),
 				'telnr'             => trim( $this->telnr ),
@@ -518,8 +518,8 @@ class Workshop extends Artikel {
 				'aantal'              => $this->aantal,
 				'workshop_code'       => $this->code,
 				'workshop_datum'      => wp_date( 'l d-m-y', $this->datum ),
-				'workshop_start_tijd' => date( 'H:i', $this->start_tijd ),
-				'workshop_eind_tijd'  => date( 'H:i', $this->eind_tijd ),
+				'workshop_start_tijd' => date( 'H:i', $this->start_tijd ), // Geen timezone conversie.
+				'workshop_eind_tijd'  => date( 'H:i', $this->eind_tijd ), // Geen timezone conversie.
 				'workshop_docent'     => str_replace( ', ', ' en ', $this->get_docent_naam() ),
 				'workshop_technieken' => implode( ', ', $this->technieken ),
 				'workshop_programma'  => $this->programma,

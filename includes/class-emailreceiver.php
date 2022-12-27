@@ -54,7 +54,7 @@ class EmailReceiver {
 						'from'      => sanitize_email( $email->fromAddress ),
 						'subject'   => sanitize_text_field( $email->subject ),
 						'content'   => $body,
-						'tijd'      => date( 'd-m-Y H:i', strtotime( $header->date ?? date( 'd-m-Y' ) ) ),
+						'tijd'      => wp_date( 'd-m-Y H:i', $header->date ? strtotime( $header->date ) : time() ),
 					]
 				);
 				$answered[] = $email_id;

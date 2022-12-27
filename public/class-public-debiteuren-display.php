@@ -10,9 +10,6 @@
 
 namespace Kleistad;
 
-use DateTime;
-use DateTimeZone;
-
 /**
  * Render van de cursus beheer formulier.
  */
@@ -132,8 +129,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * Toon het overzicht van cursussen
 	 */
 	protected function overzicht() {
-		$datum = new Datetime();
-		$datum->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
 		if ( $this->data['terugstorten'] ) {
 			echo melding( -1, 'Er staan nog per bank terug te storten bedragen open' ); // phpcs:ignore
 		}
@@ -155,19 +150,19 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			<tbody>
 			<?php
 
-			foreach ( $this->data['debiteuren'] as $debiteur ) :
-				$datum->setTimestamp( $debiteur['sinds'] );
+			$artikelregister = new Artikelregister();
+			foreach ( $this->data['orders'] as $order ) :
 				?>
-				<tr style="<?php echo $debiteur['verval_datum'] <= strtotime( 'today' ) && ! $debiteur['gesloten'] ? 'color:#b30000' : ''; ?>" >
-					<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
-					<td><?php echo esc_html( $debiteur['factuurnr'] ); ?></td>
-					<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
-					<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>
-					<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>
-					<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
-					<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( wp_date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
+				<tr style="<?php echo $order->verval_datum <= strtotime( 'today' ) && ! $order->gesloten ? 'color:#b30000' : ''; ?>" >
+					<td><?php echo esc_html( $order->referentie . ( $order->credit ? '(C)' : '' ) ); ?></td>
+					<td><?php echo esc_html( $order->get_factuurnummer() ); ?></td>
+					<td><?php echo esc_html( $order->klant['naam'] ); ?></td>
+					<td><?php echo esc_html( $artikelregister->get_naam( $order->referentie ) ); ?></td>
+					<td style="text-align:right;" data-sort="<?php echo esc_attr( $order->get_te_betalen() ); ?>">&euro; <?php echo esc_html( number_format_i18n( $order->get_te_betalen(), 2 ) ); ?></td>
+					<td data-sort="<?php echo esc_attr( $order->datum ); ?>"><?php echo esc_html( wp_date( 'd-m-Y H:i', $order->datum ) ); ?></td>
+					<td data-sort="<?php echo esc_attr( $order->verval_datum ); ?>"><?php echo esc_html( wp_date( 'd-m-Y', $order->verval_datum ) ); ?></td>
 					<td>
-						<a href="#" title="wijzig order" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
+						<a href="#" title="wijzig order" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $order->id ); ?>" data-actie="debiteur" >
 							&nbsp;
 						</a>
 					</td>

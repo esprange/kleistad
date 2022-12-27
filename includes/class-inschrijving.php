@@ -172,7 +172,8 @@ class Inschrijving extends Artikel {
 		if ( is_null( $inschrijving ) ) {
 			return;
 		}
-		$this->datum            = strtotime( $inschrijving['datum'] );
+		$timezone               = get_option( 'timezone_string' ) ?: 'Europe/Amsterdam';
+		$this->datum            = strtotime( $inschrijving['datum'] . "$timezone" );
 		$this->technieken       = json_decode( $inschrijving['technieken'], true ) ?: [];
 		$this->ingedeeld        = boolval( $inschrijving['ingedeeld'] );
 		$this->geannuleerd      = boolval( $inschrijving['geannuleerd'] );
@@ -180,7 +181,7 @@ class Inschrijving extends Artikel {
 		$this->aantal           = intval( $inschrijving['aantal'] );
 		$this->restant_email    = boolval( $inschrijving['restant_email'] );
 		$this->herinner_email   = boolval( $inschrijving['herinner_email'] );
-		$this->wacht_datum      = strtotime( $inschrijving['wacht_datum'] );
+		$this->wacht_datum      = strtotime( $inschrijving['wacht_datum'] . " $timezone" );
 		$this->extra_cursisten  = json_decode( $inschrijving['extra_cursisten'], true ) ?: [];
 		$this->hoofd_cursist_id = intval( $inschrijving['hoofd_cursist_id'] );
 		$this->maatwerkkosten   = floatval( $inschrijving['maatwerkkosten'] );
@@ -275,8 +276,8 @@ class Inschrijving extends Artikel {
 					'cursus_docent'          => $this->cursus->get_docent_naam(),
 					'cursus_start_datum'     => wp_date( 'l d-m-y', $this->cursus->start_datum ),
 					'cursus_eind_datum'      => wp_date( 'l d-m-y', $this->cursus->eind_datum ),
-					'cursus_start_tijd'      => date( 'H:i', $this->cursus->start_tijd ),
-					'cursus_eind_tijd'       => date( 'H:i', $this->cursus->eind_tijd ),
+					'cursus_start_tijd'      => date( 'H:i', $this->cursus->start_tijd ), // Geen timezone conversie.
+					'cursus_eind_tijd'       => date( 'H:i', $this->cursus->eind_tijd ), // Geen timezone conversie.
 					'cursus_technieken'      => implode( ', ', $this->technieken ),
 					'cursus_code'            => $this->code,
 					'cursus_restant_melding' => $this->get_restant_melding(),
@@ -318,7 +319,7 @@ class Inschrijving extends Artikel {
 			[
 				'cursus_id'        => $this->cursus->id,
 				'cursist_id'       => $this->klant_id,
-				'datum'            => date( 'Y-m-d H:i:s', $this->datum ),
+				'datum'            => wp_date( 'Y-m-d H:i:s', $this->datum ),
 				'technieken'       => wp_json_encode( $this->technieken ),
 				'extra_cursisten'  => wp_json_encode( $this->extra_cursisten ),
 				'hoofd_cursist_id' => $this->hoofd_cursist_id,
@@ -326,7 +327,7 @@ class Inschrijving extends Artikel {
 				'geannuleerd'      => intval( $this->geannuleerd ),
 				'opmerking'        => $this->opmerking,
 				'aantal'           => $this->aantal,
-				'wacht_datum'      => date( 'Y-m-d H:i:s', $this->wacht_datum ),
+				'wacht_datum'      => wp_date( 'Y-m-d H:i:s', $this->wacht_datum ),
 				'restant_email'    => intval( $this->restant_email ),
 				'herinner_email'   => intval( $this->herinner_email ),
 				'maatwerkkosten'   => $this->maatwerkkosten,

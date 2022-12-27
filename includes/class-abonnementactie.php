@@ -261,7 +261,7 @@ class AbonnementActie {
 	}
 
 	/**
-	 * Helper functie, om een handeling toe te voegen
+	 * Helper functie, om een handeling toe te voegen.
 	 *
 	 * @param string $tekst De handeling.
 	 */

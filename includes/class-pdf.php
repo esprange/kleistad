@@ -21,6 +21,7 @@ class PDF extends FPDF {
 	protected const NORMAAL   = 10;
 	protected const KLEIN     = 8;
 	protected const GROOT     = 20;
+	protected const HALFGROOT = 17;
 	protected const H_NORMAAL = 6;
 	protected const H_KLEIN   = 5;
 	protected const CSET      = 'Arial';
@@ -64,7 +65,7 @@ class PDF extends FPDF {
 	 * @return void
 	 */
 	public function Header() : void {
-		$this->SetFont( self::CSET, 'B', self::GROOT );
+		$this->SetFont( self::CSET, 'B', 25 > strlen( $this->titel ) ? self::GROOT : self::HALFGROOT );
 		$this->Text( 25, 30, $this->titel );
 		$this->SetXY( -60, 15 ); // Relatief t.o.v. rechterkant, voor portrait en landscape modus.
 		$this->Image( plugin_dir_path( dirname( __FILE__ ) ) . 'public/images/logo kleistad-email.jpg' );

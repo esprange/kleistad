@@ -387,9 +387,9 @@ class Cursus {
 				),
 				'start_datum'     => date( 'Y-m-d', $this->start_datum ),
 				'eind_datum'      => date( 'Y-m-d', $this->eind_datum ),
-				'ruimte_datum'    => date( 'Y-m-d H:i:s', $this->ruimte_datum ),
-				'start_tijd'      => date( 'H:i', $this->start_tijd ),
-				'eind_tijd'       => date( 'H:i', $this->eind_tijd ),
+				'ruimte_datum'    => wp_date( 'Y-m-d H:i:s', $this->ruimte_datum ),
+				'start_tijd'      => date( 'H:i', $this->start_tijd ), // Geen timezone conversie.
+				'eind_tijd'       => date( 'H:i', $this->eind_tijd ), // Geen timezone conversie.
 				'vol'             => intval( $this->vol ),
 				'meer'            => intval( $this->meer ),
 				'vervallen'       => intval( $this->vervallen ),
@@ -408,12 +408,12 @@ class Cursus {
 			$afspraak->titel      = $this->naam;
 			$afspraak->definitief = $this->tonen;
 			$afspraak->vervallen  = $this->vervallen;
-			$afspraak->start      = new DateTime( date( 'Y-m-d', $this->start_datum ) . ' ' . date( 'H:i', $this->start_tijd ), $timezone );
-			$afspraak->eind       = new DateTime( date( 'Y-m-d', $this->start_datum ) . ' ' . date( 'H:i', $this->eind_tijd ), $timezone );
+			$afspraak->start      = new DateTime( date( 'Y-m-d', $this->start_datum ) . ' ' . date( 'H:i', $this->start_tijd ), $timezone ); // Geen timezone conversie voor start_tijd.
+			$afspraak->eind       = new DateTime( date( 'Y-m-d', $this->start_datum ) . ' ' . date( 'H:i', $this->eind_tijd ), $timezone ); // Geen timezone conversie voor eind_tijd.
 			if ( 1 < count( $this->lesdatums ) ) {
 				$datums = [];
 				foreach ( $this->lesdatums as $lesdatum ) {
-					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . date( 'H:i', $this->start_tijd ), $timezone );
+					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . date( 'H:i', $this->start_tijd ), $timezone ); // Geen timezone conversie voor start_tijd.
 				}
 				sort( $datums );
 				$afspraak->set_patroon( $datums );

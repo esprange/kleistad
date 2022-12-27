@@ -39,7 +39,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $cursus->naam ); ?></td>
 					<td><?php echo esc_html( $cursus->get_docent_naam( false ) ); ?></td>
 					<td><?php echo esc_html( wp_date( 'd-m-Y', $cursus->start_datum ) ); ?> <?php echo esc_html( wp_date( 'd-m-Y', $cursus->eind_datum ) ); ?></td>
-					<td><?php echo esc_html( wp_date( 'H:i', $cursus->start_tijd ) ); ?> <?php echo esc_html( wp_date( 'H:i', $cursus->eind_tijd ) ); ?></td>
+					<td><?php echo esc_html( date( 'H:i', $cursus->start_tijd ) ); ?> <?php echo esc_html( date( 'H:i', $cursus->eind_tijd ) ); ?></td>
 					<td><?php echo esc_html( $cursus->get_statustekst() ); ?></td>
 					<td>
 						<a href="#" title="wijzig cursus" class="kleistad-edit kleistad-edit-link" style="padding:.4em .8em;"
@@ -175,12 +175,12 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_start_tijd">Begintijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" class="kleistad-tijd"
-				value="<?php echo esc_attr( wp_date( 'H:i', $this->data['cursus']->start_tijd ) ); ?>" <?php wp_readonly( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']->start_tijd ) ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_eind_tijd">Eindtijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" class="kleistad-tijd"
-				value="<?php echo esc_attr( wp_date( 'H:i', $this->data['cursus']->eind_tijd ) ); ?>" <?php wp_readonly( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']->eind_tijd ) ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 		</div>
 		<?php

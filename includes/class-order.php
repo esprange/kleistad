@@ -162,9 +162,10 @@ class Order {
 			$resultaat        = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s OR transactie_id = %s ORDER BY id DESC LIMIT 1", $arg, $arg ), ARRAY_A ) ?? 0;
 		}
 		if ( ! empty( $resultaat ) ) {
+			$timezone            = get_option( 'timezone_string' ) ?: 'Europe/Amsterdam';
 			$this->id            = intval( $resultaat['id'] );
 			$this->betaald       = floatval( $resultaat['betaald'] );
-			$this->datum         = strtotime( $resultaat['datum'] );
+			$this->datum         = strtotime( $resultaat['datum'] . " $timezone" );
 			$this->credit_id     = intval( $resultaat['credit_id'] );
 			$this->origineel_id  = intval( $resultaat['origineel_id'] );
 			$this->credit        = boolval( $resultaat['credit'] );
@@ -172,8 +173,8 @@ class Order {
 			$this->historie      = json_decode( $resultaat['historie'], true );
 			$this->klant         = json_decode( $resultaat['klant'], true );
 			$this->klant_id      = intval( $resultaat['klant_id'] );
-			$this->mutatie_datum = strtotime( $resultaat['mutatie_datum'] );
-			$this->verval_datum  = strtotime( $resultaat['verval_datum'] );
+			$this->mutatie_datum = strtotime( $resultaat['mutatie_datum'] . " $timezone" );
+			$this->verval_datum  = strtotime( $resultaat['verval_datum'] . " $timezone" );
 			$this->referentie    = $resultaat['referentie'];
 			$this->opmerking     = htmlspecialchars_decode( $resultaat['opmerking'] );
 			$this->factuurnr     = intval( $resultaat['factuurnr'] );
@@ -266,6 +267,7 @@ class Order {
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 
 		if ( ! empty( $reden ) ) {
+			// Lokale tijd, dus wp_date.
 			$this->historie[] = sprintf( '%s %s', wp_date( 'd-m-Y H:i' ), $reden );
 		}
 		$this->gesloten      = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
@@ -274,7 +276,7 @@ class Order {
 		$orderdata           = [
 			'id'            => $this->id,
 			'betaald'       => $this->betaald,
-			'datum'         => date( 'Y-m-d H:i:s', $this->datum ),
+			'datum'         => wp_date( 'Y-m-d H:i:s', $this->datum ),
 			'credit_id'     => $this->credit_id,
 			'origineel_id'  => $this->origineel_id,
 			'gesloten'      => intval( $this->gesloten ),
@@ -282,8 +284,8 @@ class Order {
 			'historie'      => wp_json_encode( $this->historie ),
 			'klant'         => wp_json_encode( $this->klant ),
 			'klant_id'      => $this->klant_id,
-			'mutatie_datum' => date( 'Y-m-d H:i:s', $this->mutatie_datum ),
-			'verval_datum'  => date( 'Y-m-d H:i:s', $this->verval_datum ),
+			'mutatie_datum' => wp_date( 'Y-m-d H:i:s', $this->mutatie_datum ),
+			'verval_datum'  => wp_date( 'Y-m-d H:i:s', $this->verval_datum ),
 			'referentie'    => $this->referentie,
 			'regels'        => $this->orderregels->get_json_export(),
 			'opmerking'     => $this->opmerking,

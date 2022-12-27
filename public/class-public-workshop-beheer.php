@@ -294,8 +294,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop                    = new Workshop( $this->data['input']['workshop_id'] );
 		$workshop->naam              = $this->data['input']['naam'];
 		$workshop->datum             = strtotime( $this->data['input']['datum'] );
-		$workshop->start_tijd        = strtotime( $this->data['input']['start_tijd'] );
-		$workshop->eind_tijd         = strtotime( $this->data['input']['eind_tijd'] );
+		$workshop->start_tijd        = strtotime( $this->data['input']['start_tijd'], $workshop->datum );
+		$workshop->eind_tijd         = strtotime( $this->data['input']['eind_tijd'], $workshop->datum );
 		$workshop->docent            = $this->data['input']['docent'] ?? '';
 		$workshop->technieken        = $this->data['input']['technieken'];
 		$workshop->organisatie       = $this->data['input']['organisatie'];
