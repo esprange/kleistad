@@ -35,7 +35,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_debiteur() : string {
-		$this->data['debiteur'] = $this->get_debiteur( $this->data['id'] );
+		$this->data['order'] = new Order( $this->data['id'] );
 		return $this->content();
 	}
 
@@ -244,36 +244,6 @@ class Public_Debiteuren extends ShortcodeForm {
 	}
 
 	/**
-	 * Toon de informatie van één debiteur.
-	 *
-	 * @param int $order_id Het order id.
-	 * @return array De informatie.
-	 */
-	private function get_debiteur( int $order_id ) : array {
-		$order           = new Order( $order_id );
-		$artikelregister = new Artikelregister();
-		return [
-			'id'            => $order->id,
-			'naam'          => $order->klant['naam'],
-			'betreft'       => $artikelregister->get_naam( $order->referentie ),
-			'referentie'    => $order->referentie,
-			'factuur'       => $order->get_factuur( true ),
-			'betaald'       => $order->betaald,
-			'openstaand'    => $order->get_te_betalen(),
-			'sinds'         => $order->datum,
-			'historie'      => $order->historie,
-			'gesloten'      => $order->gesloten,
-			'ontvangst'     => 0.0,
-			'korting'       => 0.0,
-			'restant'       => 0.0,
-			'annuleerbaar'  => $order->is_annuleerbaar(),
-			'terugstorting' => $order->is_terugstorting_actief(),
-			'credit'        => $order->credit,
-			'afboekbaar'    => $order->is_afboekbaar(),
-		];
-	}
-
-	/**
 	 * Maak de lijst van openstaande betalingen.
 	 *
 	 * @param string $zoek De eventuele zoek term.
@@ -285,7 +255,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			'terugstorten' => false,
 			'orders'       => [],
 		];
-		$orders = new Orders();
+		$orders = new Orders( [ 'latest' ] );
 		foreach ( $orders as $order ) {
 			if (
 				( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) ||

@@ -67,16 +67,17 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * Render het debiteur formulier
 	 */
 	protected function debiteur() {
+
 		$this->form(
 			function() {
 				?>
-		<p><?php echo esc_html( ucfirst( $this->data['debiteur']['betreft'] ) . ', ' . ( ! $this->data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $this->data['debiteur']['naam'] ); ?></p>
+		<p><?php echo esc_html( ucfirst( ( new Artikelregister() )->get_naam( $this->data['order']->referentie ) ) . ', ' . ( $this->data['order']->gesloten ? 'besteld door ' : 'openstaand voor ' ) . $this->data['order']->klant['naam'] ); ?></p>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2">
 				<label class="kleistad-label">referentie</label>
 			</div>
 			<div class="kleistad-col-6">
-				<?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . wp_date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?>
+				<?php echo esc_html( $this->data['order']->referentie . ' geboekt op ' . wp_date( 'd-m-Y', $this->data['order']->datum ) ); ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -84,7 +85,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">factuur</label>
 			</div>
 			<div class="kleistad-col-8">
-				<a href="<?php echo esc_url( $this->data['debiteur']['factuur'] ); ?>" target="_blank"><?php echo esc_html( basename( $this->data['debiteur']['factuur'] ) ); ?></a><br/>
+				<a href="<?php echo esc_url( $this->data['order']->get_factuur( true ) ); ?>" target="_blank"><?php echo esc_html( basename( $this->data['order']->get_factuur( true ) ) ); ?></a><br/>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -92,7 +93,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">historie</label>
 			</div>
 			<div class="kleistad-col-8" >
-				<?php foreach ( $this->data['debiteur']['historie'] as $historie ) : ?>
+				<?php foreach ( $this->data['order']->historie as $historie ) : ?>
 					<?php echo esc_html( $historie ); ?><br/>
 				<?php endforeach ?>
 			</div>
@@ -102,7 +103,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">betaald</label>
 			</div>
 			<div class="kleistad-col-4">
-				&euro; <?php echo esc_html( number_format_i18n( $this->data['debiteur']['betaald'], 2 ) ); ?>
+				&euro; <?php echo esc_html( number_format_i18n( $this->data['order']->betaald, 2 ) ); ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -110,15 +111,15 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">openstaand</label>
 			</div>
 			<div class="kleistad-col-4">
-				&euro; <?php echo esc_html( number_format_i18n( $this->data['debiteur']['openstaand'], 2 ) ); ?>
+				&euro; <?php echo esc_html( number_format_i18n( $this->data['order']->get_te_betalen(), 2 ) ); ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
-				<?php echo $this->data['debiteur']['terugstorting'] ? '<strong>Een stornering is ingediend</strong>' : ''; // phpcs:ignore ?>
+				<?php echo $this->data['order']->is_terugstorting_actief() ? '<strong>Een stornering is ingediend</strong>' : ''; // phpcs:ignore ?>
 			</div>
 		</div>
-		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
+		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['order']->id ); ?>"/>
 				<?php
 				$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end();
 			}
@@ -180,14 +181,15 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function bankbetaling() : Public_Debiteuren_Display {
-		if ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) {
+		if ( $this->data['order']->gesloten || $this->data['order']->is_terugstorting_actief() ) {
 			return $this;
 		}
+		$openstaand = $this->data['order']->get_te_betalen();
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
 				<input class="kleistad-radio" type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling"
-					value="<?php echo ( 0 < $this->data['debiteur']['openstaand'] ) ? 'bankbetaling' : 'bankstorting'; ?>" >
+					value="<?php echo ( 0 < $openstaand ) ? 'bankbetaling' : 'bankstorting'; ?>" >
 				<label for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
 			</div>
 		</div>
@@ -195,19 +197,19 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" >
 				</div>
-				<?php if ( 0 < $this->data['debiteur']['openstaand'] ) : ?>
+				<?php if ( 0 < $openstaand ) : ?>
 				<div class="kleistad-col-4 kleistad-label">
 						<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="bedrag_betaald" min="0.00" max="<?php echo esc_attr( $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
+						<input type="number" step="0.01" id="kleistad_ontvangst" name="bedrag_betaald" min="0.00" max="<?php echo esc_attr( $openstaand ); ?>" value="0">
 					</div>
 				<?php else : // Als een credit stand. ?>
 					<div class="kleistad-col-4 kleistad-label">
 						<label for="kleistad_terugstorting">Teruggestort bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >
-						<input type="number" step="0.01" id="kleistad_terugstorting" name="bedrag_gestort" min="0.00" max="<?php echo esc_attr( - $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
+						<input type="number" step="0.01" id="kleistad_terugstorting" name="bedrag_gestort" min="0.00" max="<?php echo esc_attr( - $openstaand ); ?>" value="0">
 					</div>
 				<?php endif ?>
 			</div>
@@ -222,7 +224,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @return Public_Debiteuren_Display
 	 */
 	private function annulering() : Public_Debiteuren_Display {
-		if ( $this->data['debiteur']['credit'] || ! $this->data['debiteur']['annuleerbaar'] ) {
+		if ( $this->data['order']->credit || ! $this->data['order']->is_annuleerbaar() ) {
 			return $this;
 		}
 		?>
@@ -241,7 +243,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 					<label for="kleistad_restant">Restant te betalen</label>
 				</div>
 				<div class="kleistad-col-3" >
-					<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="<?php echo esc_attr( $this->data['debiteur']['restant'] ); ?>">
+					<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="0">
 				</div>
 			</div>
 			<div class="kleistad-row">
@@ -263,7 +265,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @return Public_Debiteuren_Display
 	 */
 	private function afboeking() : Public_Debiteuren_Display {
-		if ( ! $this->data['debiteur']['afboekbaar'] ) {
+		if ( ! $this->data['order']->is_afboekbaar() ) {
 			return $this;
 		}
 		?>
@@ -290,7 +292,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @return Public_Debiteuren_Display
 	 */
 	private function korting() : Public_Debiteuren_Display {
-		if ( $this->data['debiteur']['credit'] ) {
+		if ( $this->data['order']->credit ) {
 			return $this;
 		}
 		?>
@@ -309,7 +311,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 					<label for="kleistad_korting">Korting</label>
 				</div>
 				<div class="kleistad-col-3" >
-					<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="<?php echo esc_attr( $this->data['debiteur']['korting'] ); ?>">
+					<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="0">
 				</div>
 			</div>
 			<div class="kleistad-row">

@@ -172,8 +172,7 @@ class Inschrijving extends Artikel {
 		if ( is_null( $inschrijving ) ) {
 			return;
 		}
-		$timezone               = get_option( 'timezone_string' ) ?: 'Europe/Amsterdam';
-		$this->datum            = strtotime( $inschrijving['datum'] . "$timezone" );
+		$this->datum            = strtotime( $inschrijving['datum'] );
 		$this->technieken       = json_decode( $inschrijving['technieken'], true ) ?: [];
 		$this->ingedeeld        = boolval( $inschrijving['ingedeeld'] );
 		$this->geannuleerd      = boolval( $inschrijving['geannuleerd'] );
@@ -181,7 +180,7 @@ class Inschrijving extends Artikel {
 		$this->aantal           = intval( $inschrijving['aantal'] );
 		$this->restant_email    = boolval( $inschrijving['restant_email'] );
 		$this->herinner_email   = boolval( $inschrijving['herinner_email'] );
-		$this->wacht_datum      = strtotime( $inschrijving['wacht_datum'] . " $timezone" );
+		$this->wacht_datum      = strtotime( $inschrijving['wacht_datum'] );
 		$this->extra_cursisten  = json_decode( $inschrijving['extra_cursisten'], true ) ?: [];
 		$this->hoofd_cursist_id = intval( $inschrijving['hoofd_cursist_id'] );
 		$this->maatwerkkosten   = floatval( $inschrijving['maatwerkkosten'] );

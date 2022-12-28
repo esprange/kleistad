@@ -380,7 +380,7 @@ class Order {
 		$this->save( 'gecrediteerd i.v.m. wijziging' );
 		$factuur = new Factuur();
 		$factuur->run( $credit_order ); // Wordt niet standaard verstuurd.
-		$nieuwe_order->save( sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ) );
+		$nieuwe_order->save( sprintf( "Deze factuur vervangt %s vanwege korting\n%s", $this->get_factuurnummer(), $opmerking ) );
 		do_action( 'kleistad_order_stornering', $nieuwe_order ); // Er zou stornering nodig kunnen zijn.
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		$factuur = new Factuur();

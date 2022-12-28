@@ -63,7 +63,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @return WP_UnitTest_Factory The fixture factory.
 	 */
-	protected static function factory() {
+	protected static function factory() : WP_UnitTest_Factory {
 
 		static $factory = null;
 		if ( ! $factory ) {
@@ -263,7 +263,10 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 		}
 		update_option( 'kleistad_email_actief', 1 );
 		$losnr = get_option( 'kleistad_losnr' );
-		update_option( 'kleistad_losnr', $losnr++ );
+		update_option( 'kleistad_losnr', ++$losnr );
+		foreach ( glob( sprintf( '%s/*factuur*.*', sys_get_temp_dir() ) ) as $file ) {
+			unlink( $file );
+		}
 		$this->reset_mockmailer_instance();
 		$_GET  = [];
 		$_POST = [];

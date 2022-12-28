@@ -43,11 +43,16 @@ class Orders implements Countable, Iterator {
 	public function __construct( array $search = [] ) {
 		global $wpdb;
 		$where = [ 'true=true' ];
+		$query = "SELECT * FROM {$wpdb->prefix}kleistad_orders AS ord_1 %s";
 		foreach ( $search as $key => $value ) {
-			$where[] = "$key='$value'";
+			if ( is_numeric( $key ) && 'latest' === $value ) {
+				$where[] = "ord_1.id=(SELECT MAX(ord_2.id) from {$wpdb->prefix}kleistad_orders AS ord_2 WHERE ord_1.referentie = ord_2.referentie )";
+				continue;
+			}
+			$where[] = "ord_1.$key='$value'";
 		}
 		$conditie = 'WHERE ' . implode( ' AND ', $where );
-		$data  = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $conditie", ARRAY_A ); // phpcs:ignore
+		$data  = $wpdb->get_results( sprintf( $query, $conditie ), ARRAY_A ); // phpcs:ignore
 		foreach ( $data as $row ) {
 			$this->orders[] = new Order( $row['id'], $row );
 		}

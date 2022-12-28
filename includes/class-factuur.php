@@ -36,7 +36,8 @@ class Factuur extends PDF {
 	}
 
 	/**
-	 * Geef de bestaande factuur terug.
+	 * Geef de laatst bestaande factuur terug.
+	 * In de order wordt alleen het factuurnummer bijgehouden. Om de laatste factuur te vinden wordt deze opgezocht.
 	 *
 	 * @param Order $order De order.
 	 * @return array Locatie en url van het bestand.
@@ -44,16 +45,30 @@ class Factuur extends PDF {
 	public function get( Order $order ) : array {
 		$factuurnr = $order->get_factuurnummer();
 		$type      = $order->credit ? 'credit' : '';
-		$bestand   = sprintf( '%s-%s.pdf', "{$type}factuur", $factuurnr );
+		$pattern   = 'local' === wp_get_environment_type() ?
+			sprintf( '%s/%sfactuur-%s.*', sys_get_temp_dir(), $type, $factuurnr ) :
+			sprintf( '%s/facturen/%sfactuur-%s.*', wp_get_upload_dir()['basedir'], $type, $factuurnr );
+		$bestanden = glob( $pattern );
+		usort(
+			$bestanden,
+			function( $links, $rechts ) {
+				$lsegments = explode( '.', rtrim( $links, 'pdf' ) );
+				$rsegments = explode( '.', rtrim( $rechts, 'pdf' ) );
+				$lval      = intval( $lsegments[ count( $lsegments ) - 2 ] );
+				$rval      = intval( $rsegments[ count( $rsegments ) - 2 ] );
+				return $lval <=> $rval;
+			}
+		);
+		$bestand = end( $bestanden );
 		if ( defined( 'KLEISTAD_TEST' ) ) {
 			return [
-				'locatie' => sys_get_temp_dir() . "/$bestand",
+				'locatie' => $bestand,
 				'url'     => '',
 			];
 		}
 		return [
-			'locatie' => wp_get_upload_dir()['basedir'] . "/facturen/$bestand",
-			'url'     => wp_get_upload_dir()['baseurl'] . "/facturen/$bestand",
+			'locatie' => $bestand,
+			'url'     => str_replace( wp_get_upload_dir()['basedir'], wp_get_upload_dir()['baseurl'], $bestand ),
 		];
 	}
 
