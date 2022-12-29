@@ -4,7 +4,8 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 6.1.1  
-**Stable tag:** 7.9.3  
+**Stable tag:** 7.9.4  
+
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,7 +34,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.9.3 ###
+### 7.9.4 ###
 * Verbetering galerie showcase, toont overige werkstukken van keramist.
 * Criterium werkplekreservering in weken na cursus instelbaar.
 * Cursist rol wordt niet meer verwijderd na afloop cursus.

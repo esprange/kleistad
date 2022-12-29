@@ -191,10 +191,7 @@ class InschrijvingActie {
 	 * Deel de cursist in.
 	 */
 	public function indelen() : void {
-		static $ruimte = null;
-		if ( is_null( $ruimte ) ) {
-			$ruimte = $this->inschrijving->cursus->get_ruimte();
-		}
+		$ruimte  = $this->inschrijving->cursus->get_ruimte();
 		$cursist = get_user_by( 'ID', $this->inschrijving->klant_id );
 		$cursist->add_role( CURSIST );
 		$this->inschrijving->ingedeeld   = true;

@@ -116,7 +116,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label" for="kleistad_vanaf_datum" >Vanaf</label>
 			</div>
 			<div class="kleistad-col-3">
-				<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad-datum" value="<?php echo esc_attr( wp_date( 'd-m-Y', strtotime( '-2 week' ) ) ); ?>"  readonly="readonly" />
+				<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad-datum" value="<?php echo esc_attr( wp_date( 'd-m-Y', strtotime( '-2 weeks' ) ) ); ?>"  readonly="readonly" />
 			</div>
 		</div>
 		<div class="kleistad-row" >

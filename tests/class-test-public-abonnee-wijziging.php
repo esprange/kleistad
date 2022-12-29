@@ -5,7 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Abonnee_Wijziging
- * @noinspection PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection
+ * @noinspection PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;
@@ -47,8 +47,8 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 			'dag'            => 'maandag',
 			'soort'          => $beperkt ? 'beperkt' : 'onbeperkt',
 			'betaal'         => $betaling_per_bank ? 'stort' : 'ideal',
-			'pauze_datum'    => date( 'd-m-Y', strtotime( '+ 2 weeks' ) ),
-			'herstart_datum' => date( 'd-m-Y', strtotime( '+ 5 weeks' ) ),
+			'pauze_datum'    => date( 'd-m-Y', strtotime( '+ 2 weeks 0:00' ) ),
+			'herstart_datum' => date( 'd-m-Y', strtotime( '+ 5 weeks 0:00' ) ),
 			'per_datum'      => strtotime( 'first day of next month' ),
 			'extras'         => [ 'sleutel' ],
 		];

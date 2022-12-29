@@ -63,10 +63,10 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		if ( 'pauze' === $this->form_actie ) {
 			$this->data['input']['pauze_datum']    = strtotime( $this->data['input']['pauze_datum'] );
 			$this->data['input']['herstart_datum'] = strtotime( $this->data['input']['herstart_datum'] );
-			if ( $this->data['input']['herstart_datum'] < strtotime( '+' . opties()['min_pauze_weken'] . ' weeks', $this->data['input']['pauze_datum'] ) ) {
+			if ( $this->data['input']['herstart_datum'] < strtotime( '+' . opties()['min_pauze_weken'] . ' weeks 0:00', $this->data['input']['pauze_datum'] ) ) {
 				$error->add( 'pauze', 'Het abonnement moet minimaal ' . opties()['min_pauze_weken'] . ' weken dagen gepauzeerd worden' );
 			}
-			if ( $this->data['input']['herstart_datum'] > strtotime( '+' . opties()['max_pauze_weken'] . ' weeks', $this->data['input']['pauze_datum'] ) ) {
+			if ( $this->data['input']['herstart_datum'] > strtotime( '+' . opties()['max_pauze_weken'] . ' weeks 0:00', $this->data['input']['pauze_datum'] ) ) {
 				$error->add( 'pauze', 'Het abonnement mag maximaal ' . opties()['max_pauze_weken'] . ' weken per keer gepauzeerd worden' );
 			}
 		}

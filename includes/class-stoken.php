@@ -118,7 +118,7 @@ class Stoken implements Countable, Iterator {
 		$ovens         = new Ovens();
 		$verwerk_datum = strtotime( '- ' . opties()['termijn'] . ' days 00:00' );
 		foreach ( $ovens as $oven ) {
-			$stoken = new Stoken( $oven, strtotime( '- 1 week' ), strtotime( 'today' ) );
+			$stoken = new Stoken( $oven, strtotime( '- 1 week 0:00' ), strtotime( 'today' ) );
 			foreach ( $stoken as $stook ) {
 				if ( ! $stook->is_gereserveerd() ) {
 					continue;

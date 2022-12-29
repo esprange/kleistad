@@ -451,15 +451,11 @@ class Workshop extends Artikel {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag,PHPMD.ElseExpression)
 	 */
 	public function get_statustekst( bool $uitgebreid = false ) : string {
-		static $verloop = 0;
-		if ( ! $verloop ) {
-			$verloop = strtotime( 'tomorrow' ) - opties()['verloopaanvraag'] * WEEK_IN_SECONDS;
-		}
 		if ( $this->vervallen ) {
 			$status = self::VERVALLEN;
 		} elseif ( $this->definitief ) {
 			$status = self::DEFINITIEF;
-		} elseif ( $this->aanvraagdatum < $verloop ) {
+		} elseif ( $this->aanvraagdatum < ( strtotime( '-' . opties()['verloopaanvraag'] . ' weeks 0:00' ) ) ) {
 			$status = self::VERVALT;
 		} else {
 			$status = self::CONCEPT;

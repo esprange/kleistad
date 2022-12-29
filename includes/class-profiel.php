@@ -132,7 +132,7 @@ class Profiel {
 	private function openstaande_orders( Orders $orders ) : array {
 		$lijst           = [];
 		$vandaag         = strtotime( 'today ' );
-		$tweewekeneerder = strtotime( '- 2 weeks', $vandaag );
+		$tweewekeneerder = strtotime( '- 2 weeks 0:00', $vandaag );
 		$artikelregister = new Artikelregister();
 		foreach ( $orders as $order ) {
 			if ( $order->gesloten || $order->transactie_id ) {

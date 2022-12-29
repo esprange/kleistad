@@ -337,7 +337,7 @@ EOT;
 		$feestdagen     = new Feestdagen();
 		$weken          = opties()['weken_werkplek'];
 		$vandaag        = strtotime( 'today' );
-		$driemaand      = strtotime( "+$weken weeks", $vandaag );
+		$driemaand      = strtotime( "+$weken weeks 0:00", $vandaag );
 		$werkplekconfig = $werkplekconfigs->find( $vandaag ) ?: new WerkplekConfig();
 		for ( $dagteller = $vandaag; $dagteller < $driemaand; $dagteller += DAY_IN_SECONDS ) {
 			if ( $feestdagen->is_feestdag( $dagteller ) ) {
