@@ -50,17 +50,10 @@ class Public_Saldo extends Public_Bestelling {
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
-				'ander'        => [
-					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-				],
 				'betaal'       => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! intval( $this->data['input']['bedrag'] ) ) {
-			$this->data['input']['bedrag'] = $this->data['input']['ander'];
-		}
-		if ( 15 > floatval( $this->data['input']['bedrag'] ) || 100 < floatval( $this->data['input']['bedrag'] ) ) {
+		if ( 2 > floatval( $this->data['input']['bedrag'] ) || 100 < floatval( $this->data['input']['bedrag'] ) ) {
 			return $this->melding( new WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' ) );
 		}
 		return $this->save();

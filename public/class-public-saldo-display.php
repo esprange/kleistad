@@ -43,17 +43,17 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">Bedrag</label>
 			</div>
 			<div class="kleistad-col-2">
-				<input class="kleistad-radio" type="radio" name="bedrag" id="kleistad_b15" value="15" />
+				<input class="kleistad-radio kleistad-saldo-select" type="radio" name="bedrag" id="kleistad_b15" value="15" />
 				<label for="kleistad_b15">&euro; 15</label>
 			</div>
 			<div class="kleistad-col-2">
-				<input class="kleistad-radio" type="radio" name="bedrag" id="kleistad_b30" value="30" checked="checked" />
+				<input class="kleistad-radio kleistad-saldo-select" type="radio" name="bedrag" id="kleistad_b30" value="30" checked="checked" />
 				<label for="kleistad_b30">&euro; 30</label>
 			</div>
 			<div class="kleistad-col-4">
-				<input class="kleistad-radio" type="radio" name="bedrag" id="kleistad_ander" value="0" />
+				<input class="kleistad-radio kleistad-saldo-select" type="radio" name="bedrag" id="kleistad_ander" value="0" />
 				<label for="kleistad_ander">anders &euro;&nbsp;
-					<input name="ander" type="number" min="15" max="100" maxlength="3" style="width:4em;" title="minimum 15, maximum 100 euro" >
+					<input name="ander" type="text" maxlength="7" class="kleistad-saldo-select" style="width:5em;" title="minimum 2, maximum 100 euro" >
 				</label>
 			</div>
 		</div>
@@ -91,7 +91,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_terugboeking" required value="terugboeking"
 				<?php disabled( $this->data['saldo'] <= opties()['administratiekosten'] ); ?> />
-				<label for="kleistad_betaal_terugboeking"></label>
+				<label for="kleistad_betaal_terugboeking">ik wil mijn openstaand saldo terug laten storten. Administratiekosten worden in rekening gebracht</label>
 			</div>
 		</div>
 		<?php

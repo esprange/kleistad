@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 6.1.1
-Stable tag: 7.9.4
+Stable tag: 7.9.5
+
 
 
 
@@ -34,12 +35,13 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.9.4 =
+= 7.9.5 =
 * Verbetering galerie showcase, toont overige werkstukken van keramist.
 * Criterium werkplekreservering in weken na cursus instelbaar.
 * Cursist rol wordt niet meer verwijderd na afloop cursus.
 * Vervallen workshop is te herstellen.
 * Optimalisatie debiteuren beheer.
+* Saldo storten verbeterd.
 * Diverse bugfixes mbt timestamps.
 = 7.8.8 =
 * Cursus beheer, reservering van werkplekken toegevoegd.

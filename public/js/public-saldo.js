@@ -10,63 +10,52 @@
 	'use strict';
 
 	/**
-	 * Bepaal het bij te storten saldo.
-	 *
-	 * @returns {float}
-	 */
-	function bepaalBedrag() {
-		let bedrag = $( 'input[name=bedrag]:radio:checked' ).val();
-		if ( '0' === bedrag ) {
-			bedrag = $( 'input[name=ander]' ).val();
-		}
-		return bedrag;
-	}
-
-	/**
-	 * Wijzig de teksten in het betaal formulier.
-	 *
-	 * @param {float} bedrag
-	 */
-	function wijzigTeksten( bedrag ) {
-		if ( 'undefined' !== typeof bedrag ) {
-			$( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + ' en verhoog mijn saldo.' );
-			$( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + '. Verhoging saldo vindt daarna plaats.' );
-			$( 'label[for=kleistad_betaal_terugboeking]' ).text( 'ik wil mijn openstaand saldo terug laten storten. Administratiekosten worden in rekening gebracht' );
-		}
-	}
-
-	/**
 	 * Document ready.
 	 */
 	$(
 		function()
 		{
-			wijzigTeksten( bepaalBedrag() );
-
 			$( '.kleistad-shortcode' )
-			/**
-			 * Als er een change is van het te betalen stooksalde.
-			 */
 			.on(
-				'change',
-				'input[name=bedrag]:radio',
-				function() {
-					let bedrag = bepaalBedrag();
-					$( '#kleistad_submit' ).prop( 'disabled', 15 > bedrag || 100 < bedrag );
-					wijzigTeksten( bedrag );
+				'keydown',
+				'input[name=ander]',
+				function( event ) {
+					$( '#kleistad_ander' ).prop( 'checked',true );
+					let charC = ( event.which ) ? event.which : event.keyCode;
+					if ( 32 >= charC ) { // Control keys, zoals delete, standaard afhandeling.
+						return true;
+					}
+					let commaSet = this.value.indexOf( ',' );
+					if ( ( 44 === charC || 188 === charC ) && -1 === commaSet ) {
+						// De comma, 44 in ASCII, 188 in unicode. Er mag er maar 1 aanwezig zijn.
+						event.target.value = event.target.value + event.key;
+					}
+					if ( 48 <= charC && 57 >= charC && ( -1 === commaSet || 2 >= this.value.length - commaSet ) ) {
+						// Cijfer, er mogen maar twee na de comma geplaatst worden.
+						event.target.value = event.target.value + event.key;
+					}
+					$( this ).trigger( 'input' );
+					return event.preventDefault();
 				}
 			)
-			/**
-			 * Als er sprake van een afwijkend bedrag is.
-			 */
 			.on(
 				'input',
-				'input[name=ander]',
+				'.kleistad-saldo-select',
 				function() {
-					let bedrag = bepaalBedrag();
-					$( 'input[value=0]' ).prop( 'checked',true );
-					$( '#kleistad_submit' ).prop( 'disabled', 15 > bedrag || 100 < bedrag );
-					wijzigTeksten( bedrag );
+					$( '#kleistad_ander' ).val( $( 'input[name=ander]' ).val().replace( ',', '.' ) );
+					if ( $( '#kleistad_betaal_terugboeking' ).is( ':checked' ) ) {
+						$( '#kleistad_betaal_ideal' ).prop( 'checked', true );
+					}
+					let bedrag      = $( 'input[name=bedrag]:radio:checked' ).val();
+					let bedragTekst = new Intl.NumberFormat( 'nl-NL', { style: 'currency', currency: 'EUR' } ).format( bedrag );
+					let bedragValid = 2 <= bedrag && 100 >= bedrag;
+					$( '#kleistad_submit' ).prop( 'disabled', ! bedragValid );
+					if ( ! bedragValid ) {
+						$( 'label[for=kleistad_betaal_ideal],label[for=kleistad_betaal_stort]' ).text( 'Het bij te storten bedrag moet minimaal 2 en maximaal 100 euro zijn' );
+						return;
+					}
+					$( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal ' + bedragTekst + ' en verhoog mijn saldo.' );
+					$( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van ' + bedragTekst + '. Verhoging saldo vindt daarna plaats.' );
 				}
 			)
 			/**
@@ -78,12 +67,16 @@
 				function() {
 					const $submit = $( '#kleistad_submit' );
 					if ( 'terugboeking' === $( this ).val() ) {
-						$submit.data( 'confirm',  'Saldo terugstorten|Weet je zeker dat je het saldo wil laten terugboeken ?' );
+						$submit.prop( 'disabled', false ).data( 'confirm',  'Saldo terugstorten|Weet je zeker dat je het saldo wil laten terugboeken ?' );
 						return;
 					}
+					$( '.kleistad-saldo-select' ).trigger( 'input');
 					$submit.removeData( 'confirm' );
 				}
 			);
+
+			$( '.kleistad-saldo-select' ).trigger( 'input' );
+
 		}
 	);
 
