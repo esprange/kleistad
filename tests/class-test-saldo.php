@@ -28,15 +28,15 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 * Test creation and modification of an saldo.
 	 */
 	public function test_saldo() {
-		$saldo = $this->maak_saldo();
-		$this->assertEquals( 0.0, $saldo->bedrag, 'saldo initieel not zero' );
+		$saldo1 = $this->maak_saldo();
+		$this->assertEquals( 0.0, $saldo1->bedrag, 'saldo initieel not zero' );
 
-		$saldo->bedrag = $saldo->bedrag + 123;
-		$saldo->reden  = 'test';
-		$this->assertTrue( $saldo->save(), 'saldo gewijzigd onjuiste status' );
-		$saldo = new Saldo( $saldo->klant_id );
-		$this->assertEquals( 123, $saldo->bedrag, 'saldo bedrag onjuist' );
-		$this->assertTrue( $saldo->save(), 'saldo ongewijzigd onjuiste status' );
+		$saldo1->bedrag = $saldo1->bedrag + 123;
+		$this->assertTrue( $saldo1->save(), 'saldo gewijzigd onjuiste status' );
+
+		$saldo2 = new Saldo( $saldo1->klant_id );
+		$this->assertEquals( 123, $saldo2->bedrag, 'saldo bedrag onjuist' );
+		$this->assertTrue( $saldo2->save(), 'saldo ongewijzigd onjuiste status' );
 
 		$upload_dir     = wp_upload_dir();
 		$transactie_log = $upload_dir['basedir'] . '/stooksaldo.log';
@@ -47,12 +47,14 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 * Test function get_referentie
 	 */
 	public function test_get_referentie() {
-		$saldo = $this->maak_saldo();
-		$saldo->actie->nieuw( 123.4, 'stort' );
-		$referentie1 = $saldo->get_referentie();
+		$saldo1 = $this->maak_saldo();
+		$saldo1->actie->nieuw( 123.4, 'stort' );
+		$referentie1 = $saldo1->get_referentie();
 		$this->assertMatchesRegularExpression( '~S\d+-\d{6}-\d+~', $referentie1, 'referentie incorrect' );
-		$saldo->actie->nieuw( 567.8, 'stort' );
-		$referentie2 = $saldo->get_referentie();
+
+		$saldo2 = new Saldo( $saldo1->klant_id );
+		$saldo2->actie->nieuw( 567.8, 'stort' );
+		$referentie2 = $saldo2->get_referentie();
 		$this->assertNotEquals( $referentie1, $referentie2, 'referentie wijziging incorrect' );
 	}
 
@@ -120,7 +122,6 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$saldo         = $this->maak_saldo();
 		$stoker        = new Stoker( $saldo->klant_id );
 		$saldo->bedrag = 10;
-		$saldo->reden  = 'test';
 		$saldo->save();
 		$saldo->actie->verbruik( 1000, 'test' );
 
@@ -134,7 +135,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	/**
 	 * Test terugboeken
 	 */
-	public function test_terugboeken() {
+	public function test_restitutie() {
 		$mailer = tests_retrieve_phpmailer_instance();
 		$saldo  = $this->maak_saldo();
 		$stoker = new Stoker( $saldo->klant_id );
@@ -142,7 +143,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$saldo->actie->nieuw( 10, 'ideal' );
 		$order = new Order( $saldo->get_referentie() );
 		$saldo->betaling->verwerk( $order, 10, true, 'ideal' );
-		$this->assertTrue( $saldo->betaling->doe_terugboeken(), 'terugboeken onjuist' );
+		$this->assertTrue( $saldo->actie->doe_restitutie( 'NL12INGB0001234567', 'test gebruiker' ), 'restitutie onjuist' );
 		$this->assertEquals( 'Terugboeking restant saldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 	}
 }

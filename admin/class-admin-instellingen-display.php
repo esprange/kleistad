@@ -276,7 +276,9 @@ class Admin_Instellingen_Display {
 			'cursusinschrijfprijs' => 'Prijs cursus inschrijving',
 			'workshopprijs'        => 'Prijs standaard workshop',
 			'materiaalprijs'       => 'Prijs materiaal verbruik per kilo',
-			'administratiekosten'  => 'Administratie kosten bij terugstorting',
+			'administratiekosten'  => 'Administratie kosten bij saldo terugstorting',
+			'minsaldostorting'     => 'Minimum bedrag voor saldo bijstorten',
+			'maxsaldostorting'     => 'Maximum bedrag voor saldo bijstorten',
 		];
 		foreach ( $prijzen as $id => $naam ) {
 			?>

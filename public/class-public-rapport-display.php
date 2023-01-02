@@ -39,6 +39,23 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	 */
 	protected function gebruikers() {
 		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<strong>Totaal negatief saldo</strong>
+			</div>
+			<div class="kleistad-col-3" style="font-family: monospace;font-size: medium">
+				&euro; <?php echo esc_html( number_format_i18n( $this->data['negatief_saldo'], 2 ) ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<strong>Totaal positief saldo</strong>
+			</div>
+			<div class="kleistad-col-3" style="font-family: monospace;font-size: medium">
+				&euro;&nbsp; <?php echo esc_html( number_format_i18n( $this->data['positief_saldo'], 2 ) ); ?>
+			</div>
+		</div>
+		<br/>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]'>
 			<thead>
 				<tr>
@@ -51,7 +68,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 			<?php foreach ( $this->data['stokers'] as $stoker ) : ?>
 				<tr>
 					<td><?php echo esc_html( $stoker['naam'] ); ?></td>
-					<td>&euro; <?php echo esc_html( $stoker['saldo'] ); ?></td>
+					<td style="font-family: monospace;font-size: medium">&euro; <?php echo esc_html( number_format_i18n( $stoker['saldo'], 2 ) ); ?></td>
 					<td>
 						<a href="#" title="details" class="kleistad-view kleistad-edit-link"
 							data-id="<?php echo esc_attr( $stoker['id'] ); ?>" data-actie="rapport_gebruiker" >
@@ -62,6 +79,9 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
+		<div class="kleistad-row" style="padding-top:20px;" >
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="saldi" >Download saldi</button>
+		</div>
 		<?php
 	}
 
@@ -114,11 +134,11 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 							<td style="display:none">
 							<td style="display:none">
 						<?php endif ?>
-						<td>&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
+						<td style="font-family: monospace;font-size: medium">&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
 						<td data-sort="<?php echo (int) $item['voorlopig']; ?>"><span <?php echo $item['voorlopig'] ? 'class="dashicons dashicons-yes"' : ''; ?> ></span></td>
 					<?php else : ?>
 						<td><?php echo esc_html( $item['status'] ); ?></td>
-						<td>&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
+						<td style="font-family: monospace;font-size: medium">&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
 					<?php endif; ?>
 				</tr>
 				<?php endforeach ?>

@@ -81,13 +81,21 @@ class Artikelregister  implements Countable, Iterator {
 			if ( $referentie[0] === $artikel['prefix'] ) {
 				$parameters = explode( '-', substr( $referentie, 1 ) );
 				$class      = '\\' . __NAMESPACE__ . '\\' . $artikel['class'];
-				if ( 1 === $artikel['pcount'] ) {
-					$object               = new $class( (int) $parameters[0] );
-					$object->artikel_type = $parameters[1] ?? $object->artikel_type;
-					return $object;
+				switch ( $artikel['pcount'] ) {
+					case 1:
+						$object = new $class( (int) $parameters[0] );
+						break;
+					case 2:
+						$object = new $class( (int) $parameters[0], (int) $parameters[1] );
+						break;
+					case 3:
+						$object = new $class( (int) $parameters[0], (int) $parameters[1], (int) $parameters[2] );
+						break;
+					default:
+						fout( __CLASS__, "object {$artikel['class']} kan niet met {$artikel['pcount']} parameters aangemaakt worden." );
+						return null;
 				}
-				$object               = new $class( (int) $parameters[0], (int) $parameters[1] );
-				$object->artikel_type = $parameters[2] ?? $object->artikel_type;
+				$object->artikel_type = $parameters[ $artikel['pcount'] ] ?? $object->artikel_type;
 				return $object;
 			}
 		}

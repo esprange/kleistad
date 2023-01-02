@@ -32,18 +32,26 @@ class Public_Rapport extends Shortcode {
 	 * Prepareer het overzicht over alle gebruikers
 	 *
 	 * @return string
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function prepare_gebruikers() : string {
 		if ( ! current_user_can( BESTUUR ) ) {
 			return '';
 		}
-		$this->data['stokers'] = [];
+		$this->data['stokers']        = [];
+		$this->data['negatief_saldo'] = 0.0;
+		$this->data['positief_saldo'] = 0.0;
 		foreach ( new Stokers() as $stoker ) {
 			$this->data['stokers'][] = [
 				'naam'  => $stoker->display_name,
-				'saldo' => number_format_i18n( $stoker->saldo->bedrag, 2 ),
+				'saldo' => $stoker->saldo->bedrag,
 				'id'    => $stoker->ID,
 			];
+			if ( 0 > $stoker->saldo->bedrag ) {
+				$this->data['negatief_saldo'] += $stoker->saldo->bedrag;
+			} else {
+				$this->data['positief_saldo'] += $stoker->saldo->bedrag;
+			}
 		}
 		return $this->content();
 	}
@@ -100,15 +108,39 @@ class Public_Rapport extends Shortcode {
 				}
 			}
 		}
-		foreach ( $saldo->storting as $storting ) {
-			$data['items'][] = [
-				'datum'     => strtotime( $storting['datum'] ),
-				'bedrag'    => number_format_i18n( $storting['prijs'], 2 ),
-				'status'    => $storting['status'] ?? '',
-				'gewicht'   => $storting['gewicht'] ?? '',
-				'voorlopig' => ! isset( $storting['status'] ),
-			];
+		foreach ( $saldo->mutaties as $mutatie ) {
+			if ( $mutatie->code ) {
+				$data['items'][] = [
+					'datum'     => $mutatie->datum,
+					'bedrag'    => number_format_i18n( $mutatie->bedrag, 2 ),
+					'status'    => $mutatie->status,
+					'gewicht'   => 0.0 < $mutatie->gewicht ? number_format_i18n( $mutatie->gewicht, 2 ) : '',
+					'voorlopig' => ! empty( $mutatie->status ),
+				];
+			}
 		}
 		return $data;
 	}
+
+	/**
+	 * Schrijf de gebruikers saldo naar het bestand.
+	 */
+	protected function saldi() {
+		$fields = [
+			'Naam',
+			'Saldo',
+		];
+		fputcsv( $this->filehandle, $fields, ';' );
+		foreach ( new Stokers() as $stoker ) {
+			fputcsv(
+				$this->filehandle,
+				[
+					$stoker->display_name,
+					number_format_i18n( $stoker->saldo->bedrag, 2 ),
+				],
+				';'
+			);
+		}
+	}
+
 }

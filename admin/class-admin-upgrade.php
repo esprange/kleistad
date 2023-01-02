@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 182;
+	const DBVERSIE = 183;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -54,6 +54,8 @@ class Admin_Upgrade {
 			'workshopprijs'         => 120,
 			'materiaalprijs'        => 2.50,
 			'administratiekosten'   => 1.00,
+			'minsaldostorting'      => 2.00,
+			'maxsaldostorting'      => 100.00,
 			'termijn'               => 4,
 			'start_maanden'         => 3,
 			'min_pauze_weken'       => 2,

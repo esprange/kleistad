@@ -67,14 +67,12 @@ class Test_Oven extends Kleistad_UnitTestCase {
 		$saldo = new Saldo( $user_id );
 		$this->assertEquals( 0.0, $saldo->bedrag, 'saldo initieel not zero' );
 		$saldo->bedrag = $bedrag;
-		$saldo->reden  = 'test 1';
 		$saldo->save();
 
 		$saldo2 = new Saldo( $user_id );
 		$this->assertEquals( $bedrag, $saldo2->bedrag, 'saldo not equal to ' . $bedrag );
 
 		$saldo2->bedrag = $saldo2->bedrag + $bedrag;
-		$saldo2->reden  = 'test 2';
 		$saldo2->save();
 
 		$saldo3 = new Saldo( $user_id );

@@ -55,41 +55,10 @@ class SaldoBetaling extends ArtikelBetaling {
 			$this->saldo->klant_id,
 			$referentie,
 			$bedrag,
-			sprintf( 'Kleistad saldo %s', $this->saldo->code ),
+			sprintf( 'Kleistad saldo %s', $this->saldo->mutaties->end()->code ),
 			$bericht,
 			false
 		);
-	}
-
-	/**
-	 * Stort het saldo terug.
-	 *
-	 * @return bool
-	 */
-	public function doe_terugboeken() : bool {
-		$referentie = '';
-		foreach ( $this->saldo->storting as $storting ) {
-			$code_elementen = explode( '-', $storting['code'] );
-			if ( isset( $code_elementen[2] ) && is_numeric( $code_elementen[2] ) ) {
-				$referentie = $storting['code'];
-			}
-		}
-		$order = new Order( $referentie );
-		if ( $order->id ) {
-			$this->saldo->verzend_email(
-				'_terugboeking',
-				$order->terugboeken( $this->saldo->bedrag, opties()['administratiekosten'], 'terugstorting restant saldo' )
-			);
-			$this->saldo->storting = [
-				'code'   => "S{$this->saldo->klant_id}-terugboeking",
-				'datum'  => date( 'Y-m-d', strtotime( 'today' ) ),
-				'prijs'  => - $this->saldo->bedrag,
-				'status' => 'terugboeking saldo',
-			];
-			$this->saldo->save();
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -105,9 +74,13 @@ class SaldoBetaling extends ArtikelBetaling {
 	 */
 	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
+			$reden               = 'storting';
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
-			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'terugboeking';
-			$this->saldo->update_storting( $this->saldo->get_referentie(), "{$this->saldo->reden} per $type" );
+			if ( $bedrag < 0 && 'restitutie' === $this->saldo->artikel_type ) {
+				$this->saldo->restitutie_actief = false;
+				$reden                          = 'restitutie';
+			}
+			$this->saldo->update_mutatie_status( "$reden per $type" );
 			$this->saldo->save();
 			if ( $order->id ) {
 				/**
@@ -124,6 +97,9 @@ class SaldoBetaling extends ArtikelBetaling {
 			 */
 			$order = new Order( $this->saldo->get_referentie() );
 			$this->saldo->verzend_email( '_ideal', $order->bestel( $bedrag, '', $transactie_id ) );
+		} else {
+			$this->saldo->remove_mutatie();
+			$this->saldo->save();
 		}
 	}
 

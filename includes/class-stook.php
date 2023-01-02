@@ -285,8 +285,7 @@ class Stook {
 					$medestoker       = get_userdata( $stookdeel->medestoker );
 					$saldo            = new Saldo( $stookdeel->medestoker );
 					$saldo->bedrag   -= $stookdeel->prijs;
-					$saldo->reden     = 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $stoker->display_name;
-					if ( false === $saldo->save() ) {
+					if ( false === $saldo->save( 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $stoker->display_name ) ) {
 						fout( __CLASS__, "saldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" );
 						continue;
 					}

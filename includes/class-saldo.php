@@ -18,13 +18,14 @@ namespace Kleistad;
  * @property float  bedrag
  * @property array  storting
  * @property float  prijs
+ * @property bool   terugboeking actief
  */
 class Saldo extends Artikel {
 
 	public const DEFINITIE = [
 		'prefix'       => 'S',
 		'naam'         => 'stook en materialen',
-		'pcount'       => 1,
+		'pcount'       => 3,
 		'annuleerbaar' => true,
 	];
 	public const META_KEY  = 'kleistad_stooksaldo';
@@ -38,23 +39,25 @@ class Saldo extends Artikel {
 	];
 
 	/**
-	 * De beginwaarden van een dagdelenkaart.
+	 * Het saldo bedrag
 	 *
-	 * @access private
-	 * @var array $default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
+	 * @var float $bedrag Het saldo bedrag.
 	 */
-	private array $default_data = [
-		'storting' => [],
-		'bedrag'   => 0.0,
-	];
+	public float $bedrag = 0.0;
 
 	/**
-	 * De reden waarvoor het saldo gewijzigd wordt. Is alleen voor de logging bedoeld.
+	 * Registratie van de mutaties.
 	 *
-	 * @access public
-	 * @var string $reden De reden.
+	 * @var SaldoMutaties Het register.
 	 */
-	public string $reden = '';
+	public SaldoMutaties $mutaties;
+
+	/**
+	 * Indicatie voor restitutie
+	 *
+	 * @var bool False als er geen restitutie is.
+	 */
+	public bool $restitutie_actief;
 
 	/**
 	 * Het actie object
@@ -64,86 +67,78 @@ class Saldo extends Artikel {
 	public SaldoActie $actie;
 
 	/**
+	 * De referentie voor storting of restitutie
+	 *
+	 * @var string De referentie van de storting of restitutie order
+	 */
+	private string $referentie;
+
+	/**
 	 * De constructor
 	 *
 	 * @since      4.0.87
 	 *
-	 * @param int $klant_id De gebruiker waarvoor het saldo wordt gemaakt.
+	 * @param int    $klant_id De gebruiker waarvoor het saldo wordt gemaakt.
+	 * @param string $datum    De datum (ymd) waarop er een storting heeft plaatsgevonden.
+	 * @param string $volgnr   Het volgnummer.
 	 */
-	public function __construct( int $klant_id ) {
-		$this->klant_id = $klant_id;
-		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
-		$this->data     = wp_parse_args( $saldo, $this->default_data );
-		$this->actie    = new SaldoActie( $this );
-		$this->betaling = new SaldoBetaling( $this );
+	public function __construct( int $klant_id, string $datum = '', string $volgnr = '' ) {
+		$this->klant_id          = $klant_id;
+		$this->actie             = new SaldoActie( $this );
+		$this->betaling          = new SaldoBetaling( $this );
+		$this->mutaties          = new SaldoMutaties();
+		$saldo_data              = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: [];
+		$saldo_data              = wp_parse_args(
+			$saldo_data,
+			[
+				'storting'     => [],
+				'bedrag'       => 0.0,
+				'terugboeking' => false,
+			]
+		);
+		$this->bedrag            = $saldo_data['bedrag'];
+		$this->restitutie_actief = $saldo_data['restitutie'] ?? false;
+		foreach ( $saldo_data['storting'] as $mutatie_data ) {
+			$this->mutaties->toevoegen(
+				new SaldoMutatie(
+					$mutatie_data['code'],
+					$mutatie_data['prijs'],
+					$mutatie_data['status'] ?? '',
+					strtotime( $mutatie_data['datum'] ),
+					$mutatie_data['gewicht'] ?? 0
+				)
+			);
+		}
+		$this->referentie = ( $datum ) ?
+			sprintf( '%s%d-%s-%d', self::DEFINITIE['prefix'], $klant_id, $datum, (int) $volgnr ) :
+			sprintf( '%s%d-%s-%d', self::DEFINITIE['prefix'], $klant_id, date( 'ymd' ), count( $this->mutaties ) );
 	}
 
 	/**
-	 * Getter magic functie
+	 * Update de status van de mutatie
 	 *
-	 * @since      4.0.87
+	 * @param string $status     De status.
 	 *
-	 * @param string $attribuut Het attribuut waarvan de waarde wordt opgevraagd.
-	 * @return mixed De waarde.
+	 * @return void
 	 */
-	public function &__get( string $attribuut ) {
-		if ( array_key_exists( $attribuut, $this->data ) ) {
-			return $this->data[ $attribuut ];
-		}
-		$laatste_storting = end( $this->data['storting'] );
-		if ( array_key_exists( $attribuut, $laatste_storting ) ) {
-			return $laatste_storting[ $attribuut ];
-		}
-		$null = null; // nodig omdat de waarde by reference teruggegeven moet worden.
-		return $null;
-	}
-
-	/**
-	 * Setter magic functie
-	 *
-	 * @since      4.0.87
-	 *
-	 * @param string $attribuut Het attribuut waarvan de waarde wordt aangepast.
-	 * @param mixed  $waarde De nieuwe waarde.
-	 */
-	public function __set( string $attribuut, mixed $waarde ) {
-		if ( 'bedrag' === $attribuut ) {
-			$this->data[ $attribuut ] = round( $waarde, 2 );
-			return;
-		}
-		if ( 'storting' === $attribuut ) {
-			$this->data['storting'][] = $waarde;
-			return;
-		}
-		$this->data['storting'][ array_key_last( $this->data['storting'] ) ][ $attribuut ] = $waarde;
-	}
-
-	/**
-	 * Geef de storting terug die bij de code hoort
-	 *
-	 * @param string $referentie De code.
-	 *
-	 * @return array
-	 */
-	public function geef_storting( string $referentie ) : array {
-		foreach ( $this->data['storting'] as $storting ) {
-			if ( $referentie === $storting['code'] ) {
-				return $storting;
+	public function update_mutatie_status( string $status ) : void {
+		foreach ( $this->mutaties as $mutatie ) {
+			if ( $this->referentie === $mutatie->code ) {
+				$mutatie->status = $status;
 			}
 		}
-		return [];
 	}
 
 	/**
-	 * Update de status van de storting
+	 * Verwijder de mutatie (bijv. de betaling is niet gelukt).
 	 *
-	 * @param string $referentie De code.
-	 * @param string $status     De status van de storting.
+	 * @return void
 	 */
-	public function update_storting( string $referentie, string $status ) {
-		foreach ( $this->data['storting'] as $key => $storting ) {
-			if ( $referentie === $storting['code'] ) {
-				$this->data['storting'][ $key ]['status'] = $status;
+	public function remove_mutatie() : void {
+		foreach ( $this->mutaties as $mutatie ) {
+			if ( $this->referentie === $mutatie->code ) {
+				$mutatie->code = '';
+				return;
 			}
 		}
 	}
@@ -154,7 +149,7 @@ class Saldo extends Artikel {
 	 * @return string
 	 */
 	public function get_referentie() : string {
-		return $this->code;
+		return $this->referentie ?: $this->mutaties->end()->code;
 	}
 
 	/**
@@ -178,7 +173,7 @@ class Saldo extends Artikel {
 				'parameters'  => [
 					'voornaam'   => $gebruiker->first_name,
 					'achternaam' => $gebruiker->last_name,
-					'bedrag'     => number_format_i18n( $this->prijs, 2 ),
+					'bedrag'     => number_format_i18n( $this->mutaties->end()->bedrag, 2 ),
 					'saldo'      => number_format_i18n( $this->bedrag, 2 ),
 					'saldo_link' => $this->get_betaal_link(),
 				],
@@ -191,17 +186,33 @@ class Saldo extends Artikel {
 	 *
 	 * @since      4.0.87
 	 *
+	 * @param string $reden Tekst voor de logging.
 	 * @return bool True als saldo is aangepast.
 	 */
-	public function save() : bool {
-		$saldo = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( $saldo === $this->data ) {
+	public function save( string $reden = '' ) : bool {
+		$mutatie_data = [];
+		foreach ( $this->mutaties as $mutatie ) {
+			$mutatie_data[] = [
+				'code'    => $mutatie->code,
+				'prijs'   => $mutatie->bedrag,
+				'status'  => $mutatie->status,
+				'gewicht' => $mutatie->gewicht,
+				'datum'   => date( 'Y-m-d', $mutatie->datum ),
+			];
+		}
+		$saldo_mutatie_data = [
+			'bedrag'            => $this->bedrag,
+			'restitutie_actief' => $this->restitutie_actief,
+			'storting'          => $mutatie_data,
+		];
+		$saldo_data         = get_user_meta( $this->klant_id, self::META_KEY, true );
+		if ( $saldo_data === $saldo_mutatie_data ) {
 			return true;
 		}
-		$huidig_saldo = $saldo['bedrag'] ?? 0.0;
-		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) ) {
-			if ( $huidig_saldo !== $this->bedrag ) {
-				$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
+		$vorig_saldo = $saldo_data['bedrag'] ?? 0.0;
+		if ( update_user_meta( $this->klant_id, self::META_KEY, $saldo_mutatie_data ) ) {
+			if ( $vorig_saldo !== $this->bedrag ) {
+				$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $vorig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $reden;
 				file_put_contents(  // phpcs:ignore
 					wp_upload_dir()['basedir'] . '/stooksaldo.log',
 					date( 'c' ) . " : $tekst\n",
@@ -236,7 +247,7 @@ class Saldo extends Artikel {
 	 */
 	public function get_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
-		$orderregels->toevoegen( new Orderregel( 'stook of materialen saldo', 1, $this->prijs ) );
+		$orderregels->toevoegen( new Orderregel( 'stook of materialen saldo', 1, $this->mutaties->end()->bedrag ) );
 		return $orderregels;
 	}
 

@@ -393,22 +393,19 @@ class Order {
 	 * @param float  $bedrag     Het bedrag.
 	 * @param float  $kosten     De kosten die in rekening worden gebracht.
 	 * @param string $vermelding De vermelding van het terug te storten bedrag.
-	 * @param string $opmerking  Een eventuele opmerking op de factuur.
+	 * @param string $opmerking  De optionele opmerking op de factuur.
 	 *
 	 * @return string
 	 */
-	public function terugboeken( float $bedrag, float $kosten, string $vermelding, string $opmerking = '' ) : string {
-		$nieuwe_order              = clone $this;
-		$nieuwe_order->gesloten    = false;
-		$nieuwe_order->orderregels = new Orderregels();
-		$nieuwe_order->orderregels->toevoegen( new Orderregel( $vermelding, 1, - $bedrag ) );
-		$nieuwe_order->orderregels->toevoegen( new Orderregel( 'administratie kosten', 1, $kosten ) );
-		$nieuwe_order->betaald = 0.0;
-		$nieuwe_order->save( sprintf( "Terugboeken bedrag\n%s", $opmerking ) );
-		do_action( 'kleistad_order_stornering', $nieuwe_order ); // Er zou stornering nodig kunnen zijn.
+	public function restitueren( float $bedrag, float $kosten, string $vermelding, string $opmerking = '' ) : string {
+		$this->credit    = true;
+		$this->opmerking = $opmerking;
+		$this->orderregels->toevoegen( new Orderregel( $vermelding, 1, - $bedrag ) );
+		$this->orderregels->toevoegen( new Orderregel( 'administratie kosten', 1, $kosten ) );
+		$this->save( sprintf( "Terugboeken bedrag\n%s", $vermelding ) );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		$factuur = new Factuur();
-		return $factuur->run( $nieuwe_order );
+		return $factuur->run( $this );
 	}
 
 	/**

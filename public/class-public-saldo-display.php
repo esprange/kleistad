@@ -36,8 +36,8 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 */
 	private function bijstorten() : Public_Saldo_Display {
 		?>
-		<p>Je huidige saldo is <strong>&euro; <?php echo esc_html( $this->data['saldo'] ); ?></strong></p>
-		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['gebruiker_id'] ); ?>" />
+		<p>Je huidige saldo is <strong>&euro; <?php echo esc_html( number_format_i18n( $this->data['saldo']->bedrag, 2 ) ); ?></strong></p>
+		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['saldo']->klant_id ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-2">
 				<label class="kleistad-label">Bedrag</label>
@@ -52,8 +52,18 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-4">
 				<input class="kleistad-radio kleistad-saldo-select" type="radio" name="bedrag" id="kleistad_ander" value="0" />
+				<input type="hidden" name="minsaldo" value="<?php echo esc_attr( opties()['minsaldostorting'] ); ?>">
+				<input type="hidden" name="maxsaldo" value="<?php echo esc_attr( opties()['maxsaldostorting'] ); ?>">
 				<label for="kleistad_ander">anders &euro;&nbsp;
-					<input name="ander" type="text" maxlength="7" class="kleistad-saldo-select" style="width:5em;" title="minimum 2, maximum 100 euro" >
+					<input name="ander" type="text" maxlength="7" class="kleistad-saldo-select" style="width:5em;"
+					title="<?php //phpcs:ignore
+						echo esc_attr(
+							sprintf(
+								'minimum € %d, maximum € %d',
+								number_format_i18n( opties()['minsaldostorting'], 2 ),
+								number_format_i18n( opties()['maxsaldostorting'], 2 )
+							)
+						); //phpcs:ignore ?>" >
 				</label>
 			</div>
 		</div>
@@ -90,8 +100,22 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_terugboeking" required value="terugboeking"
-				<?php disabled( $this->data['saldo'] <= opties()['administratiekosten'] ); ?> />
-				<label for="kleistad_betaal_terugboeking">ik wil mijn openstaand saldo terug laten storten. Administratiekosten worden in rekening gebracht</label>
+				<?php disabled( ! $this->data['terugstortbaar'] ); ?> />
+				<label for="kleistad_betaal_terugboeking"><?php echo esc_html( $this->data['terugstorttekst'] ); ?></label>
+			</div>
+		</div>
+		<div class="kleistad-row" style="display:none" id="kleistad_iban_info">
+			<div class="kleistad-col-1 kleistad-label">
+				<label for="kleistad_iban">IBAN</label>
+			</div>
+			<div class="kleistad-col-3">
+				<input class="kleistad-input" type="text" name="iban" id="kleistad_iban" value="<?php echo esc_attr( $this->data['input']['iban'] ); ?>">
+			</div>
+			<div class="kleistad-col-1 kleistad-label">
+				<label for="kleistad_rnaam">t.n.v.</label>
+			</div>
+			<div class="kleistad-col-3">
+				<input class="kleistad-input" type="text" name="rnaam" id="kleistad_rnaam" value="<?php echo esc_attr( $this->data['input']['iban'] ); ?>">
 			</div>
 		</div>
 		<?php

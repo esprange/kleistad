@@ -24,6 +24,7 @@
         "php-imap/php-imap": ">=4.5",
         "setasign/fpdf": ">=1",
         "deliciousbrains/wp-background-processing": ">=1",
+        "globalcitizen/php-iban": "^4.1",
         "ext-calendar": "*",
         "ext-exif": "*",
         "ext-gd": "*",

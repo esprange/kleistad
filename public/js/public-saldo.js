@@ -46,12 +46,16 @@
 					if ( $( '#kleistad_betaal_terugboeking' ).is( ':checked' ) ) {
 						$( '#kleistad_betaal_ideal' ).prop( 'checked', true );
 					}
-					let bedrag      = $( 'input[name=bedrag]:radio:checked' ).val();
-					let bedragTekst = new Intl.NumberFormat( 'nl-NL', { style: 'currency', currency: 'EUR' } ).format( bedrag );
-					let bedragValid = 2 <= bedrag && 100 >= bedrag;
+					let bedrag         = parseFloat( $( 'input[name=bedrag]:radio:checked' ).val() );
+					let bedragMin      = parseFloat( $( 'input[name=minsaldo]' ).val() );
+					let bedragMax      = parseFloat($( 'input[name=maxsaldo]' ).val() );
+					let bedragValid    = bedragMin <= bedrag && bedragMax >= bedrag;
+					let bedragTekst    = new Intl.NumberFormat( 'nl-NL', { style: 'currency', currency: 'EUR' } ).format( bedrag );
+					let bedragMinTekst = new Intl.NumberFormat( 'nl-NL', { style: 'currency', currency: 'EUR' } ).format( bedragMin );
+					let bedragMaxTekst = new Intl.NumberFormat( 'nl-NL', { style: 'currency', currency: 'EUR' } ).format( bedragMax );
 					$( '#kleistad_submit' ).prop( 'disabled', ! bedragValid );
 					if ( ! bedragValid ) {
-						$( 'label[for=kleistad_betaal_ideal],label[for=kleistad_betaal_stort]' ).text( 'Het bij te storten bedrag moet minimaal 2 en maximaal 100 euro zijn' );
+						$( 'label[for=kleistad_betaal_ideal],label[for=kleistad_betaal_stort]' ).text( 'Het bij te storten bedrag moet minimaal € ' + bedragMinTekst + ' en maximaal € ' + bedragMaxTekst + ' zijn' );
 						return;
 					}
 					$( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal ' + bedragTekst + ' en verhoog mijn saldo.' );
@@ -65,13 +69,16 @@
 				'change',
 				'input[name=betaal]',
 				function() {
-					const $submit = $( '#kleistad_submit' );
+					const $submit    = $( '#kleistad_submit' );
+					const $iban_info = $( '#kleistad_iban_info' );
 					if ( 'terugboeking' === $( this ).val() ) {
+						$iban_info.show().find( 'input' ).attr( 'required', true );
 						$submit.prop( 'disabled', false ).data( 'confirm',  'Saldo terugstorten|Weet je zeker dat je het saldo wil laten terugboeken ?' );
 						return;
 					}
-					$( '.kleistad-saldo-select' ).trigger( 'input');
+					$iban_info.hide().find( 'input' ).attr( 'required', false );
 					$submit.removeData( 'confirm' );
+					$( '.kleistad-saldo-select' ).trigger( 'input');
 				}
 			);
 

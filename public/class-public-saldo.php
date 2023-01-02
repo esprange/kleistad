@@ -12,6 +12,7 @@
 namespace Kleistad;
 
 use WP_Error;
+use PHP_IBAN\IBAN;
 
 /**
  * De kleistad saldo class.
@@ -24,12 +25,23 @@ class Public_Saldo extends Public_Bestelling {
 	 * @return string
 	 */
 	protected function prepare() : string {
-		$gebruiker_id = get_current_user_id();
-		$saldo        = new Saldo( $gebruiker_id );
-		$this->data   = [
-			'gebruiker_id' => $gebruiker_id,
-			'saldo'        => number_format_i18n( $saldo->bedrag, 2 ),
-		];
+		$this->data['saldo'] = new Saldo( get_current_user_id() );
+		if ( $this->data['saldo']->terugboeking ) {
+			$this->data['terugstorttekst'] = 'een terugstorting is al aangevraagd';
+			$this->data['terugstortbaar']  = false;
+		} elseif ( $this->data['saldo']->bedrag > opties()['administratiekosten'] ) {
+			$this->data['terugstorttekst'] = sprintf( 'ik wil mijn openstaand saldo terug laten storten. Administratiekosten (€ %s ) worden in rekening gebracht', number_format_i18n( opties()['administratiekosten'], 2 ) );
+			$this->data['terugstortbaar']  = true;
+		} else {
+			$this->data['terugstorttekst'] = sprintf( 'het terugstorten van een openstaand saldo is vanwege administratiekosten alleen mogelijk als dit meer dan € %s bedraagt', number_format_i18n( opties()['administratiekosten'], 2 ) );
+			$this->data['terugstortbaar']  = false;
+		}
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data['input'] = [
+				'iban'  => '',
+				'rnaam' => '',
+			];
+		}
 		return $this->content();
 	}
 
@@ -51,10 +63,28 @@ class Public_Saldo extends Public_Bestelling {
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
 				'betaal'       => FILTER_SANITIZE_STRING,
+				'iban'         => FILTER_SANITIZE_STRING,
+				'rnaam'        => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( 2 > floatval( $this->data['input']['bedrag'] ) || 100 < floatval( $this->data['input']['bedrag'] ) ) {
-			return $this->melding( new WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' ) );
+		if ( ! empty( $this->data['input']['iban'] ) ) {
+			$iban = new IBAN( $this->data['input']['iban'] );
+			if ( ! $iban->Verify() ) {
+				return $this->melding( new WP_Error( 'onjuist_iban', 'het IBAN bankrekeningnummer is geen geldig IBAN' ) );
+			}
+			$this->data['input']['iban'] = $iban->HumanFormat();
+		}
+		if ( opties()['minsaldostorting'] > floatval( $this->data['input']['bedrag'] ) || opties()['maxsaldostorting'] < floatval( $this->data['input']['bedrag'] ) ) {
+			return $this->melding(
+				new WP_Error(
+					'onjuist_bedrag',
+					sprintf(
+						'Het bedrag moet tussen %d en %d euro liggen',
+						number_format_i18n( opties()['minsaldostorting'], 2 ),
+						number_format_i18n( opties()['maxsaldostorting'], 2 )
+					)
+				)
+			);
 		}
 		return $this->save();
 	}
@@ -68,7 +98,7 @@ class Public_Saldo extends Public_Bestelling {
 	 */
 	protected function save() : array {
 		if ( 'terugboeking' === $this->data['input']['betaal'] ) {
-			return $this->terugboeken();
+			return $this->verlagen();
 		}
 		return $this->verhogen();
 	}
@@ -94,16 +124,16 @@ class Public_Saldo extends Public_Bestelling {
 	}
 
 	/**
-	 * Storneer het openstaand bedrag
+	 * Stort het openstaand bedrag terug
 	 *
 	 * @return array
 	 */
-	private function terugboeken() : array {
+	private function verlagen() : array {
 		$saldo = new Saldo( intval( $this->data['input']['gebruiker_id'] ) );
-		if ( 1.00 > $saldo->bedrag ) {
-			return [ 'status' => $this->status( new WP_Error( 'saldo', 'Het openstaand bedrag is kleiner dan 1 euro, vanwege de administratiekosten is terugstorting niet mogelijk' ) ) ];
+		if ( opties()['administratiekosten'] > $saldo->bedrag ) {
+			return [ 'status' => $this->status( new WP_Error( 'saldo', 'Het openstaand bedrag is kleiner dan ' . opties()['administratiekosten'] . ' euro, vanwege de administratiekosten is terugstorting niet mogelijk' ) ) ];
 		}
-		$result = $saldo->betaling->doe_terugboeken();
+		$result = $saldo->actie->doe_restitutie( $this->data['input']['iban'], $this->data['input']['rnaam'] );
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'saldo', 'Terugstorting was niet mogelijk, neem eventueel contact op met Kleistad' ) ) ];
 		}

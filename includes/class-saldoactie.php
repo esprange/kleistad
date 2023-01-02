@@ -42,13 +42,12 @@ class SaldoActie {
 	 * @return bool|string redirect url of true.
 	 */
 	public function nieuw( float $bedrag, string $betaalwijze ): bool|string {
-		$datum                     = wp_date( 'ymd', strtotime( 'today' ) );
-		$volgnr                    = count( $this->saldo->storting );
-		$this->saldo->storting     = [
-			'code'  => "S{$this->saldo->klant_id}-$datum-$volgnr",
-			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
-			'prijs' => $bedrag,
-		];
+		$this->saldo->mutaties->toevoegen(
+			new SaldoMutatie(
+				$this->saldo->get_referentie(),
+				$bedrag,
+			)
+		);
 		$this->saldo->artikel_type = 'saldo';
 		$this->saldo->save();
 		if ( 'ideal' === $betaalwijze ) {
@@ -63,8 +62,48 @@ class SaldoActie {
 	 * Annulering van de storting.
 	 */
 	public function afzeggen() : void {
-		$this->saldo->update_storting( $this->saldo->get_referentie(), 'geannuleerd' );
+		$this->saldo->remove_mutatie();
 		$this->saldo->save();
+	}
+
+	/**
+	 * Stort het saldo terug.
+	 *
+	 * @param string $iban  Het iban bankrekening nummer waarop terug geboekt moet worden.
+	 * @param string $rnaam De naam behorende bij de bankrekening.
+	 * @return bool
+	 */
+	public function doe_restitutie( string $iban, string $rnaam ) : bool {
+		if ( $this->saldo->restitutie_actief ) {
+			return false;
+		}
+		$this->saldo->mutaties->toevoegen(
+			new SaldoMutatie(
+				$this->maak_code( 'adminkosten' ),
+				-opties()['administratiekosten'],
+				'administratiekosten ivm restitutie saldo'
+			)
+		);
+		$this->saldo->mutaties->toevoegen(
+			new SaldoMutatie(
+				$this->saldo->get_referentie(),
+				- $this->saldo->bedrag + opties()['administratiekosten'],
+			)
+		);
+		$this->saldo->bedrag           -= opties()['administratiekosten'];
+		$this->saldo->restitutie_actief = true;
+		$this->saldo->save( 'restitutie saldo' );
+		$order = new Order( $this->saldo->get_referentie() );
+		$this->saldo->verzend_email(
+			'_terugboeking',
+			$order->restitueren(
+				$this->saldo->bedrag,
+				opties()['administratiekosten'],
+				'terugstorting restant saldo',
+				sprintf( 'Het bedrag wordt teruggestort op rekening %s t.n.v. %s', $iban, $rnaam )
+			)
+		);
+		return true;
 	}
 
 	/**
@@ -73,42 +112,42 @@ class SaldoActie {
 	 * @param float $nieuw_saldo Nieuw saldo.
 	 */
 	public function correctie( float $nieuw_saldo ) : void {
-		$verschil              = $nieuw_saldo - $this->saldo->bedrag;
-		$corrector             = wp_get_current_user()->display_name;
-		$this->saldo->bedrag   = $nieuw_saldo;
-		$this->saldo->reden    = "correctie door $corrector";
-		$this->saldo->storting = [
-			'code'   => "S{$this->saldo->klant_id}-correctie",
-			'datum'  => date( 'Y-m-d', strtotime( 'today' ) ),
-			'prijs'  => $verschil,
-			'status' => "correctie door $corrector",
-		];
-		$this->saldo->save();
+		$verschil            = $nieuw_saldo - $this->saldo->bedrag;
+		$corrector           = wp_get_current_user()->display_name;
+		$this->saldo->bedrag = $nieuw_saldo;
+		$this->saldo->mutaties->toevoegen(
+			new SaldoMutatie(
+				$this->maak_code( 'correctie' ),
+				$verschil,
+				"correctie door $corrector"
+			)
+		);
+		$this->saldo->save( "correctie door $corrector" );
 	}
 
 	/**
 	 * Registreer een materialen verbruik
 	 *
 	 * @param int    $verbruik Het verbruik in gram.
-	 * @param string $reden    De reden van het verbruik.
+	 * @param string $cursus   De cursus waar het verbruik plaatsvindt.
 	 *
 	 * @return void
 	 */
-	public function verbruik( int $verbruik, string $reden ) : void {
+	public function verbruik( int $verbruik, string $cursus ) : void {
 		$kosten = opties()['materiaalprijs'] * $verbruik / 1000;
 		if ( 0.01 > $kosten ) {
 			return;
 		}
-		$this->saldo->bedrag  -= $kosten;
-		$this->saldo->reden    = 'verbruik materialen geregisteerd door ' . wp_get_current_user()->display_name;
-		$this->saldo->storting = [
-			'code'    => "S{$this->saldo->klant_id}-verbruik",
-			'datum'   => date( 'Y-m-d', strtotime( 'today' ) ),
-			'prijs'   => - $kosten,
-			'gewicht' => $verbruik,
-			'status'  => "$verbruik gram materialen: $reden",
-		];
-		$this->saldo->save();
+		$this->saldo->bedrag -= $kosten;
+		$this->saldo->mutaties->toevoegen(
+			new SaldoMutatie(
+				$this->maak_code( 'verbruik' ),
+				- $kosten,
+				"$verbruik gram materialen: $cursus",
+				$verbruik
+			)
+		);
+		$this->saldo->save( "$cursus verbruik materialen geregisteerd door " . wp_get_current_user()->display_name );
 		if ( 0 > $this->saldo->bedrag ) {
 			$this->saldo->verzend_email( '_negatief' );
 		}
@@ -126,17 +165,28 @@ class SaldoActie {
 		if ( 0.01 > $bedrag ) {
 			return;
 		}
-		$this->saldo->bedrag  -= $bedrag;
-		$this->saldo->reden    = $reden;
-		$this->saldo->storting = [
-			'code'   => "S{$this->saldo->klant_id}-overig",
-			'datum'  => date( 'Y-m-d', strtotime( 'today' ) ),
-			'prijs'  => - $bedrag,
-			'status' => "koop $reden",
-		];
-		$this->saldo->save();
+		$this->saldo->bedrag -= $bedrag;
+		$this->saldo->mutaties->toevoegen(
+			new SaldoMutatie(
+				$this->maak_code( 'overig' ),
+				- $bedrag,
+				"koop $reden"
+			)
+		);
+		$this->saldo->save( $reden );
 		if ( 0 > $this->saldo->bedrag ) {
 			$this->saldo->verzend_email( '_negatief' );
 		}
+	}
+
+	/**
+	 * Maak een code aan voor een mutatie zonder order.
+	 *
+	 * @param string $postfix Achtervoegsel.
+	 *
+	 * @return string
+	 */
+	private function maak_code( string $postfix ) : string {
+		return sprintf( '%s%d-%s', Saldo::DEFINITIE['prefix'], $this->saldo->klant_id, $postfix );
 	}
 }
