@@ -23,6 +23,7 @@ class Public_Saldo extends Public_Bestelling {
 	 * Prepareer 'saldo' form
 	 *
 	 * @return string
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function prepare() : string {
 		$this->data['saldo'] = new Saldo( get_current_user_id() );

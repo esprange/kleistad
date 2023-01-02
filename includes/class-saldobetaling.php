@@ -97,10 +97,10 @@ class SaldoBetaling extends ArtikelBetaling {
 			 */
 			$order = new Order( $this->saldo->get_referentie() );
 			$this->saldo->verzend_email( '_ideal', $order->bestel( $bedrag, '', $transactie_id ) );
-		} else {
-			$this->saldo->remove_mutatie();
-			$this->saldo->save();
+			return;
 		}
+		$this->saldo->remove_mutatie();
+		$this->saldo->save();
 	}
 
 }
