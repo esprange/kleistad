@@ -79,6 +79,7 @@ class SaldoActie {
 		}
 		$huidig_saldo              = $this->saldo->bedrag;
 		$this->saldo->artikel_type = 'restitutie';
+		$referentie                = $this->saldo->get_referentie() . "-{$this->saldo->artikel_type}";
 		$this->saldo->mutaties->toevoegen(
 			new SaldoMutatie(
 				$this->maak_code( 'adminkosten' ),
@@ -88,14 +89,14 @@ class SaldoActie {
 		);
 		$this->saldo->mutaties->toevoegen(
 			new SaldoMutatie(
-				$this->saldo->get_referentie() . "-{$this->saldo->artikel_type}",
+				$referentie,
 				- $this->saldo->bedrag + opties()['administratiekosten'],
 			)
 		);
 		$this->saldo->bedrag           -= opties()['administratiekosten'];
 		$this->saldo->restitutie_actief = true;
 		$this->saldo->save( 'restitutie saldo' );
-		$order = new Order( $this->saldo->get_referentie() );
+		$order = new Order( $referentie );
 		$this->saldo->verzend_email(
 			'_terugboeking',
 			$order->restitueren(

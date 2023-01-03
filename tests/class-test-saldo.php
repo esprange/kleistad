@@ -191,8 +191,11 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$register = new Artikelregister(); // via het register om te simuleren dat het via de debiteurenbeheer of mollie client verwerkt wordt.
 		$saldo4   = $register->get_object( $saldo3->mutaties->current()->code );
 		$order4   = new Order( $saldo3->mutaties->current()->code );
-		$saldo4->betaling->verwerk( $order4, -30, true, 'bank' );
+		$this->assertTrue( $saldo4->restitutie_actief, 'restitutie vlag niet gezet' );
+		$saldo4->betaling->verwerk( $order4, -30 + opties()['administratiekosten'], true, 'bank' );
 
-		$this->assertEquals( 0, $saldo4->bedrag, 'na restitutie geen 0 saldo' );
+		$saldo5 = new Saldo( $saldo1->klant_id );
+		$this->assertFalse( $saldo5->restitutie_actief, 'restitutie vlag nog aanwezig' );
+		$this->assertEquals( 0, $saldo5->bedrag, 'na restitutie geen 0 saldo' );
 	}
 }

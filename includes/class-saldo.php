@@ -57,7 +57,7 @@ class Saldo extends Artikel {
 	 *
 	 * @var bool False als er geen restitutie is.
 	 */
-	public bool $restitutie_actief;
+	public bool $restitutie_actief = false;
 
 	/**
 	 * Het actie object
@@ -91,9 +91,9 @@ class Saldo extends Artikel {
 		$saldo_data              = wp_parse_args(
 			$saldo_data,
 			[
-				'storting'     => [],
-				'bedrag'       => 0.0,
-				'terugboeking' => false,
+				'storting'   => [],
+				'bedrag'     => 0.0,
+				'restitutie' => false,
 			]
 		);
 		$this->bedrag            = $saldo_data['bedrag'];
@@ -201,9 +201,9 @@ class Saldo extends Artikel {
 			];
 		}
 		$saldo_mutatie_data = [
-			'bedrag'            => $this->bedrag,
-			'restitutie_actief' => $this->restitutie_actief,
-			'storting'          => $mutatie_data,
+			'bedrag'     => $this->bedrag,
+			'restitutie' => $this->restitutie_actief,
+			'storting'   => $mutatie_data,
 		];
 		$saldo_data         = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( $saldo_data === $saldo_mutatie_data ) {

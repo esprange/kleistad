@@ -78,7 +78,6 @@ class SaldoBetaling extends ArtikelBetaling {
 			if ( $bedrag < 0 && 'restitutie' === $this->saldo->artikel_type ) {
 				$this->saldo->restitutie_actief = false;
 				$reden                          = 'restitutie';
-				$bedrag                        += opties()['administratiekosten']; // Administratiekosten zijn al eerder betaald.
 			}
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->update_mutatie_status( "$reden per $type" );

@@ -26,16 +26,15 @@ class Public_Saldo extends Public_Bestelling {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function prepare() : string {
-		$this->data['saldo'] = new Saldo( get_current_user_id() );
-		if ( $this->data['saldo']->terugboeking ) {
-			$this->data['terugstorttekst'] = 'een terugstorting is al aangevraagd';
-			$this->data['terugstortbaar']  = false;
-		} elseif ( $this->data['saldo']->bedrag > opties()['administratiekosten'] ) {
-			$this->data['terugstorttekst'] = sprintf( 'ik wil mijn openstaand saldo terug laten storten. Administratiekosten (€ %s ) worden in rekening gebracht', number_format_i18n( opties()['administratiekosten'], 2 ) );
-			$this->data['terugstortbaar']  = true;
+		$this->data['saldo']          = new Saldo( get_current_user_id() );
+		$this->data['terugstortbaar'] = false;
+		if ( $this->data['saldo']->restitutie_actief ) {
+			$this->data['terugstorttekst'] = 'een restitutie van het openstaand saldo is al aangevraagd';
+		} elseif ( $this->data['saldo']->bedrag <= opties()['administratiekosten'] ) {
+			$this->data['terugstorttekst'] = sprintf( 'een restitutie van een openstaand saldo is vanwege administratiekosten alleen mogelijk als dit meer dan € %s bedraagt', number_format_i18n( opties()['administratiekosten'], 2 ) );
 		} else {
-			$this->data['terugstorttekst'] = sprintf( 'het terugstorten van een openstaand saldo is vanwege administratiekosten alleen mogelijk als dit meer dan € %s bedraagt', number_format_i18n( opties()['administratiekosten'], 2 ) );
-			$this->data['terugstortbaar']  = false;
+			$this->data['terugstorttekst'] = sprintf( 'ik wil een restitutie van mijn openstaand saldo. Administratiekosten (€ %s ) worden in rekening gebracht', number_format_i18n( opties()['administratiekosten'], 2 ) );
+			$this->data['terugstortbaar']  = true;
 		}
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data['input'] = [
