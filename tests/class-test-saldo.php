@@ -59,6 +59,40 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test remove mutatie
+	 */
+	public function test_remove_mutatie() {
+		$saldo1 = $this->maak_saldo();
+		$saldo1->actie->nieuw( 25, 'stort' );
+
+		$saldo2 = new Saldo( $saldo1->klant_id );
+		$this->assertEquals( $saldo1->get_referentie(), $saldo2->mutaties->current()->code, 'remove mutatie code niet gevuld' );
+
+		do_action( 'kleistad_order_annulering', $saldo1->get_referentie() );
+		$saldo3 = new Saldo( $saldo1->klant_id );
+		$this->assertEmpty( $saldo3->mutaties->current()->code, 'remove mutatie code niet leeg' );
+	}
+
+	/**
+	 * Test update status na ideal betaling
+	 */
+	public function test_update_mutatie_status() {
+		$register = new Artikelregister();
+
+		$saldo1 = $this->maak_saldo();
+		$saldo1->actie->nieuw( 25, 'ideal' );
+
+		$saldo2 = $register->get_object( $saldo1->get_referentie() );
+		$this->assertEmpty( $saldo2->mutaties->current()->status, 'status not empty for ideal payment' );
+
+		$order = new Order( $saldo1->get_referentie() );
+		$saldo2->betaling->verwerk( $order, 25, true, 'ideal', 'xyz' );
+
+		$saldo3 = $register->get_object( $saldo1->get_referentie() );
+		$this->assertNotEmpty( $saldo3->mutaties->current()->status, 'status empty after ideal completed' );
+	}
+
+	/**
 	 * Test verwerk function for bank payment
 	 */
 	public function test_verwerk_bank() {
@@ -137,13 +171,28 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 */
 	public function test_restitutie() {
 		$mailer = tests_retrieve_phpmailer_instance();
-		$saldo  = $this->maak_saldo();
-		$stoker = new Stoker( $saldo->klant_id );
+		$saldo1 = $this->maak_saldo();
+		$stoker = new Stoker( $saldo1->klant_id );
 
-		$saldo->actie->nieuw( 10, 'ideal' );
-		$order = new Order( $saldo->get_referentie() );
-		$saldo->betaling->verwerk( $order, 10, true, 'ideal' );
-		$this->assertTrue( $saldo->actie->doe_restitutie( 'NL12INGB0001234567', 'test gebruiker' ), 'restitutie onjuist' );
+		$saldo1->actie->nieuw( 10, 'ideal' );
+		$order1 = new Order( $saldo1->get_referentie() );
+		$saldo1->betaling->verwerk( $order1, 10, true, 'ideal' );
+
+		$saldo2 = new Saldo( $saldo1->klant_id );
+		$saldo2->actie->nieuw( 20, 'ideal' );
+		$order2 = new Order( $saldo2->get_referentie() );
+		$saldo2->betaling->verwerk( $order2, 20, true, 'ideal' );
+
+		$saldo3 = new Saldo( $saldo1->klant_id );
+		$this->assertTrue( $saldo3->actie->doe_restitutie( 'NL12INGB0001234567', 'test gebruiker' ), 'restitutie onjuist' );
 		$this->assertEquals( 'Terugboeking restant saldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
+		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
+
+		$register = new Artikelregister(); // via het register om te simuleren dat het via de debiteurenbeheer of mollie client verwerkt wordt.
+		$saldo4   = $register->get_object( $saldo3->mutaties->current()->code );
+		$order4   = new Order( $saldo3->mutaties->current()->code );
+		$saldo4->betaling->verwerk( $order4, -30, true, 'bank' );
+
+		$this->assertEquals( 0, $saldo4->bedrag, 'na restitutie geen 0 saldo' );
 	}
 }

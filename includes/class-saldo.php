@@ -104,8 +104,8 @@ class Saldo extends Artikel {
 					$mutatie_data['code'],
 					$mutatie_data['prijs'],
 					$mutatie_data['status'] ?? '',
-					strtotime( $mutatie_data['datum'] ),
-					$mutatie_data['gewicht'] ?? 0
+					$mutatie_data['gewicht'] ?? 0,
+					strtotime( $mutatie_data['datum'] )
 				)
 			);
 		}

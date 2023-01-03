@@ -74,12 +74,13 @@ class SaldoBetaling extends ArtikelBetaling {
 	 */
 	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			$reden               = 'storting';
-			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
+			$reden = 'storting';
 			if ( $bedrag < 0 && 'restitutie' === $this->saldo->artikel_type ) {
 				$this->saldo->restitutie_actief = false;
 				$reden                          = 'restitutie';
+				$bedrag                        += opties()['administratiekosten']; // Administratiekosten zijn al eerder betaald.
 			}
+			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->update_mutatie_status( "$reden per $type" );
 			$this->saldo->save();
 			if ( $order->id ) {

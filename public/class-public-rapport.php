@@ -115,7 +115,7 @@ class Public_Rapport extends Shortcode {
 					'bedrag'    => number_format_i18n( $mutatie->bedrag, 2 ),
 					'status'    => $mutatie->status,
 					'gewicht'   => 0.0 < $mutatie->gewicht ? number_format_i18n( $mutatie->gewicht, 2 ) : '',
-					'voorlopig' => ! empty( $mutatie->status ),
+					'voorlopig' => empty( $mutatie->status ),
 				];
 			}
 		}
