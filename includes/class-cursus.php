@@ -205,7 +205,7 @@ class Cursus {
 				$this->ruimte_datum    = strtotime( $data['ruimte_datum'] );
 				$this->start_tijd      = strtotime( $data['start_tijd'] );
 				$this->eind_tijd       = strtotime( $data['eind_tijd'] );
-				$this->lesdatums       = array_map( 'strtotime', json_decode( $data['lesdatums'], true ) );
+				$this->lesdatums       = array_map( 'strtotime', json_decode( $data['lesdatums'] ?: [], true ) );
 				$this->technieken      = json_decode( $data['technieken'] ?: '[]', true );
 				$this->werkplekken     = json_decode( $data['werkplekken'] ?: '[]', true );
 				$this->docent          = htmlspecialchars_decode( $data['docent'] );
