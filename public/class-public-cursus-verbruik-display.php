@@ -40,7 +40,7 @@ class Public_Cursus_Verbruik_Display extends Public_Shortcode_Display {
 				<tr>
 					<td data-sort="<?php echo esc_attr( $cursus->id ); ?>"><?php echo esc_html( $cursus->code ); ?></td>
 					<td><?php echo esc_html( $cursus->naam ); ?></td>
-					<td><?php echo esc_html( $cursus->get_docent_naame() ); ?></td>
+					<td><?php echo esc_html( $cursus->get_docent_naam() ); ?></td>
 					<td data-sort="<?php echo esc_attr( $cursus->start_datum ); ?>"><?php echo esc_html( wp_date( 'd-m-Y', $cursus->start_datum ) ); ?></td>
 					<td>
 						<a href="#" title="toon cursisten" class="kleistad-view kleistad-edit-link"	data-id="<?php echo esc_attr( $cursus->id ); ?>" data-actie="cursisten" >
@@ -80,14 +80,14 @@ class Public_Cursus_Verbruik_Display extends Public_Shortcode_Display {
 					<tr>
 						<td><?php echo esc_html( $cursist['naam'] ); ?>
 							<input type="hidden" name="cursist_id[]" value="<?php echo esc_attr( $cursist['id'] ); ?>" ></td>
-						<td>&euro; <?php echo esc_html( number_format_i18n( $cursist['saldo'], 2 ) ); ?></td>
+						<td>&euro; <?php echo esc_html( number_format_i18n( $cursist['saldo']->bedrag, 2 ) ); ?></td>
 						<td><label><select readonly="readonly">
-								<?php foreach ( $cursist['verbruiken'] as $verbruik ) : ?>
+								<?php foreach ( $cursist['saldo']->mutaties as $mutatie ) : ?>
 								<option>
 									<?php
 									echo esc_html(
-										wp_date( 'd-m-Y', strtotime( $verbruik['datum'] ) ) . ' : ' .
-										$verbruik['gewicht'] . ' gram, &euro; ' . number_format_i18n( -$verbruik['prijs'], 2 )
+										wp_date( 'd-m-Y', $mutatie->datum ) . ' : ' .
+										$mutatie->gewicht . ' gram, &euro; ' . number_format_i18n( -$mutatie->bedrag, 2 )
 									);
 									?>
 								</option>

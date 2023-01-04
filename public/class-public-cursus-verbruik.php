@@ -92,25 +92,13 @@ class Public_Cursus_Verbruik extends ShortcodeForm {
 			if ( ! $inschrijving->ingedeeld ) {
 				continue;
 			}
-			$cursist    = get_userdata( $inschrijving->klant_id );
-			$saldo      = new Saldo( $inschrijving->klant_id );
-			$verbruiken = array_filter(
-				$saldo->storting,
-				function( $storting ) {
-					return str_contains( $storting['code'], 'verbruik' );
-				}
-			);
-			usort(
-				$verbruiken,
-				function( $links, $rechts ) {
-					return strtotime( $rechts['datum'] ) <=> strtotime( $links['datum'] );
-				}
-			);
+			$cursist = get_userdata( $inschrijving->klant_id );
+			$saldo   = new Saldo( $inschrijving->klant_id );
+			$saldo->mutaties->filter_by_code( 'verbruik' )->sort_by_date( false );
 			$cursisten[] = [
-				'id'         => $inschrijving->klant_id,
-				'naam'       => $cursist->display_name . $inschrijving->toon_aantal(),
-				'saldo'      => $saldo->bedrag,
-				'verbruiken' => $verbruiken,
+				'id'    => $inschrijving->klant_id,
+				'naam'  => $cursist->display_name . $inschrijving->toon_aantal(),
+				'saldo' => $saldo,
 			];
 			usort(
 				$cursisten,

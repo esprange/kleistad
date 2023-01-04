@@ -120,7 +120,7 @@ class Gebruiker extends WP_User {
 				continue;
 			}
 			$stoker = new Stoker( $gebruiker->ID );
-			if ( ! empty( $stoker->saldo->storting ) ) {
+			if ( $stoker->saldo->mutaties->count() ) {
 				continue;
 			}
 			error_log( 'Opruimen van ' . $gebruiker->display_name ); // phpcs:ignore

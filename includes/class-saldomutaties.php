@@ -102,4 +102,41 @@ class SaldoMutaties implements Countable, Iterator {
 		return isset( $this->mutaties[ $this->current_index ] );
 	}
 
+	/**
+	 * Filter de verzameling op code soort.
+	 *
+	 * @param string $code_segment Het filter.
+	 *
+	 * @return SaldoMutaties
+	 */
+	public function filter_by_code( string $code_segment ) : SaldoMutaties {
+		$mutaties = $this->mutaties;
+		foreach ( $mutaties as $mutatie ) {
+			if ( ! str_contains( $mutatie->code, $code_segment ) ) {
+				unset( $this->mutaties );
+			}
+		}
+		$this->mutaties = array_values( $mutaties );
+		$this->rewind();
+		return $this;
+	}
+
+	/**
+	 * Sort de verzameling
+	 *
+	 * @param bool $ascending Als true dan ascending.
+	 *
+	 * @return SaldoMutaties
+	 */
+	public function sort_by_date( bool $ascending = true ) : SaldoMutaties {
+		usort(
+			$this->mutaties,
+			function( $links, $rechts ) use ( $ascending ) {
+				return $ascending ? ( $links->datum <=> $rechts->datum ) : ( $rechts->datum <=> $links->datum );
+			}
+		);
+		$this->rewind();
+		return $this;
+	}
+
 }
