@@ -194,14 +194,14 @@ class Saldo extends Artikel {
 		foreach ( $this->mutaties as $mutatie ) {
 			$mutatie_data[] = [
 				'code'    => $mutatie->code,
-				'prijs'   => $mutatie->bedrag,
+				'prijs'   => round( $mutatie->bedrag, 2 ),
 				'status'  => $mutatie->status,
 				'gewicht' => $mutatie->gewicht,
 				'datum'   => date( 'Y-m-d', $mutatie->datum ),
 			];
 		}
 		$saldo_mutatie_data = [
-			'bedrag'     => $this->bedrag,
+			'bedrag'     => round( $this->bedrag, 2 ),
 			'restitutie' => $this->restitutie_actief,
 			'storting'   => $mutatie_data,
 		];
