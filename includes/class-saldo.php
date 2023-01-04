@@ -123,7 +123,7 @@ class Saldo extends Artikel {
 	 */
 	public function update_mutatie_status( string $status ) : void {
 		foreach ( $this->mutaties as $mutatie ) {
-			if ( $this->referentie === $mutatie->code ) {
+			if ( str_contains( $mutatie->code, $this->referentie ) ) {
 				$mutatie->status = $status;
 			}
 		}
@@ -136,7 +136,7 @@ class Saldo extends Artikel {
 	 */
 	public function remove_mutatie() : void {
 		foreach ( $this->mutaties as $mutatie ) {
-			if ( $this->referentie === $mutatie->code ) {
+			if ( str_contains( $mutatie->code, $this->referentie ) ) {
 				$mutatie->code = '';
 				return;
 			}
