@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 6.1.1  
-**Stable tag:** 7.9.6  
+**Stable tag:** 7.9.7  
 
 
 

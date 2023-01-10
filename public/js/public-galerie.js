@@ -18,6 +18,7 @@
 	 * @property {object} titel         - the title.
 	 * @property {string} beschrijving  - the description.
 	 * @property {string} prijs         - the price.
+	 * @property {string} status        = status of the showcase.
 	 * @property {string} foto_small    - url for the small picture.
 	 * @property {string} foto_large    - url for the large picture.
 	 * @property {string} link          - url of displayed page.
@@ -166,6 +167,7 @@
 			updateField( '#beschrijving', showcases[index].beschrijving );
 			updateField( '#prijs', '&euro; ' + showcases[index].prijs );
 			updateField( '#foto', showcases[index].foto_large, `<img src="${showcases[index].foto_large}" alt="foto van werkstuk" class="kleistad-showcase">` );
+			updateField( '#status', showcases[index].status );
 			window.history.pushState( {}, '', showcases[index].link );
 		}
 	}

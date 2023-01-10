@@ -66,7 +66,9 @@ add_action(
 					<div class="kleistad-showcase-item" id="foto"></div>
 					<div>
 						<div class="kleistad-showcase-item">
-							<div class="kleistad-showcase-titel" id="titel"></div>
+							<div class="kleistad-showcase-titel" id="titel" style="text-align: center;"></div>
+							<br/>
+							<div class="kleistad-showcase-status" id="status" style="text-align: center;"></div>
 							<strong>Prijs</strong>
 							<div style="padding-left:15px" id="prijs"></div>
 							<div>

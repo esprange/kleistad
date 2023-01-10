@@ -234,7 +234,7 @@ class Showcases implements Countable, Iterator {
 					'foto_small'   => wp_get_attachment_image_url( $showcase->foto_id ),
 					'foto_large'   => wp_get_attachment_image_url( $showcase->foto_id, 'large' ),
 					'prijs'        => number_format_i18n( $showcase->prijs, 2 ),
-					'status'       => $showcase->status,
+					'status'       =>  $showcase->is_tentoongesteld() ? ' ( nu tentoongesteld )' : '',
 					'link'         => get_permalink( $showcase->id ),
 					'keramist_id'  => $showcase->keramist_id,
 				];
