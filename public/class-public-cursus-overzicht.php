@@ -280,8 +280,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'technieken' => implode( ', ', $inschrijving->technieken ),
 			];
 			if ( ! $inschrijving->hoofd_cursist_id ) {
-				$order        = new Order( $inschrijving->get_referentie() );
-				$cursist_info = array_merge(
+				$order          = new Order( $inschrijving->get_referentie() );
+				$is_wachtlijst  = ! $inschrijving->ingedeeld && $inschrijving->wacht_datum;
+				$is_wachtlopend = ! $inschrijving->ingedeeld && $inschrijving->cursus->is_lopend();
+				$extra_link     = $inschrijving->get_link( [ 'code' => $inschrijving->code ], 'extra_cursisten', 'extra cursisten' );
+				$cursist_info   = array_merge(
 					$cursist_info,
 					[
 						'extra'          => false,
@@ -289,8 +292,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'betaald'        => $inschrijving->ingedeeld && $order->gesloten,
 						'restant_email'  => $inschrijving->restant_email,
 						'herinner_email' => $inschrijving->herinner_email,
-						'wachtlopend'    => ! $inschrijving->ingedeeld && ! $order->id,
-						'wachtlijst'     => ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && ! $inschrijving->cursus->is_lopend(),
+						'wachtlopend'    => $is_wachtlopend,
+						'wachtlijst'     => $is_wachtlijst && $inschrijving->cursus->is_wachtbaar(),
+						'was_wachtlijst' => $is_wachtlijst && ! $inschrijving->cursus->is_wachtbaar(),
+						'extra_link'     => 1 < $inschrijving->aantal ? $extra_link : '',
 					]
 				);
 			}

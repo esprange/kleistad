@@ -283,7 +283,8 @@ class Cursus {
 	 * @return bool
 	 */
 	public function is_lopend() : bool {
-		return $this->start_datum < strtotime( 'today' );
+		$vandaag = strtotime( 'today' );
+		return $this->start_datum < $vandaag && $this->eind_datum >= $vandaag;
 	}
 
 	/**

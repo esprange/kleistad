@@ -123,7 +123,7 @@ option.kleistad-bank {
   display: inline-block;
 }
 
-.kleistad-openstaand {
+.kleistad-profielpopup {
   background-color: white;
   border: 1px solid;
   box-shadow: 5px 10px var(--border);
@@ -133,7 +133,7 @@ option.kleistad-bank {
   width: 300px;
 }
 
-.kleistad-betaalinfo {
+.kleistad-profielbutton {
   border-radius: 50%;
   color: black;
   font-size: 25px;

@@ -232,6 +232,7 @@ class InschrijvingActie {
 	 */
 	public function indelen_lopend( float $prijs ) : void {
 		$this->inschrijving->maatwerkkosten = $prijs;
+		$this->inschrijving->wacht_datum    = 0;
 		$this->inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->indelen();

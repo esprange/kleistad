@@ -199,20 +199,23 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 					<?php else : ?>
 						<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 						<td>
-							<?php
-							if ( ! $cursist['ingedeeld'] ) :
-								if ( $cursist['wachtlopend'] || $cursist['wachtlijst'] ) :
-									?>
-									<a href="#" title="<?php echo $cursist['wachtlijst'] ? 'uitschrijven of indelen' : 'indelen'; ?>" class="kleistad-edit-link"
-									data-id="<?php echo esc_attr( $cursist['code'] ); ?>"
-									data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven_indelen' : 'indelen'; ?>" >
-									<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>
-								<?php else : ?>
-									nog niet betaald !
-									<?php
-								endif;
-							endif
-							?>
+							<?php if ( $cursist['wachtlopend'] ) : ?>
+								<a href="#" title="indelen" class="kleistad-edit-link"
+									data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="indelen" >
+									wacht op factuur
+								</a>
+							<?php elseif ( $cursist['wachtlijst'] ) : ?>
+								<a href="#" title="uitschrijven of indelen" class="kleistad-edit-link"
+									data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="uitschrijven_indelen" >
+									wachtlijst
+								</a>
+							<?php elseif ( $cursist['was_wachtlijst'] ) : ?>
+								wachtlijst
+							<?php elseif ( $cursist['extra_link'] ) : ?>
+								<?php echo $cursist['extra_link']; //phpcs:ignore ?>
+							<?php elseif ( ! $cursist['ingedeeld'] ) : ?>
+								nog niet betaald !
+							<?php endif; ?>
 						</td>
 					<?php endif ?>
 				</tr>

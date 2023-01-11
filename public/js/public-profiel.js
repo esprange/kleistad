@@ -56,9 +56,9 @@
 			 */
 			$page.on(
 				'click',
-				'#kleistad_betaalinfo',
+				'.kleistad-profielbutton',
 				function ( element ) {
-					$( '#kleistad_openstaand' ).toggle( 'drop' );
+					$( '#kleistad_' + $( this ).data( 'section' ) ).toggle( 'drop' );
 					element.stopPropagation();
 				}
 			);
@@ -69,7 +69,7 @@
 			$( 'body' ).on(
 				'click',
 				function() {
-					$( '#kleistad_openstaand' ).hide();
+					$( '.kleistad-profielpopup' ).hide();
 				}
 			)
 		}

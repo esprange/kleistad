@@ -89,16 +89,29 @@ class Profiel {
 			 * Bepaal openstaande vorderingen
 			 */
 			$lijst     = $this->openstaande_orders( new Orders( [ 'klant_id' => $user->ID ] ) );
+			$saldo     = new Saldo( $user->ID );
 			$maxstatus = empty( $lijst ) ? 0 : max( array_column( $lijst, 'status' ) );
 			$style     = [ 'display: none', 'background-color: lightblue', 'background-color: orange', 'background-color: red' ];
+			$buttons   = '';
+			if ( -2 > $saldo->bedrag ) {
+				$buttons .= '<button class="kleistad-profielbutton" data-section="negatiefsaldo" style="background-color: red">S</button>';
+			}
+			if ( count( $lijst ) ) {
+				$buttons .= '<button class="kleistad-profielbutton" data-section="openstaand" style="' . $style[ $maxstatus ] . ';">&euro;</button>';
+			}
+			if ( $buttons ) {
+				$buttons .= '<br/>';
+			}
 			ob_start();
 			?>
 	<div id="kleistad_profiel_container">
 		<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
-			<?php if ( count( $lijst ) ) : ?>
-		<button id="kleistad_betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
-		<br/>
-		<div id="kleistad_openstaand" class="kleistad-openstaand" style="display: none;" >
+		<?php echo $buttons; // phpcs:ignore ?>
+		<div id="kleistad_negatiefsaldo" class="kleistad-profielpopup" style="display: none" >
+			Het materialen/stook saldo is negatief:<br/>
+			<strong>€ <?php echo esc_html( number_format_i18n( $saldo->bedrag, 2 ) ); ?></strong>.
+		</div>
+		<div id="kleistad_openstaand" class="kleistad-profielpopup" style="display: none;" >
 			<table>
 				<tr>
 					<td colspan="4"><strong>Openstaande facturen</strong></td>
@@ -114,8 +127,7 @@ class Profiel {
 			</table>
 		</div>
 	</div>
-				<?php
-			endif;
+			<?php
 			$profiel = ob_get_clean();
 			set_transient( "kleistad_profiel_$user->ID", $profiel, 900 );
 		}
