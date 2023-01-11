@@ -269,7 +269,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	private function cursistenlijst( Cursus $cursus ) : array {
 		$cursisten = [];
+		$vandaag   = strtotime( 'today' );
 		foreach ( new Inschrijvingen( $cursus->id, true ) as $inschrijving ) {
+			if ( $inschrijving->cursus->eind_datum < $vandaag && ! $inschrijving->ingedeeld ) {
+				continue;
+			}
 			$cursist      = get_userdata( $inschrijving->klant_id );
 			$cursist_info = [
 				'code'       => $inschrijving->code,
@@ -280,11 +284,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'technieken' => implode( ', ', $inschrijving->technieken ),
 			];
 			if ( ! $inschrijving->hoofd_cursist_id ) {
-				$order          = new Order( $inschrijving->get_referentie() );
-				$is_wachtlijst  = ! $inschrijving->ingedeeld && $inschrijving->wacht_datum;
-				$is_wachtlopend = ! $inschrijving->ingedeeld && $inschrijving->cursus->is_lopend();
-				$extra_link     = $inschrijving->get_link( [ 'code' => $inschrijving->code ], 'extra_cursisten', 'extra cursisten' );
-				$cursist_info   = array_merge(
+				$order        = new Order( $inschrijving->get_referentie() );
+				$extra_link   = $inschrijving->get_link( [ 'code' => $inschrijving->code ], 'extra_cursisten', 'extra cursisten' );
+				$cursist_info = array_merge(
 					$cursist_info,
 					[
 						'extra'          => false,
@@ -292,9 +294,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'betaald'        => $inschrijving->ingedeeld && $order->gesloten,
 						'restant_email'  => $inschrijving->restant_email,
 						'herinner_email' => $inschrijving->herinner_email,
-						'wachtlopend'    => $is_wachtlopend,
-						'wachtlijst'     => $is_wachtlijst && $inschrijving->cursus->is_wachtbaar(),
-						'was_wachtlijst' => $is_wachtlijst && ! $inschrijving->cursus->is_wachtbaar(),
+						'wachtlopend'    => $inschrijving->is_wacht_op_lopend(),
+						'wachtlijst'     => $inschrijving->is_op_wachtlijst() && $inschrijving->cursus->is_wachtbaar(),
+						'was_wachtlijst' => $inschrijving->is_op_wachtlijst() && ! $inschrijving->cursus->is_wachtbaar(),
 						'extra_link'     => 1 < $inschrijving->aantal ? $extra_link : '',
 					]
 				);

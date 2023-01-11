@@ -219,6 +219,7 @@ class Saldo extends Artikel {
 					FILE_APPEND
 				);
 			}
+			do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 			return true;
 		}
 		return false;

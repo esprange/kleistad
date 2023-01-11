@@ -4,10 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 6.1.1
-Stable tag: 7.9.8
-
-
-
+Stable tag: 7.9.11
 
 
 
@@ -37,9 +34,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.9.8 =
+= 7.9.11 =
 * Overzicht cursisten verbeterd.
-* Profiel aangepast zodat ook negatief saldo wordt getoond.
+* Profiel aangepast zodat ook saldo wordt getoond.
 = 7.9.6 =
 * Verbetering galerie showcase, toont overige werkstukken van keramist.
 * Criterium werkplekreservering in weken na cursus instelbaar.

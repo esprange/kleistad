@@ -281,7 +281,7 @@ class InschrijvingActie {
 	 * @return void
 	 */
 	public function naar_wachtlijst() : void {
-		if ( $this->inschrijving->wacht_datum || $this->inschrijving->ingedeeld || $this->inschrijving->geannuleerd || $this->inschrijving->cursus->is_lopend() ) {
+		if ( $this->inschrijving->is_op_wachtlijst() || $this->inschrijving->ingedeeld || $this->inschrijving->geannuleerd || $this->inschrijving->cursus->is_lopend() ) {
 			return; // Niets doen als de inschrijving al op de wachtlijst staat of is ingedeeld of geannuleerd of de cursus al gestart is.
 		}
 		$order = new Order( $this->inschrijving->get_referentie() );

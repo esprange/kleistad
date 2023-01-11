@@ -225,6 +225,24 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Test of er een wachtdatum is. Test niet op 0 maar op een echte waarde, want mysql verandert een 0 tijd obv de tijdzone.
+	 *
+	 * @return bool
+	 */
+	public function is_op_wachtlijst() : bool {
+		return ! $this->ingedeeld && ! $this->geannuleerd && $this->wacht_datum > WEEK_IN_SECONDS;
+	}
+
+	/**
+	 * Test of de cursist wacht op indeling op een lopende cursus.
+	 *
+	 * @return bool
+	 */
+	public function is_wacht_op_lopend() : bool {
+		return ! $this->ingedeeld && ! $this->geannuleerd && ! $this->is_op_wachtlijst() && $this->cursus->is_lopend();
+	}
+
+	/**
 	 * Toont eventueel aantal medecursisten
 	 *
 	 * @return string Het aantal.

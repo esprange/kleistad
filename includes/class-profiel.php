@@ -88,16 +88,14 @@ class Profiel {
 			/**
 			 * Bepaal openstaande vorderingen
 			 */
-			$lijst     = $this->openstaande_orders( new Orders( [ 'klant_id' => $user->ID ] ) );
-			$saldo     = new Saldo( $user->ID );
-			$maxstatus = empty( $lijst ) ? 0 : max( array_column( $lijst, 'status' ) );
-			$style     = [ 'display: none', 'background-color: lightblue', 'background-color: orange', 'background-color: red' ];
-			$buttons   = '';
-			if ( -2 > $saldo->bedrag ) {
-				$buttons .= '<button class="kleistad-profielbutton" data-section="negatiefsaldo" style="background-color: red">S</button>';
-			}
+			$lijst       = $this->openstaande_orders( new Orders( [ 'klant_id' => $user->ID ] ) );
+			$saldo       = new Saldo( $user->ID );
+			$orderstatus = empty( $lijst ) ? 0 : max( array_column( $lijst, 'status' ) );
+			$saldostatus = ! $saldo->mutaties->count() ? 0 : ( $saldo->bedrag >= 0 ? 1 : ( $saldo->bedrag >= - 2 ? 2 : 3 ) );
+			$style       = [ 'display: none', 'background-color: lightblue', 'background-color: orange', 'background-color: red' ];
+			$buttons     = '<button class="kleistad-profielbutton" data-section="saldo" style="' . $style[ $saldostatus ] . ';">S</button>';
 			if ( count( $lijst ) ) {
-				$buttons .= '<button class="kleistad-profielbutton" data-section="openstaand" style="' . $style[ $maxstatus ] . ';">&euro;</button>';
+				$buttons .= '<button class="kleistad-profielbutton" data-section="openstaand" style="' . $style[ $orderstatus ] . ';">&euro;</button>';
 			}
 			if ( $buttons ) {
 				$buttons .= '<br/>';
@@ -107,9 +105,8 @@ class Profiel {
 	<div id="kleistad_profiel_container">
 		<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
 		<?php echo $buttons; // phpcs:ignore ?>
-		<div id="kleistad_negatiefsaldo" class="kleistad-profielpopup" style="display: none" >
-			Het materialen/stook saldo is negatief:<br/>
-			<strong>€ <?php echo esc_html( number_format_i18n( $saldo->bedrag, 2 ) ); ?></strong>.
+		<div id="kleistad_saldo" class="kleistad-profielpopup" style="display: none" >
+			Het materialen/stook saldo is <strong>€ <?php echo esc_html( number_format_i18n( $saldo->bedrag, 2 ) ); ?></strong>.
 		</div>
 		<div id="kleistad_openstaand" class="kleistad-profielpopup" style="display: none;" >
 			<table>
