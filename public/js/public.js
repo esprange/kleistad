@@ -75,21 +75,25 @@ function strtodate( value ) {
 			return;
 		}
 		if ( ! $.fn.DataTable.isDataTable( '.kleistad-datatable' ) ) {
-			// noinspection JSCheckFunctionSignatures .
-			$datatable.on(
-				'init.dt',
-				function() {
-					$datatable.show();
-				}
-			).dataTable(
+			$datatable.DataTable(
 				{
 					language: {
-						url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
+						url: '//cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
 					},
-					deferRender: true,
 					stateSave: true
 				}
-			);
+			).on(
+				'page.dt',
+				function() {
+					window.sessionStorage.setItem( $( this ).prop( 'id' ), $( this ).DataTable().page() );
+				}
+			).on(
+				'preDraw',
+				function() {
+					let page = window.sessionStorage.getItem( $( this ).prop( 'id' ) );
+					$( this ).DataTable().page( +( page !== null ? page : 0 ) );
+				}
+			)
 		}
 	}
 
