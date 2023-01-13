@@ -71,7 +71,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			echo melding( -1, 'Morgen gaan een of meer concept workshops vervallen !' ); // phpcs:ignore
 		}
 		?>
-		<table class="kleistad-datatable display compact responsive nowrap" id="kleistad_workshops" style="width:100%" data-page-length="10" data-order='[[ 8, "desc" ]]' >
+		<table class="kleistad-datatable display compact responsive nowrap" id="kleistad_workshops" style="width:100%" data-page-length="10" data-order='[[ 8, "asc" ], [ 1, "desc" ]]' >
 			<thead>
 			<tr>
 				<th data-priority="8">Code</th>
