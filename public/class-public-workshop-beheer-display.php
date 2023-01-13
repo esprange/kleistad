@@ -55,6 +55,12 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		$gaat_vervallen = false;
+		$mail_volgorde  = [
+			WorkshopActie::NIEUW      => 1,
+			WorkshopActie::VRAAG      => 2,
+			WorkshopActie::GEREAGEERD => 3,
+			''                        => 4,
+		];
 		foreach ( $this->data['workshops']  as $workshop ) {
 			$status = $workshop->get_statustekst();
 			if ( Workshop::VERVALT === $status ) {
@@ -93,7 +99,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $workshop->aantal ); ?></td>
 					<td><?php echo esc_html( implode( ', ', $workshop->technieken ) ); ?></td>
 					<td><?php echo esc_html( $workshop->get_statustekst() ); ?></td>
-					<td><?php echo esc_html( $workshop->communicatie[0]['type'] ?? '' ); ?></td>
+					<td data-sort="<?php echo esc_attr( $mail_volgorde[ $workshop->communicatie[0]['type'] ?? '' ] ); ?>" >
+						<?php echo esc_html( $workshop->communicatie[0]['type'] ?? '' ); ?>
+					</td>
 					<td data-sort="<?php echo esc_attr( strtotime( $workshop->communicatie[0]['tijd'] ?? '' ) ); ?>" >
 						<a href="#" data-id="<?php echo esc_attr( $workshop->id ); ?>" data-actie="wijzigen" title="wijzig workshop" class="kleistad-edit kleistad-edit-link" >
 							&nbsp;
