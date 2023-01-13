@@ -98,6 +98,9 @@ class Public_Workshop_Aanvraag extends Public_Bestelling {
 			$error->add( 'verplicht', 'De naam van de contactpersooon (een of meer alfabetische karakters) is verplicht' );
 			$this->data['input']['contact'] = '';
 		}
+		if ( false === strtotime( $this->data['input']['datum'] ) ) {
+			$error->add( 'onjuist', 'De gekozen datum voor de workshop is niet correct' );
+		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $this->melding( $error );
 		}
