@@ -50,7 +50,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 	protected function overzicht() {
 		if ( count( $this->data['showcases'] ) ) :
 			?>
-		<table class="kleistad-datatable display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
+		<table class="kleistad-datatable display" id="kleistad_showcases_beheer" data-page-length="10" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
 				<th data-orderable="false"></th>
@@ -95,7 +95,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function verkoop() : void {
 		?>
-		<table class="kleistad-datatable responsive display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
+		<table class="kleistad-datatable responsive display" id="kleistad_showcases" data-page-length="10" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
 				<th data-orderable="false" data-priority="4">Foto &nbsp; &nbsp;</th>

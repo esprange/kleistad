@@ -129,7 +129,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		?>
-		<table class="kleistad-datatable display" id="kleistad_cursussen" data-order='[[ 0, "desc" ]]'>
+		<table class="kleistad-datatable display" id="kleistad_cursussen_2" data-order='[[ 0, "desc" ]]'>
 			<thead>
 			<tr>
 				<th>Code</th>
@@ -171,7 +171,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		?>
 		<strong><?php echo esc_html( $this->data['cursus']['code'] . ' ' . $this->data['cursus']['naam'] ); ?></strong>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
-		<table class="kleistad-datatable display" data-paging="false" data-searching="false">
+		<table class="kleistad-datatable display" id="kleistad_cursisten" data-paging="false" data-searching="false">
 			<thead>
 			<tr>
 				<th>Naam</th>
@@ -239,7 +239,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		?>
 		<strong><?php echo esc_html( $this->data['cursus']['code'] . ' ' . $this->data['cursus']['naam'] ); ?></strong>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
-		<table class="kleistad-datatable display" data-paging="false" data-searching="false">
+		<table class="kleistad-datatable display" id="kleistad_cursisten" data-paging="false" data-searching="false">
 			<thead>
 			<tr>
 				<th>Naam</th>

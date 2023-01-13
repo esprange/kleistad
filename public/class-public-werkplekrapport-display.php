@@ -68,7 +68,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 		}
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( wp_date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( wp_date( 'd-m-Y', $this->data['tot_datum'] ) ); ?></h2>
-		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
+		<table class="kleistad-datatable display compact" id="kleistad_werkplekgebruikers" data-order= '[[ 0, "desc" ]]' >
 			<thead>
 				<tr>
 					<th>Datum</th>
@@ -158,7 +158,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 */
 	private function tabel_individueel() : void {
 		?>
-		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]' data-searching="false" >
+		<table class="kleistad-datatable display compact" id="kleistad_werkplekgebruik" data-order= '[[ 0, "asc" ]]' data-searching="false" >
 			<thead>
 			<tr>
 				<th>Datum</th>

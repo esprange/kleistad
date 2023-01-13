@@ -22,7 +22,7 @@ class Public_Abonnement_Overzicht_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() : void {
 		?>
-		<table class="kleistad-datatable display compact nowrap" data-order='[[ 0, "asc" ]]'>
+		<table class="kleistad-datatable display compact nowrap" id="kleistad_abonnementen" data-order='[[ 0, "asc" ]]'>
 			<thead>
 				<tr>
 					<th>Naam</th>

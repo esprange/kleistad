@@ -56,7 +56,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<br/>
-		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]'>
+		<table class="kleistad-datatable display compact" id="kleistad_stookrapport" data-order= '[[ 0, "asc" ]]'>
 			<thead>
 				<tr>
 					<th>Naam</th>
@@ -94,7 +94,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 		$ovenstook = count( array_column( $this->data['items'], 'oven' ) );
 		?>
 		<p>Saldorapport voor <?php echo esc_html( $this->data['naam'] ); ?> (het huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
-		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
+		<table class="kleistad-datatable display compact" id="kleistad_stokers" data-order= '[[ 0, "desc" ]]' >
 			<thead>
 				<tr>
 				<?php if ( $ovenstook ) : ?>

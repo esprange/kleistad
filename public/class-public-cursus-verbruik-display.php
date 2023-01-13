@@ -65,7 +65,7 @@ class Public_Cursus_Verbruik_Display extends Public_Shortcode_Display {
 			<strong><?php echo esc_html( $this->data['cursus']->code . ' ' . $this->data['cursus']->naam ); ?></strong>
 			<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']->id ); ?>">
 			<input type="hidden" id="materiaalprijs" value="<?php echo esc_attr( opties()['materiaalprijs'] ); ?>" >
-			<table class="kleistad-datatable display" data-paging="false" data-searching="false" data-info="false" data-ordering="false">
+			<table class="kleistad-datatable display" id="kleistad_cursus_verbruiken" data-paging="false" data-searching="false" data-info="false" data-ordering="false">
 				<thead>
 				<tr>
 					<th>Naam</th>

@@ -26,7 +26,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 			<?php echo esc_html( $this->data['maand'] ? wp_date( 'F Y', mktime( 0, 0, 0, $this->data['maand'], 1, $this->data['jaar'] ) ) : $this->data['jaar'] ); ?>
 			voor <?php echo esc_html( $this->data['artikel'] ); ?></p>.
 
-		<table class="kleistad-datatable display compact nowrap" >
+		<table class="kleistad-datatable display compact nowrap" id="kleistad_omzetdetails">
 			<thead>
 				<tr>
 					<th style="width:10%">Code</th>
@@ -114,7 +114,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 		<button class="kleistad-button kleistad-edit-link" type="button" id="kleistad_rapport" style="display:none" data-id="<?php echo esc_attr( "{$this->data['jaar']}-{$this->data['maand']}" ); ?>" data-actie="overzicht" >Toon omzet</button>
 		<br/><br/>
 		<div>
-			<table class="kleistad-datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
+			<table class="kleistad-datatable display compact nowrap" id="kleistad_omzet" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
 				<thead>
 					<tr>
 						<th style="width:35%;">Omzet</th>

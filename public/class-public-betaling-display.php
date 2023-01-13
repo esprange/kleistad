@@ -56,7 +56,7 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 				<p>Voor <?php echo esc_html( $this->data['klant'] ); ?></p>
 			</div>
 		</div>
-		<table class="kleistad-datatable  display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false" >
+		<table class="kleistad-datatable display compact nowrap" id="kleistad_betaling" data-paging="false" data-searching="false" data-ordering="false" data-info="false" >
 			<thead>
 				<tr><th>Aantal</th><th>Omschrijving</th><th>Stuksprijs</th><th>Prijs</th>
 			</thead>

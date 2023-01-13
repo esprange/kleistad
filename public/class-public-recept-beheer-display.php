@@ -114,7 +114,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		?>
-		<table class="kleistad-datatable display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
+		<table class="kleistad-datatable display" id="kleistad_recepten" data-page-length="10" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
 				<th data-orderable="false">Glazuur</th>
