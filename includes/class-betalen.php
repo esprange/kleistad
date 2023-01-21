@@ -136,7 +136,7 @@ class Betalen {
 			$transient    = $betaling->id . Ontvangen::REFUNDS;
 			$refund_ids   = get_transient( $transient ) ?: [];
 			$refund_ids[] = $refund->id;
-			set_transient( $transient, $refund_ids );
+			set_transient( $transient, $refund_ids, WEEK_IN_SECONDS );
 			return true;
 		}
 		return false;

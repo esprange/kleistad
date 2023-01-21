@@ -62,7 +62,6 @@
 			<li>cursus_lopend : instructie bij inschrijving op lopende cursus</li>
 			<li>cursus_lopend_betalen : bij indeling na aanbieden prijs op lopende cursus</li>
 			<li>cursus_restant : betalen resterend cursusgeld via email link</li>
-			<li>cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
 			<li>cursus_ideal : bevestiging betaling bedrag</li>
 			<li>cursus_wijziging: bevestiging aanpassing inschrijving naar andere cursus
 				<ul style="list-style-type:square;margin-left:25px">
@@ -112,6 +111,15 @@
 				<ul style="list-style-type:square;margin-left:25px">
 					<li>[naam] : naam van de klant</li>
 					<li>[artikel] : artikel dat gecorrigeerd of geannuleerd is</li>
+				</ul>
+			</li>
+			<li>order_aanmaning : herinnering om te betalen
+				<ul style="list-style-type:square;margin-left:25px">
+					<li>[naam] : naam van de klant</li>
+					<li>[referentie] : referentie op de factuur</li>>
+					<li>[openstaand] : openstaand bedrag</li>
+					<li>[artikel] : artikel waarvoor het bedrag openstaat</li>
+					<li>[betaal_link] : Ideal betaal link</li>
 				</ul>
 			</li>
 		</ol>
@@ -218,6 +226,13 @@
 					<li>[email] : Het email adres van de vraagsteller</li>
 					<li>[telefoon] : Het telefoonnummer van de vraagsteller</li>
 					<li>[vraag] : De vraag</li>
+				</ul>
+			</li>
+			<li>herzend_factuur : Opnieuw verzenden factuur
+				<ul style="list-style-type:square;margin-left:25px">
+					<li>[naam] : naam van de klant</li>
+					<li>[referentie] : referentie op de factuur</li>>
+					<li>[betaal_link] : Ideal betaal link</li>
 				</ul>
 			</li>
 		</ol>

@@ -126,7 +126,7 @@ class Profiel {
 	</div>
 			<?php
 			$profiel = ob_get_clean();
-			set_transient( "kleistad_profiel_$user->ID", $profiel, 900 );
+			set_transient( "kleistad_profiel_$user->ID", $profiel, 15 * MINUTE_IN_SECONDS );
 		}
 		return $profiel;
 	}

@@ -107,6 +107,13 @@ class Order {
 	public int $verval_datum = 0;
 
 	/**
+	 * De order aanmaan datum
+	 *
+	 * @var int $aanmaan_datum Unix order aanmaandatum/tijd.
+	 */
+	public int $aanmaan_datum = 0;
+
+	/**
 	 * De order referentie
 	 *
 	 * @var string $referentie De order referentie.
@@ -173,8 +180,9 @@ class Order {
 			$this->historie      = json_decode( $resultaat['historie'], true );
 			$this->klant         = json_decode( $resultaat['klant'], true );
 			$this->klant_id      = intval( $resultaat['klant_id'] );
-			$this->mutatie_datum = strtotime( $resultaat['mutatie_datum'] . " $timezone" );
-			$this->verval_datum  = strtotime( $resultaat['verval_datum'] . " $timezone" );
+			$this->mutatie_datum = is_null( $resultaat['mutatie_datum'] ) ? 0 : strtotime( $resultaat['mutatie_datum'] . " $timezone" );
+			$this->verval_datum  = is_null( $resultaat['verval_datum'] ) ? 0 : strtotime( $resultaat['verval_datum'] . " $timezone" );
+			$this->aanmaan_datum = is_null( $resultaat['aanmaan_datum'] ) ? 0 : strtotime( $resultaat['aanmaan_datum'] . " $timezone" );
 			$this->referentie    = $resultaat['referentie'];
 			$this->opmerking     = htmlspecialchars_decode( $resultaat['opmerking'] );
 			$this->factuurnr     = intval( $resultaat['factuurnr'] );
@@ -286,6 +294,7 @@ class Order {
 			'klant_id'      => $this->klant_id,
 			'mutatie_datum' => wp_date( 'Y-m-d H:i:s', $this->mutatie_datum ),
 			'verval_datum'  => wp_date( 'Y-m-d H:i:s', $this->verval_datum ),
+			'aanmaan_datum' => wp_date( 'Y-m-d H:i:s', $this->aanmaan_datum ),
 			'referentie'    => $this->referentie,
 			'regels'        => $this->orderregels->get_json_export(),
 			'opmerking'     => $this->opmerking,

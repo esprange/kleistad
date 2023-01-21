@@ -225,7 +225,6 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		<br/>
 		<button class="kleistad-button kleistad-download-link" type="button" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
 		<button class="kleistad-button kleistad-download-link" type="button" name="kleistad_submit_cursus_overzicht" data-actie="presentielijst" >Presentielijst</button>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_cursus_overzicht" id="kleistad_herinner" value="herinner_email" data-confirm="Cursisten|weet je zeker dat je nu de herinneringsemail wilt versturen" >Verstuur herinner email</button>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 	}

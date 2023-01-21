@@ -31,7 +31,6 @@ class Inschrijving extends Artikel {
 		'inschrijving'     => 'Inschrijving cursus',
 		'indeling'         => 'Indeling cursus',
 		'_extra'           => 'Welkom cursus',
-		'_herinnering'     => 'Herinnering betaling cursus',
 		'_ideal'           => 'Betaling cursus',
 		'_ideal_betaald'   => 'Betaling cursus',
 		'_lopend'          => 'Inschrijving lopende cursus',
@@ -121,13 +120,6 @@ class Inschrijving extends Artikel {
 	public bool $restant_email = false;
 
 	/**
-	 * Status of aanmaning verstuurd is.
-	 *
-	 * @var bool True als aanmaning email verstuurd.
-	 */
-	public bool $herinner_email = false;
-
-	/**
 	 * Maatwerk bij te late inschrijving.
 	 *
 	 * @var float De maatwerkkosten
@@ -179,7 +171,6 @@ class Inschrijving extends Artikel {
 		$this->opmerking        = htmlspecialchars_decode( $inschrijving['opmerking'] );
 		$this->aantal           = intval( $inschrijving['aantal'] );
 		$this->restant_email    = boolval( $inschrijving['restant_email'] );
-		$this->herinner_email   = boolval( $inschrijving['herinner_email'] );
 		$this->wacht_datum      = strtotime( $inschrijving['wacht_datum'] );
 		$this->extra_cursisten  = json_decode( $inschrijving['extra_cursisten'], true ) ?: [];
 		$this->hoofd_cursist_id = intval( $inschrijving['hoofd_cursist_id'] );
@@ -346,7 +337,6 @@ class Inschrijving extends Artikel {
 				'aantal'           => $this->aantal,
 				'wacht_datum'      => wp_date( 'Y-m-d H:i:s', $this->wacht_datum ),
 				'restant_email'    => intval( $this->restant_email ),
-				'herinner_email'   => intval( $this->herinner_email ),
 				'maatwerkkosten'   => $this->maatwerkkosten,
 			]
 		);

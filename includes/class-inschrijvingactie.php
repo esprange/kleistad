@@ -51,31 +51,6 @@ class InschrijvingActie {
 	}
 
 	/**
-	 * Stuur de herinnerings email.
-	 *
-	 * @return int Aantal emails verstuurd.
-	 */
-	public function herinnering() : int {
-		if ( 0 === $this->inschrijving->aantal || $this->inschrijving->geannuleerd || ! $this->inschrijving->ingedeeld ) {
-			return 0;
-		}
-		$order            = new Order( $this->inschrijving->get_referentie() );
-		$regeling_betaald = $order->betaald > ( $this->inschrijving->aantal * $this->inschrijving->cursus->inschrijfkosten + 1 );
-		if ( $order->gesloten || $regeling_betaald || $this->inschrijving->herinner_email ) {
-			/**
-			 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
-			 * En uiteraard sturen maar éénmaal de standaard herinnering.
-			 */
-			return 0;
-		}
-		$this->inschrijving->artikel_type   = 'cursus';
-		$this->inschrijving->herinner_email = true;
-		$this->inschrijving->save();
-		$this->inschrijving->verzend_email( '_herinnering' );
-		return 1;
-	}
-
-	/**
 	 * Verstuur de melding dat het restant betaald moet worden als dat nog niet betaald is
 	 */
 	public function restant_betaling() : void {

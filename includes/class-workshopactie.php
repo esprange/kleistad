@@ -300,8 +300,14 @@ class WorkshopActie {
 		$emailer->send(
 			[
 				'to'      => "Workshop mailbox <$emailer->info@$emailer->domein>",
-				'subject' => ucfirst( $workshop->naam ) . ' vraag',
-				'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
+				'subject' => sprintf( '%s %s vraag', $workshop->code, ucfirst( $workshop->naam ) ),
+				'content' => sprintf(
+					'<p>Er is een vraag ontvangen van %s over de %s gepland op %s. %s</p>',
+					$email['from-name'],
+					$workshop->naam,
+					date( 'd-m-Y', $workshop->datum ),
+					$workshop->vervallen ? 'Deze workshop is vervallen' : ''
+				),
 				'sign'    => 'Workshop mailbox',
 			]
 		);

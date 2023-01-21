@@ -201,26 +201,6 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
-	 * Stuur een herinner email
-	 *
-	 * @return array
-	 */
-	protected function herinner_email() : array {
-		$aantal_email = 0;
-		// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
-		foreach ( new Inschrijvingen( $this->data['input']['cursus_id'], true ) as $inschrijving ) {
-			/**
-			 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
-			 */
-			$aantal_email += $inschrijving->actie->herinnering();
-		}
-		return [
-			'status'  => $this->status( ( $aantal_email > 0 ) ? "Emails zijn verstuurd naar $aantal_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
-			'content' => $this->display(),
-		];
-	}
-
-	/**
 	 * Bepaal of er actieve cursisten zijn in een cursus.
 	 *
 	 * @param  int $cursus_id Het id van de cursus.
@@ -293,7 +273,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'ingedeeld'      => $inschrijving->ingedeeld,
 						'betaald'        => $inschrijving->ingedeeld && $order->gesloten,
 						'restant_email'  => $inschrijving->restant_email,
-						'herinner_email' => $inschrijving->herinner_email,
+						'herinner_email' => boolval( $order->aanmaan_datum ),
 						'wachtlopend'    => $inschrijving->is_wacht_op_lopend(),
 						'wachtlijst'     => $inschrijving->is_op_wachtlijst() && $inschrijving->cursus->is_wachtbaar(),
 						'was_wachtlijst' => $inschrijving->is_op_wachtlijst() && ! $inschrijving->cursus->is_wachtbaar(),

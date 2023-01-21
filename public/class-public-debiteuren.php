@@ -46,7 +46,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function prepare_zoek() : string {
 		$zoek       = ( $this->data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
-		$this->data = array_merge( $this->data, $this->get_debiteuren( $zoek ) );
+		$this->data = array_merge( $this->data, $this->get_debiteuren( [ 'zoek' => $zoek ] ) );
 		return $this->content();
 	}
 
@@ -56,7 +56,17 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$this->data = array_merge( $this->data, $this->get_debiteuren() );
+		$this->data = array_merge( $this->data, $this->get_debiteuren( [ 'open' => true ] ) );
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'aan te manen debiteuren' overzicht form
+	 *
+	 * @return string
+	 */
+	protected function prepare_aanmanen() : string {
+		$this->data = array_merge( $this->data, $this->get_debiteuren( [ 'aanmanen' => true ] ) );
 		return $this->content();
 	}
 
@@ -91,9 +101,13 @@ class Public_Debiteuren extends ShortcodeForm {
 				],
 				'opmerking_korting'    => FILTER_SANITIZE_STRING,
 				'opmerking_annulering' => FILTER_SANITIZE_STRING,
+				'aanmaan'              => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_FORCE_ARRAY,
+				],
 			]
 		);
-		if ( 'blokkade' === $this->form_actie ) {
+		if ( str_contains( 'blokkade aanmanen', $this->form_actie ) ) {
 			return $this->save();
 		}
 		$this->data['order'] = new Order( $this->data['input']['id'] );
@@ -103,6 +117,45 @@ class Public_Debiteuren extends ShortcodeForm {
 			}
 		}
 		return $this->save();
+	}
+
+	/**
+	 * Verzend de aanmaningen
+	 *
+	 * @return array
+	 */
+	protected function aanmanen() : array {
+		$emailer = new Email();
+		foreach ( $this->data['input']['aanmaan'] as $order_id ) {
+			$order                = new Order( $order_id );
+			$artikelregister      = new Artikelregister();
+			$artikel              = $artikelregister->get_object( $order->referentie );
+			$order->aanmaan_datum = strtotime( 'now' );
+			$order->save();
+			$emailer->send(
+				[
+					'to'          => $order->klant['email'],
+					'slug'        => 'order_aanmaning',
+					'subject'     => 'Herinnering betaling',
+					'attachments' => $order->get_factuur(),
+					'parameters'  => [
+						'naam'        => $order->klant['naam'],
+						'referentie'  => $order->referentie,
+						'openstaand'  => number_format_i18n( $order->get_te_betalen(), 2 ),
+						'betaal_link' => $artikel->get_betaal_link(),
+						'artikel'     => $artikel->get_artikelnaam(),
+					],
+				]
+			);
+		}
+		return [
+			'status'  => $this->status(
+				count( $this->data['input']['aanmaan'] ) ?
+					sprintf( 'Er zijn %d herinneringen per email verzonden', count( $this->data['input']['aanmaan'] ) ) :
+					'Er zijn geen emails verzonden'
+			),
+			'content' => $this->display(),
+		];
 	}
 
 	/**
@@ -246,20 +299,29 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Maak de lijst van openstaande betalingen.
 	 *
-	 * @param string $zoek De eventuele zoek term.
+	 * @param array $filter Het eventuele filter.
 	 * @return array De info.
 	 */
-	private function get_debiteuren( string $zoek = '' ) : array {
+	private function get_debiteuren( array $filter ) : array {
 		$data   = [
 			'openstaand'   => 0,
 			'terugstorten' => false,
 			'orders'       => [],
 		];
+		$filter = array_merge(
+			[
+				'zoek'     => '',
+				'open'     => false,
+				'aanmanen' => false,
+			],
+			$filter
+		);
 		$orders = new Orders( [ 'latest' ] );
 		foreach ( $orders as $order ) {
 			if (
-				( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) ||
-				( empty( $zoek ) && $order->gesloten )
+				( $filter['zoek'] && false === stripos( "{$order->klant['naam']} $order->referentie", $filter['zoek'] ) ) ||
+				( $filter['open'] && $order->gesloten ) ||
+				( $filter['aanmanen'] && ( $order->verval_datum > strtotime( 'today' ) || $order->gesloten || $order->credit ) )
 			) {
 				continue;
 			}

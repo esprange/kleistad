@@ -113,6 +113,7 @@
 				<ul style="list-style-type:square;margin-left:25px">
 					<li>actie=zoek. Met zoekfunctie die ook gesloten orders toont</li>
 					<li>actie=blokkade. Om een kwartaal af te sluiten</li>
+					<li>actie=aanmanen. Om een overzicht te hebben van orders waarvan de vervaldatum verstreken is</li>
 				</ul>
 			</li>
 		</ol>

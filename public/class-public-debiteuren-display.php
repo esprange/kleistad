@@ -35,6 +35,67 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	}
 
 	/**
+	 * Render het aanmanen overzicht.
+	 */
+	protected function aanmanen() {
+		$this->form(
+			function() {
+				?>
+				<table class="kleistad-datatable display compact nowrap" id="kleistad_debiteuren" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
+					<thead>
+					<tr>
+						<th>Code</th>
+						<th>Factuur</th>
+						<th>Naam</th>
+						<th>Betreft</th>
+						<th>Openstaand</th>
+						<th>Vervaldatum</th>
+						<th>Aanmaandatum</th>
+						<th data-orderable="false"></th>
+					</tr>
+					</thead>
+					<tbody>
+					<?php
+
+					$artikelregister = new Artikelregister();
+					foreach ( $this->data['orders'] as $order ) :
+						?>
+						<tr style="<?php echo esc_attr( ( $order->verval_datum <= strtotime( 'today' ) && ! $order->gesloten ) ? 'color:#b30000' : '' ); ?>" >
+							<td><?php echo esc_html( $order->referentie . ( $order->credit ? '(C)' : '' ) ); ?></td>
+							<td><?php echo esc_html( $order->get_factuurnummer() ); ?></td>
+							<td><?php echo esc_html( $order->klant['naam'] ); ?></td>
+							<td><?php echo esc_html( $artikelregister->get_naam( $order->referentie ) ); ?></td>
+							<td style="text-align:right;" data-sort="<?php echo esc_attr( $order->get_te_betalen() ); ?>">&euro; <?php echo esc_html( number_format_i18n( $order->get_te_betalen(), 2 ) ); ?></td>
+							<td data-sort="<?php echo esc_attr( $order->verval_datum ); ?>"><?php echo esc_html( wp_date( 'd-m-Y', $order->verval_datum ) ); ?></td>
+							<?php if ( $order->aanmaan_datum ) : ?>
+								<td data-sort="<?php echo esc_attr( $order->aanmaan_datum ); ?>"><?php echo esc_html( wp_date( 'd-m-Y H:i', $order->aanmaan_datum ) ); ?></td>
+								<td><!--suppress HtmlFormInputWithoutLabel -->
+									<input type="checkbox" name="aanmaan[]" value="<?php echo esc_attr( $order->id ); ?>" ></td>
+							<?php else : ?>
+								<td></td>
+								<td><!--suppress HtmlFormInputWithoutLabel -->
+									<input type="checkbox" checked="checked" name="aanmaan[]" value="<?php echo esc_attr( $order->id ); ?>" ></td>
+							<?php endif; ?>
+						</tr>
+					<?php endforeach ?>
+					</tbody>
+				</table>
+				<div class="kleistad-row" style="padding-top:20px;">
+					<div class="kleistad-col-3">
+						<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" value="aanmanen" >Zend aanmaning</button>
+					</div>
+					<div class="kleistad-col-4">
+					</div>
+					<div class="kleistad-col-3">
+						<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
+					</div>
+				</div>
+				<?php
+			}
+		);
+	}
+
+	/**
 	 * Render het blokkade formulier
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
