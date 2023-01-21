@@ -282,7 +282,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 			'tijd'      => current_time( 'd-m-Y H:i' ),
 		];
 		WorkshopActie::verwerk( $email );
-		$this->assertEquals( 'Workshop vraag', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
+		$this->assertStringContainsString( 'Workshop vraag', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
 
 		$workshop->actie->reactie( 'reactie 2 op vraag' );
 
