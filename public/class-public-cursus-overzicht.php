@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad cursus overzicht class.
  */
@@ -24,10 +26,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	protected function prepare_cursisten() : string {
 		$cursus                  = new Cursus( $this->data['id'] );
 		$this->data['cursus']    = [
-			'id'    => $cursus->id,
-			'naam'  => $cursus->naam,
-			'code'  => $cursus->code,
-			'loopt' => $cursus->start_datum < strtotime( 'today' ),
+			'id'       => $cursus->id,
+			'naam'     => $cursus->naam,
+			'code'     => $cursus->code,
+			'loopt'    => $cursus->start_datum < strtotime( 'today' ),
+			'voltooid' => $cursus->eind_datum < strtotime( 'today' ),
 		];
 		$this->data['cursisten'] = $this->cursistenlijst( $cursus );
 		return $this->content();
@@ -52,12 +55,22 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
 		];
 		$this->data['cursist'] = [
-			'id'     => $cursist_id,
-			'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
-			'datum'  => $inschrijving->datum,
-			'aantal' => $inschrijving->aantal,
+			'id'              => $cursist_id,
+			'naam'            => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+			'datum'           => $inschrijving->datum,
+			'aantal'          => $inschrijving->aantal,
+			'extra_cursisten' => $inschrijving->extra_cursisten,
 		];
 		return $this->content();
+	}
+
+	/**
+	 * Geef de informatie van de cursist weer en geef de mogelijkheid tot correctie.
+	 *
+	 * @return string
+	 */
+	protected function prepare_correctie() : string {
+		return $this->prepare_indelen();
 	}
 
 	/**
@@ -87,17 +100,37 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() : array {
-		$this->data['input'] = filter_input_array(
+		$this->data['input']                    = filter_input_array(
 			INPUT_POST,
 			[
-				'cursist_id' => FILTER_SANITIZE_NUMBER_INT,
-				'cursus_id'  => FILTER_SANITIZE_NUMBER_INT,
-				'kosten'     => [
+				'cursist_id'      => FILTER_SANITIZE_NUMBER_INT,
+				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
+				'nieuw_cursus_id' => FILTER_SANITIZE_NUMBER_INT,
+				'kosten'          => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
+				'aantal'          => FILTER_SANITIZE_NUMBER_INT,
+				'extra_cursisten' => [
+					'filter' => FILTER_SANITIZE_NUMBER_INT,
+					'flags'  => FILTER_FORCE_ARRAY,
+				],
 			]
 		);
+		$this->data['input']['extra_cursisten'] = array_map( 'intval', $this->data['input']['extra_cursisten'] ?? [] );
+		if ( 'correctie' === $this->form_actie &&
+			$this->data['input']['aantal'] < count( $this->data['input']['extra_cursisten'] ) + 1 ) {
+			return $this->melding(
+				new WP_Error(
+					'incorrect',
+					sprintf(
+						'Er zijn %d medecursisten aangemeld, hetgeen meer is dan het gewenste aantal van %d',
+						count( $this->data['input']['extra_cursisten'] ),
+						$this->data['input']['aantal'] - 1
+					)
+				)
+			);
+		}
 		return $this->save();
 	}
 
@@ -187,6 +220,24 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
+	 * Corrigeer een inschrijving
+	 *
+	 * @return array
+	 */
+	protected function correctie() : array {
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['cursist_id'] );
+		$result       = $inschrijving->actie->correctie(
+			$this->data['input']['nieuw_cursus_id'],
+			$this->data['input']['aantal'],
+			$this->data['input']['extra_cursisten']
+		);
+		return [
+			'status'  => $this->status( $result ? 'De gegevens zijn opgeslagen en een mail is naar de cursist verstuurd' : '' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
 	 * Schrijf een cursist uit
 	 *
 	 * @return array
@@ -265,7 +316,13 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 			if ( ! $inschrijving->hoofd_cursist_id ) {
 				$order        = new Order( $inschrijving->get_referentie() );
-				$extra_link   = $inschrijving->get_link( [ 'code' => $inschrijving->code ], 'extra_cursisten', 'extra cursisten' );
+				$extra_link   = $inschrijving->get_link(
+					[ 'code' => $inschrijving->code ],
+					'extra_cursisten',
+					'',
+					'Extra cursisten aanvullen',
+					'kleistad-group'
+				);
 				$cursist_info = array_merge(
 					$cursist_info,
 					[
@@ -277,7 +334,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'wachtlopend'    => $inschrijving->is_wacht_op_lopend(),
 						'wachtlijst'     => $inschrijving->is_op_wachtlijst() && $inschrijving->cursus->is_wachtbaar(),
 						'was_wachtlijst' => $inschrijving->is_op_wachtlijst() && ! $inschrijving->cursus->is_wachtbaar(),
-						'extra_link'     => 1 < $inschrijving->aantal ? $extra_link : '',
+						'extra_link'     => 1 < $inschrijving->aantal ? "$extra_link &nbsp;" : '',
 					]
 				);
 			}

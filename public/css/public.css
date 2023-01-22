@@ -179,19 +179,25 @@ option.kleistad-bank {
 a.kleistad-edit {
   background-image: url("../images/icon-edit.png");
   background-repeat: no-repeat;
-  padding: 0.4em 0.8em;
+  padding: 0.4em 1em;
+}
+
+a.kleistad-group {
+  background-image: url("../images/icon-group.png");
+  background-repeat: no-repeat;
+  padding: 0.4em 1em;
 }
 
 a.kleistad-view {
   background-image: url("../images/icon-view.png");
   background-repeat: no-repeat;
-  padding: 0.4em 0.8em;
+  padding: 0.4em 1em;
 }
 
 a.kleistad-schedule {
   background-image: url("../images/icon-calendar.png");
   background-repeat: no-repeat;
-  padding: 0.4em 0.8em;
+  padding: 0.4em 1em;
 }
 
 /**

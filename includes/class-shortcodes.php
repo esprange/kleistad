@@ -54,8 +54,8 @@ class Shortcodes {
 			 */
 			'abonnement_overzicht'  => (object) [
 				'script' => false,
-				'js'     => [ 'jquery', 'datatables', 'kleistad' ],
-				'css'    => [ 'datatables' ],
+				'js'     => [ 'jquery', 'datatables', 'jquery-ui-datepicker', 'kleistad-form' ],
+				'css'    => [ 'datatables', 'jquery-ui', 'dashicons' ],
 				'access' => [ BESTUUR ],
 			],
 			/**

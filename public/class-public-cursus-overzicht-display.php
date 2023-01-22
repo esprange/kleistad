@@ -91,6 +91,82 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	}
 
 	/**
+	 * Render het correctie formulier
+	 *
+	 * @return void
+	 */
+	protected function correctie(): void {
+		$this->form(
+			function() {
+				?>
+		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
+		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
+		<h2>Correctie inschrijving</h2>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label>Cursist</label>
+			</div>
+			<div class="kleistad-col-5">
+				<?php echo esc_html( $this->data['cursist']['naam'] ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="cursus_id">Cursus</label>
+			</div>
+			<div class="kleistad-col-5">
+				<select name="nieuw_cursus_id" id="cursus_id" required >
+					<?php
+					foreach ( new Cursussen( strtotime( 'today' ) ) as $cursus ) :
+						?>
+					<option value="<?php echo esc_attr( $cursus->id ); ?>" <?php selected( $this->data['cursus']['id'], $cursus->id ); ?>>
+						<?php echo esc_html( "$cursus->code $cursus->naam" ); ?>
+					</option>
+						<?php
+					endforeach;
+					?>
+				</select>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="aantal">Aantal</label>
+			</div>
+			<div class="kleistad-col-3">
+				<input name="aantal" id="aantal" min="1" type="number" size="2" required
+					value="<?php echo esc_attr( $this->data['cursist']['aantal'] ); ?>">
+			</div>
+		</div>
+				<?php foreach ( $this->data['cursist']['extra_cursisten'] as $extra_cursist ) : ?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="extra_cursist_<?php echo esc_attr( $extra_cursist ); ?>">Medecursist</label>
+			</div>
+			<div class="kleistad-col-5">
+				<input name="extra_cursisten[]" type="checkbox" id="extra_cursist_<?php echo esc_attr( $extra_cursist ); ?>"
+					value="<?php echo esc_attr( $extra_cursist ); ?>" checked >
+					<?php echo esc_html( get_user_by( 'id', $extra_cursist )->display_name ); ?>
+			</div>
+		</div>
+					<?php
+			endforeach;
+				?>
+		<div class="kleistad-row" style="padding-top:20px;">
+			<div class="kleistad-col-3">
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="correctie" >Bewaren</button>
+			</div>
+			<div class="kleistad-col-4">
+			</div>
+			<div class="kleistad-col-3">
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
+			</div>
+		</div>
+				<?php
+			}
+		);
+	}
+
+	/**
 	 * Render het uitschrijven formulier
 	 */
 	protected function uitschrijven_indelen() {
@@ -165,6 +241,12 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het formulier
 	 *
+	 * Extra cursisten: dashicons-businesswoman
+	 * Indelen: dashicons-insert
+	 * Uitschrijven: dashicons-remove
+	 * Correctie: dashicons-edit
+	 * Wachtlijst: dashicons-hourglass
+	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function cursisten_bestuur() {
@@ -178,7 +260,8 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 				<th>Technieken</th>
 				<th>Betaald</th>
 				<th>Herinner Email</th>
-				<th>Nog niet ingedeeld</th>
+				<th>Status</th>
+				<th>Actie</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -195,27 +278,51 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 					<?php endif ?>
 					<?php if ( $cursist['extra'] ) : ?>
 						<td><span class="dashicons dashicons-minus"></span></td>
-						<td><span class="dashicons dashicons-minus"></span></td>
+						<td>ingedeeld</td>
+						<td></td>
 					<?php else : ?>
 						<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 						<td>
-							<?php if ( $cursist['wachtlijst'] ) : ?>
-								<a href="#" title="uitschrijven of indelen" class="kleistad-edit-link"
-									data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="uitschrijven_indelen" >
-									wachtlijst
-								</a>
-							<?php elseif ( $cursist['was_wachtlijst'] ) : ?>
-								wachtlijst
-							<?php elseif ( $cursist['wachtlopend'] ) : ?>
-								<a href="#" title="indelen" class="kleistad-edit-link"
-									data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="indelen" >
-									wacht op factuur
-								</a>
-							<?php elseif ( $cursist['extra_link'] ) : ?>
-								<?php echo $cursist['extra_link']; //phpcs:ignore ?>
-							<?php elseif ( ! $cursist['ingedeeld'] ) : ?>
-								nog niet betaald !
-							<?php endif; ?>
+						<?php
+						if ( $cursist['wachtlijst'] || $cursist['was_wachtlijst'] ) :
+							echo 'wachtlijst';
+							elseif ( $cursist['wachtlopend'] ) :
+								echo 'wacht op factuur';
+							elseif ( ! $cursist['ingedeeld'] ) :
+								echo 'nog niet betaald';
+							else :
+								echo 'ingedeeld';
+							endif;
+							?>
+						</td>
+						<td>
+							<?php
+							echo $cursist['extra_link']; //phpcs:ignore
+							if ( ! $this->data['cursus']['voltooid'] ) :
+								if ( $cursist['wachtlijst'] ) :
+									?>
+							<a href="#" title="uitschrijven of indelen" class="kleistad-edit-link kleistad-edit"
+								data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="uitschrijven_indelen" >
+								<!-- wachtlijst -->
+							</a>
+									<?php
+								elseif ( $cursist['wachtlopend'] ) :
+									?>
+							<a href="#" title="indelen" class="kleistad-edit-link kleistad-edit"
+								data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="indelen" >
+								<!-- wacht op factuur -->
+							</a>
+									<?php
+								elseif ( $this->data['cursus']['loopt'] ) :
+									?>
+							<a href="#" title="corrigeer de inschrijving" class="kleistad-edit-link kleistad-edit"
+								data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="correctie" >
+								<!--correctie-->
+							</a>
+									<?php
+								endif;
+							endif;
+							?>
 						</td>
 					<?php endif ?>
 				</tr>

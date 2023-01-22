@@ -122,12 +122,16 @@ abstract class Artikel {
 	 * @param array  $args       Een array met parameters.
 	 * @param string $pagina     De pagina waar geland moet worden.
 	 * @param string $verwijzing De tekst in de link.
+	 * @param string $titel      De eventuele titel die wordt weergegeven tijdens hover.
+	 * @param string $class      De eventuele class voor het anchor.
 	 *
 	 * @return string De html link.
 	 */
-	public function get_link( array $args, string $pagina, string $verwijzing = 'Kleistad pagina' ) : string {
+	public function get_link( array $args, string $pagina, string $verwijzing = 'Kleistad pagina', string $titel = '', string $class = '' ) : string {
 		$url = add_query_arg( array_merge( $args, [ 'hsh' => $this->get_controle() ] ), home_url( "/kleistad-$pagina" ) );
-		return "<a href=\"$url\" target=\"_blank\" >$verwijzing</a>";
+		return <<<HTML
+			<a href="$url" title="$titel" target="_blank" class="$class" >$verwijzing</a>
+		HTML;
 	}
 
 	/**

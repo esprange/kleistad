@@ -27,7 +27,7 @@ namespace Kleistad;
  * @property bool   overbrugging_email
  * @property array  extras
  * @property int    factuur_maand
- * @property array historie
+ * @property array  historie
  */
 class Abonnement extends Artikel {
 

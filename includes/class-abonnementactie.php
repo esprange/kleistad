@@ -199,6 +199,48 @@ class AbonnementActie {
 	}
 
 	/**
+	 * Wijziging uitgevoerd door beheerder.
+	 *
+	 * @param array $wijzigingen Wijzigingen.
+	 *
+	 * @return void
+	 */
+	public function correctie( array $wijzigingen ) : void {
+		$wijzigen = false;
+		foreach (
+			[
+				'start_datum'      => false,
+				'start_eind_datum' => false,
+				'pauze_datum'      => true,
+				'herstart_datum'   => true,
+				'eind_datum'       => true,
+				'soort'            => false,
+			] as $veld => $nul ) {
+			if ( ! empty( $wijzigingen[ $veld ] ) ) {
+				$waarde = str_contains( $veld, 'datum' ) ? strtotime( $wijzigingen[ $veld ] ) : $wijzigingen[ $veld ];
+				if ( $waarde !== $this->abonnement->$veld ) {
+					$this->abonnement->$veld = $waarde;
+					$wijzigen                = true;
+				}
+				continue;
+			}
+			if ( $nul ) {
+				if ( $this->abonnement->$veld ) {
+					$this->abonnement->$veld = 0;
+					$wijzigen                = true;
+				}
+			}
+		}
+		if ( $wijzigen ) {
+			// Omdat alleen de eind datum van de start periode gewijzigd kan worden, hier dan de reguliere datum meteen aanpassen.
+			$this->abonnement->reguliere_datum = strtotime( 'first day of next month', $this->abonnement->start_eind_datum );
+			$this->abonnement->extras          = $wijzigingen['extras'];
+			$this->log( 'Abonnement aangepast door ' . wp_get_current_user()->display_name );
+			$this->abonnement->save();
+		}
+	}
+
+	/**
 	 * Geef aan dat er een overbrugging betaald moet worden
 	 */
 	public function overbrugging() : void {
