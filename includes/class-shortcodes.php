@@ -197,7 +197,7 @@ class Shortcodes {
 			 */
 			'rapport'               => (object) [
 				'script' => false,
-				'js'     => [ 'jquery', 'datatables', 'kleistad' ],
+				'js'     => [ 'jquery', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'datatables', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],

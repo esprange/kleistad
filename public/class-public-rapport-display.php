@@ -28,10 +28,28 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	 * Render het rapport van de geselecteerde gebruiker
 	 */
 	protected function rapport_gebruiker() {
-		$this->rapport();
-		?>
-		<button class="kleistad-button kleistad-terug-link" type="button" data-actie="gebruikers" style="float:right" >Terug</button>
-		<?php
+		$this->form(
+			function() {
+				$this->rapport();
+				?>
+				<div class="kleistad-row">
+					<div class="kleistad-col-3 kleistad-label">
+						<label for="kleistad_saldo">Aangepast saldo bedrag</label>
+					</div>
+					<div class="kleistad-col-3">
+						<input id="kleistad_saldo" name="saldo" type="number"
+							value="<?php echo esc_attr( sprintf( '%.2f', $this->data['saldo'] ) ); ?>"
+							step="0.01" size="5" required>
+						<input name="id" type="hidden" value="<?php echo esc_attr( $this->data['id'] ); ?>" >
+					</div>
+				</div>
+				<div class="kleistad-row">
+					<button class="kleistad-button" name="kleistad_submit_rapport" type="submit" >Bewaren</button>
+					<button class="kleistad-button kleistad-terug-link" type="button" data-actie="gebruikers" style="float:right" >Terug</button>
+				</div>
+				<?php
+			}
+		);
 	}
 
 	/**
@@ -93,7 +111,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	private function rapport() {
 		$ovenstook = count( array_column( $this->data['items'], 'oven' ) );
 		?>
-		<p>Saldorapport voor <?php echo esc_html( $this->data['naam'] ); ?> (het huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
+		<p>Saldorapport voor <?php echo esc_html( $this->data['naam'] ); ?> (het huidig saldo is &euro; <?php echo esc_html( number_format_i18n( $this->data['saldo'], 2 ) ); ?>)</p>
 		<table class="kleistad-datatable display compact" id="kleistad_stokers" data-order= '[[ 0, "desc" ]]' >
 			<thead>
 				<tr>

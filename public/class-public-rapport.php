@@ -12,11 +12,12 @@
 namespace Kleistad;
 
 use WP_User;
+use WP_Error;
 
 /**
  * De kleistad rapport class.
  */
-class Public_Rapport extends Shortcode {
+class Public_Rapport extends ShortcodeForm {
 
 	/**
 	 * Prepareer het overzicht rapport van de gebruiker
@@ -71,6 +72,45 @@ class Public_Rapport extends Shortcode {
 	}
 
 	/**
+	 * Valideer/sanitize 'saldo rapport' form
+	 *
+	 * @return array
+	 */
+	public function process(): array {
+		$this->data['input'] = filter_input_array(
+			INPUT_POST,
+			[
+				'id'    => FILTER_SANITIZE_STRING,
+				'saldo' => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+			]
+		);
+		if ( ! is_numeric( $this->data['input']['saldo'] ) ) {
+			return $this->melding( new WP_Error( 'onjuist', 'Format nieuw saldo is onjuistK' ) );
+		}
+		if ( ! current_user_can( BESTUUR ) ) {
+			return $this->melding( new WP_Error( 'beveiliging', 'Deze actie mag alleen door Bestuur worden uitgevoerd' ) );
+		}
+		return $this->save();
+	}
+
+	/**
+	 * Bewaar het aangepaste saldo.
+	 *
+	 * @return array
+	 */
+	protected function save(): array {
+		$saldo = new Saldo( intval( $this->data['input']['id'] ) );
+		$saldo->actie->correctie( $this->data['input']['saldo'] );
+		return [
+			'status'  => $this->status( 'Het saldo is aangepast' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
 	 * Haal de rapport data op.
 	 *
 	 * @param WP_User $gebruiker De gebruiker.
@@ -79,7 +119,7 @@ class Public_Rapport extends Shortcode {
 		$data          = [];
 		$saldo         = new Saldo( $gebruiker->ID );
 		$data['naam']  = $gebruiker->display_name;
-		$data['saldo'] = number_format_i18n( $saldo->bedrag, 2 );
+		$data['saldo'] = $saldo->bedrag;
 		$data['items'] = [];
 		foreach ( new Ovens() as $oven ) {
 			$stoken = new Stoken( $oven, 0 );

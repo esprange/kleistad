@@ -4,7 +4,8 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 6.1.1  
-**Stable tag:** 7.10.1  
+**Stable tag:** 7.10.2  
+
 
 
 
@@ -38,8 +39,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.10.1 ###
-* Dashboard functionaliteit voor cursisten en abonnees naar front-end verplaatst (cursisten- en abonnementen overzicht).
+### 7.10.2 ###
+* Dashboard functionaliteit voor cursisten, abonnees en saldo naar front-end verplaatst.
 * Aanmaningen versturen vanuit debiteuren overzicht i.p.v. vanuit cursus overzicht.
 * Bij ontvangst van vragen naar aanleiding van een geplande workshop meer info tonen in bericht.
 ### 7.9.14 ###

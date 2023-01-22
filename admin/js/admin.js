@@ -139,16 +139,6 @@
 			);
 
 			/**
-			 * Bij wijzigen beperkt abonnement, vereisen dat de dag ingevuld wordt.
-			 */
-			$( '#kleistad-soort' ).on(
-				'change',
-				function() {
-					$( '#kleistad-dag' ).prop( 'required', ( 'beperkt' === $( this ).val() ) );
-				}
-			);
-
-			/**
 			 * Werkplek configyratie
 			 */
 			$werkplek_start_config.datepicker(
