@@ -433,7 +433,7 @@ class Order {
 		if (
 			$artikel->get_naw_klant() !== $this->klant ||
 			$artikel->get_referentie() !== $this->referentie ||
-			$artikel->get_factuurregels()->get_bruto() !== $this->orderregels->get_bruto()
+			$artikel->get_factuurregels() !== $this->orderregels
 		) {
 			$betaald         = $this->betaald;
 			$this->betaald   = 0.0;
