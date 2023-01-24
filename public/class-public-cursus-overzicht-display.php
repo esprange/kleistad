@@ -306,14 +306,14 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 								<!-- wachtlijst -->
 							</a>
 									<?php
-								elseif ( $cursist['wachtlopend'] ) :
+								elseif ( $cursist['wachtlopend'] || $cursist['was_wachtlijst'] ) :
 									?>
 							<a href="#" title="indelen" class="kleistad-edit-link kleistad-edit"
 								data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="indelen" >
 								<!-- wacht op factuur -->
 							</a>
 									<?php
-								elseif ( $this->data['cursus']['loopt'] ) :
+								elseif ( ! $this->data['cursus']['loopt'] ) :
 									?>
 							<a href="#" title="corrigeer de inschrijving" class="kleistad-edit-link kleistad-edit"
 								data-id="<?php echo esc_attr( $cursist['code'] ); ?>" data-actie="correctie" >
