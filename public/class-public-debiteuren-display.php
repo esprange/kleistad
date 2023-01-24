@@ -185,7 +185,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		}
 		?>
 		<p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $this->data['openstaand'], 2 ) ); ?></p>
-		<table class="kleistad-datatable display compact nowrap" id="kleistad_debiteuren" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
+		<table class="kleistad-datatable display compact nowrap" id="kleistad_debiteuren" data-page-length="10" data-order='[[ 6, "asc" ]]' >
 			<thead>
 			<tr>
 				<th>Code</th>
