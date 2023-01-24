@@ -257,11 +257,14 @@ class WorkshopActie {
 		}
 		$order = new Order( $this->workshop->get_referentie() );
 		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-			$this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
-			return [
-				'level'  => $level,
-				'status' => $bericht . 'een herbevestiging inclusief eventueel aangepaste factuur is verstuurd',
-			];
+			$factuur = $order->wijzig( $this->workshop->get_referentie(), 'Correctie gegevens workshop' );
+			if ( $factuur ) {
+				$this->workshop->verzend_email( '_betaling', $factuur );
+				return [
+					'level'  => $level,
+					'status' => $bericht . 'een herbevestiging inclusief eventueel aangepaste factuur is verstuurd',
+				];
+			}
 		}
 		$this->workshop->verzend_email( '_herbevestiging' );
 		return [

@@ -267,6 +267,77 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test wijzig  function
+	 * 1. Normale bestelling workshop.
+	 * 2. Bestelling wijziging workshop.
+	 *
+	 * @return void
+	 */
+	public function test_wijzig() {
+		$mailer   = tests_retrieve_phpmailer_instance();
+		$workshop = new Workshop();
+		$workshop->actie->aanvraag(
+			[
+				'user_email' => 'test@test.tst',
+				'contact'    => 'test',
+				'aantal'     => 4,
+				'datum'      => strtotime( 'tomorrow' ),
+				'start_tijd' => '10:00',
+				'eind_tijd'  => '12:00',
+				'telnr'      => '12345567890',
+				'naam'       => 'workshop',
+				'technieken' => [],
+				'opmerking'  => '',
+				'dagdeel'    => 'ochtend',
+				'price'      => 100,
+			]
+		);
+		$this->assertStringContainsString( 'Bevestiging van aanvraag workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 1, $mailer->get_sent_count(), 'aantal email onjuist' );
+
+		$workshop->actie->bevestig();
+		$this->assertStringContainsString( 'Bevestiging van workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 2, $mailer->get_sent_count(), 'aantal email onjuist' );
+
+		Workshops::doe_dagelijks();
+		$workshop = new Workshop( $workshop->id );
+		$this->assertStringContainsString( 'Betaling van workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 3, $mailer->get_sent_count(), 'aantal email onjuist' );
+
+		$workshop        = new Workshop( $workshop->id );
+		$workshop->datum = strtotime( '+ 1 week 0:00' );
+		$workshop->actie->bevestig();
+		$this->assertStringContainsString( 'Betaling van workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 4, $mailer->get_sent_count(), 'aantal email onjuist' );
+
+		$workshop              = new Workshop( $workshop->id );
+		$workshop->organisatie = 'Organisatie';
+		$workshop->actie->bevestig();
+		$this->assertStringContainsString( 'Betaling van workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 5, $mailer->get_sent_count(), 'aantal email onjuist' );
+
+		$workshop         = new Workshop( $workshop->id );
+		$workshop->aantal = 5;
+		$workshop->kosten = 120;
+		$workshop->actie->bevestig();
+		$this->assertStringContainsString( 'Betaling van workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 6, $mailer->get_sent_count(), 'aantal email onjuist' );
+
+		$workshop            = new Workshop( $workshop->id );
+		$workshop->programma = 'aangepast';
+		$workshop->actie->bevestig();
+		$this->assertStringContainsString( 'Bevestiging na correctie van workshop', $mailer->get_last_sent()->subject, 'email betaling incorrect' );
+		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+		$this->assertEquals( 7, $mailer->get_sent_count(), 'aantal email onjuist' );
+	}
+
+	/**
 	 * Test verwerk aanvraag
 	 */
 	public function test_verwerk() {
