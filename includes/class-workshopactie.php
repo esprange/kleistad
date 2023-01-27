@@ -51,6 +51,7 @@ class WorkshopActie {
 	 * @since 5.0.0
 	 */
 	public function afzeggen() : void {
+		$this->workshop->verwijder_werkplekken( $this->workshop->code );
 		$this->workshop->vervallen = true;
 		$this->workshop->save();
 	}
@@ -68,7 +69,6 @@ class WorkshopActie {
 		}
 		$this->workshop->actie->afzeggen();
 		if ( $this->workshop->definitief ) {
-			$this->workshop->verwijder_werkplekken( $this->workshop->code );
 			$this->workshop->verzend_email( '_afzegging' );
 		}
 	}
