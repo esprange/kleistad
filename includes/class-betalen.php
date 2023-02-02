@@ -121,23 +121,27 @@ class Betalen {
 		$betaling = $service->get_payment( $mollie_betaling_id );
 		$value    = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
-			$refund       = $betaling->refund(
-				[
-					'amount'      => [
-						'currency' => 'EUR',
-						'value'    => $value,
-					],
-					'metadata'    => [
-						'order_id' => $referentie,
-					],
-					'description' => $beschrijving,
-				]
-			);
-			$transient    = $betaling->id . Ontvangen::REFUNDS;
-			$refund_ids   = get_transient( $transient ) ?: [];
-			$refund_ids[] = $refund->id;
-			set_transient( $transient, $refund_ids, WEEK_IN_SECONDS );
-			return true;
+			try {
+				$refund       = $betaling->refund(
+					[
+						'amount'      => [
+							'currency' => 'EUR',
+							'value'    => $value,
+						],
+						'metadata'    => [
+							'order_id' => $referentie,
+						],
+						'description' => $beschrijving,
+					]
+				);
+				$transient    = $betaling->id . Ontvangen::REFUNDS;
+				$refund_ids   = get_transient( $transient ) ?: [];
+				$refund_ids[] = $refund->id;
+				set_transient( $transient, $refund_ids, WEEK_IN_SECONDS );
+				return true;
+			} catch ( Exception $e ) {
+				fout( __CLASS__, $e->getMessage() );
+			}
 		}
 		return false;
 	}
