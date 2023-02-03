@@ -125,7 +125,9 @@ class Workshops implements Countable, Iterator {
 		if ( $workshop->definitief || $workshop->vervallen ) {
 			return;
 		}
-		$workshop->vervallen = $workshop->aanvraagdatum + opties()['verloopaanvraag'] * WEEK_IN_SECONDS < strtotime( 'today' );
+		$workshop->vervallen =
+			( $workshop->aanvraagdatum + opties()['verloopaanvraag'] * WEEK_IN_SECONDS ) < strtotime( 'today' ) ||
+			( $workshop->datum < strtotime( 'today' ) );
 		$workshop->save();
 	}
 
