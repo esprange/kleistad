@@ -115,7 +115,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 				<label for="kleistad_rnaam">t.n.v.</label>
 			</div>
 			<div class="kleistad-col-3">
-				<input class="kleistad-input" type="text" name="rnaam" id="kleistad_rnaam" value="<?php echo esc_attr( $this->data['input']['iban'] ); ?>">
+				<input class="kleistad-input" type="text" name="rnaam" id="kleistad_rnaam" value="<?php echo esc_attr( $this->data['input']['rnaam'] ); ?>">
 			</div>
 		</div>
 		<?php
