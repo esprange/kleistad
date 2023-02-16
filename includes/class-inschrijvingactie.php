@@ -173,7 +173,7 @@ class InschrijvingActie {
 		$this->inschrijving->wacht_datum = 0;
 		$this->inschrijving->save();
 		$ruimte -= $this->inschrijving->aantal;
-		if ( 0 >= $ruimte - $this->inschrijving->aantal ) {
+		if ( 0 >= $ruimte ) {
 			$this->inschrijving->cursus->set_vol();
 		}
 	}

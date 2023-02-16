@@ -29,7 +29,7 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 				<label for="kleistad_naam">Je naam (verplicht)</label>
 			</div>
 			<div class="kleistad-col-6">
-				<input class="kleistad-input" name="naam" id="kleistad_contact" type="text"
+				<input class="kleistad-input" name="naam" id="kleistad_naam" type="text"
 				required maxlength="25" placeholder="naam" title="Vul s.v.p. je naam in"
 				value="<?php echo esc_attr( $this->data['input']['naam'] ); ?>" autocomplete="given-name" />
 			</div>

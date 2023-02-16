@@ -599,7 +599,7 @@ class MollieSimulatie {
 							 */
 							public function getCheckOutUrl() : string {
 								if ( ! defined( 'KLEISTAD_TEST' ) ) {
-									return add_query_arg( 'id', $this->id, plugin_dir_url( __DIR__ ) . '/tests/molliesimulator.php' );
+									return add_query_arg( 'id', $this->id, plugin_dir_url( __DIR__ ) . 'tests/molliesimulator.php' );
 								}
 								return add_query_arg( 'id', $this->id, 'https://www.example.com/test.php' );
 							}

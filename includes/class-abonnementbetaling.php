@@ -185,7 +185,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 			$this->verwerk_betaald( $order, $bedrag, $type, $transactie_id );
 			return;
 		}
-		$this->verwerk_mislukt( $order, $type );
+		$this->verwerk_mislukt( $order, $bedrag, $type, $transactie_id );
 	}
 
 	/**
@@ -253,15 +253,18 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * Verwerk de betaling als deze mislukt is.
 	 *
 	 * @param Order  $order         De order als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag.
 	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 *
 	 * @return void
 	 */
-	private function verwerk_mislukt( Order $order, string $type ) : void {
+	private function verwerk_mislukt( Order $order, float $bedrag, string $type, string $transactie_id ) : void {
 		if ( 'directdebit' === $type && $order->id ) {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
+			$order->ontvang( $bedrag, $transactie_id );
 			$this->abonnement->verzend_email( '_regulier_mislukt', $order->get_factuur() );
 			return;
 		}

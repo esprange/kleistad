@@ -215,6 +215,7 @@ class AbonnementActie {
 				'herstart_datum'   => true,
 				'eind_datum'       => true,
 				'soort'            => false,
+				'extras'           => false,
 			] as $veld => $nul ) {
 			if ( ! empty( $wijzigingen[ $veld ] ) ) {
 				$waarde = str_contains( $veld, 'datum' ) ? strtotime( $wijzigingen[ $veld ] ) : $wijzigingen[ $veld ];
@@ -234,7 +235,6 @@ class AbonnementActie {
 		if ( $wijzigen ) {
 			// Omdat alleen de eind datum van de start periode gewijzigd kan worden, hier dan de reguliere datum meteen aanpassen.
 			$this->abonnement->reguliere_datum = strtotime( 'first day of next month', $this->abonnement->start_eind_datum );
-			$this->abonnement->extras          = $wijzigingen['extras'];
 			$this->log( 'Abonnement aangepast door ' . wp_get_current_user()->display_name );
 			$this->abonnement->save();
 		}

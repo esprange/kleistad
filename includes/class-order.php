@@ -459,6 +459,7 @@ class Order {
 	public function ontvang( float $bedrag, string $transactie_id ): string {
 		$this->betaald      += $bedrag;
 		$this->transactie_id = $transactie_id;
+		$this->gesloten      = false;
 		$this->save( sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'Betaling' : 'Stornering', abs( $bedrag ), $this->betaald ) );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		return $this->get_factuur();

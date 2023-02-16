@@ -155,7 +155,7 @@ class Ontvangen {
 				$artikel->betaling->verwerk(
 					$order,
 					- $chargeback->amount->value,
-					$betaling->isPaid(),
+					false,
 					$betaling->method,
 					$betaling->id
 				);
