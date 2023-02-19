@@ -407,11 +407,16 @@ class Order {
 	 * @return string
 	 */
 	public function restitueren( float $bedrag, float $kosten, string $vermelding, string $opmerking = '' ) : string {
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->get_object( $this->referentie );
+		$this->klant_id  = $artikel->klant_id;
+		$this->klant     = $artikel->get_naw_klant();
 		$this->credit    = true;
 		$this->opmerking = $opmerking;
 		$this->orderregels->toevoegen( new Orderregel( $vermelding, 1, - $bedrag ) );
 		$this->orderregels->toevoegen( new Orderregel( 'administratie kosten', 1, $kosten ) );
 		$this->save( sprintf( "Terugboeken bedrag\n%s", $vermelding ) );
+		do_action( 'kleistad_order_stornering', $this );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		$factuur = new Factuur();
 		return $factuur->run( $this );
